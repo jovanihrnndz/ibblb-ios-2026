@@ -113,7 +113,8 @@ struct SermonCardView: View {
         thumbnailUrl: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
         youtubeVideoId: "dQw4w9WgXcQ",
         audioUrl: nil,
-        tags: ["Parables", "Grace"]
+        tags: ["Parables", "Grace"],
+        slug: "prodigal-son-returns"
     ))
     .padding()
 }

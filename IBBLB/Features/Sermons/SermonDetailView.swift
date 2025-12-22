@@ -10,7 +10,11 @@ import SwiftUI
 struct SermonDetailView: View {
     let sermon: Sermon
     @State private var isAudioPlayerExpanded = false
-    
+    @State private var outline: SermonOutline?
+    @State private var isOutlineLoading = false
+
+    private let outlineService = SanityOutlineService()
+
     var body: some View {
         VStack(spacing: 0) {
             BannerView()
@@ -70,6 +74,12 @@ struct SermonDetailView: View {
                     if let audioURL = audioURL {
                         audioSection(audioURL: audioURL)
                     }
+
+                    // Bosquejo/Outline Section
+                    if let outline = outline {
+                        SermonOutlineSectionView(outline: outline)
+                            .padding(.top, 8)
+                    }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
@@ -84,6 +94,21 @@ struct SermonDetailView: View {
                 EmptyView()
             }
         }
+        .task {
+            await loadOutline()
+        }
+    }
+
+    // MARK: - Outline Loading
+
+    private func loadOutline() async {
+        isOutlineLoading = true
+        defer { isOutlineLoading = false }
+
+        outline = await outlineService.fetchOutline(
+            slug: sermon.slug,
+            youtubeId: sermon.youtubeVideoId
+        )
     }
     
     // MARK: - Audio Section
@@ -177,7 +202,8 @@ struct SermonDetailView: View {
             thumbnailUrl: nil,
             youtubeVideoId: "dQw4w9WgXcQ",
             audioUrl: "https://example.com/audio.mp3",
-            tags: ["Parables", "Grace"]
+            tags: ["Parables", "Grace"],
+            slug: "prodigal-son-grace-redemption"
         ))
     }
 }

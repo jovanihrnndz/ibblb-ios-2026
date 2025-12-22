@@ -9,7 +9,8 @@ struct Sermon: Decodable, Identifiable, Hashable {
     let youtubeVideoId: String?
     let audioUrl: String?
     let tags: [String]?
-    
+    let slug: String?
+
     // CodingKeys can be omitted since we use .convertFromSnakeCase in APIClient
     // but kept for explicit mapping or documentation if needed.
     enum CodingKeys: String, CodingKey {
@@ -21,6 +22,7 @@ struct Sermon: Decodable, Identifiable, Hashable {
         case youtubeVideoId = "youtubeId"
         case audioUrl
         case tags
+        case slug
     }
     
     func hash(into hasher: inout Hasher) {
