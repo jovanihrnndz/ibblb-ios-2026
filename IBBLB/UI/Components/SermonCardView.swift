@@ -77,10 +77,7 @@ struct SermonCardView: View {
             .overlay {
                 // Play overlay icon
                 if let id = sermon.youtubeVideoId, !id.trimmingCharacters(in: .whitespaces).isEmpty {
-                    Image(systemName: "play.circle.fill")
-                        .font(.system(size: isTV ? 80 : 44))
-                        .foregroundColor(.white)
-                        .shadow(color: .black.opacity(0.35), radius: isTV ? 12 : 8, x: 0, y: 5)
+                    VideoThumbnailOverlay()
                 }
             }
             .frame(maxWidth: .infinity)

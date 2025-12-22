@@ -28,18 +28,77 @@ struct SermonsView: View {
         return viewModel.sermons
     }
     
+    // Search suggestions based on current sermons
+    private var searchSuggestions: [String] {
+        let query = viewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return [] }
+        let lowercasedQuery = query.lowercased()
+        let titles = listSermons.map { $0.title }
+        let uniqueTitles = Array(Set(titles))
+        return uniqueTitles
+            .filter { $0.lowercased().contains(lowercasedQuery) }
+            .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+            .prefix(5)
+            .map { $0 }
+    }
+    
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                BannerView()
-                    .frame(maxWidth: .infinity)
-                
-                ZStack {
-                    Color(.systemGroupedBackground)
-                        .ignoresSafeArea()
+            ZStack(alignment: .top) {
+                VStack(spacing: 0) {
+                    BannerView()
+                        .frame(maxWidth: .infinity)
                     
-                    contentView
+                    ZStack {
+                        Color(.systemGroupedBackground)
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                // Dismiss keyboard when tapping on background
+                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                            }
+                        
+                        contentView
+                    }
                 }
+                
+                // Search bar overlaying content - content bleeds underneath
+                VStack(spacing: 0) {
+                    UIKitSearchBar(text: $viewModel.searchText, placeholder: "Search sermons")
+                        .padding(.horizontal, isTV ? 60 : 16)
+                        .padding(.vertical, isTV ? 16 : 12)
+                    
+                    // Search suggestions
+                    if !searchSuggestions.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(searchSuggestions, id: \.self) { suggestion in
+                                Button(action: {
+                                    viewModel.searchText = suggestion
+                                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                                }) {
+                                    HStack {
+                                        Image(systemName: "magnifyingglass")
+                                            .foregroundColor(.secondary)
+                                        Text(suggestion)
+                                            .foregroundColor(.primary)
+                                            .lineLimit(1)
+                                        Spacer()
+                                    }
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.horizontal, isTV ? 60 : 16)
+                        .padding(.vertical, 8)
+                        .background(.regularMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.top, 100) // Position below banner
             }
             .toolbar(.hidden, for: .navigationBar)
             .task {
@@ -57,21 +116,6 @@ struct SermonsView: View {
     private var contentView: some View {
         ScrollView {
             VStack(spacing: 16) {
-                // SearchBar at the top - scrolls with content
-                SearchBar(text: $viewModel.searchText, placeholder: "Search sermons")
-                    .padding(.horizontal, isTV ? 60 : 16)
-                    .padding(.top, isTV ? 24 : 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: isTV ? 24 : 16)
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: isTV ? 24 : 16)
-                                    .stroke(Color.white.opacity(0.12), lineWidth: isTV ? 2 : 1)
-                            )
-                            .shadow(color: Color.black.opacity(0.1), radius: isTV ? 12 : 8, x: 0, y: 2)
-                    )
-                    .padding(.top, isTV ? 16 : 8)
-                
                 // Content based on state
                 if viewModel.isLoading && viewModel.sermons.isEmpty {
                     loadingView
@@ -84,9 +128,11 @@ struct SermonsView: View {
                 }
             }
             .padding(.horizontal, isTV ? 60 : 16)
+            .padding(.top, isTV ? 24 : 50) // Small padding - content starts just below search bar, then scrolls under
             .padding(.bottom, isTV ? 32 : 16)
         }
         .scrollIndicators(.hidden)
+        .scrollDismissesKeyboard(.interactively) // Dismiss keyboard when scrolling
         .refreshable {
             await viewModel.refresh()
         }

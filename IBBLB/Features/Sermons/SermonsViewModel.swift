@@ -7,6 +7,7 @@ class SermonsViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     @Published var searchText: String = ""
+    @Published var selectedYear: Int? = nil
     
     private let apiService: MobileAPIService
     private let limit = 20
@@ -46,6 +47,13 @@ class SermonsViewModel: ObservableObject {
         await fetchSermons()
     }
     
+    func setYearFilter(_ year: Int?) {
+        selectedYear = year
+        Task {
+            await fetchSermons()
+        }
+    }
+    
     func clearSearch() {
         searchText = ""
         lastSearchText = ""
@@ -65,7 +73,9 @@ class SermonsViewModel: ObservableObject {
                 let fetchedSermons = try await apiService.fetchSermons(
                     limit: limit,
                     offset: 0,
-                    search: searchText.isEmpty ? nil : searchText
+                    search: searchText.isEmpty ? nil : searchText,
+                    tag: nil,
+                    year: selectedYear
                 )
                 
                 // Check if task was cancelled

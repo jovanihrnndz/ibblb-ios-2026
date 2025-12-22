@@ -32,7 +32,7 @@ struct MobileAPIService {
     enum SupabaseEndpoint: Endpoint {
         case livestreamEvents
         case events
-        case sermons(limit: Int?, offset: Int?, search: String?, tag: String?)
+        case sermons(limit: Int?, offset: Int?, search: String?, tag: String?, year: Int?)
         
         var method: HTTPMethod { .get }
         
@@ -50,7 +50,7 @@ struct MobileAPIService {
                 return [URLQueryItem(name: "select", value: "*"), URLQueryItem(name: "order", value: "starts_at.desc"), URLQueryItem(name: "limit", value: "5")]
             case .events:
                 return [URLQueryItem(name: "select", value: "*"), URLQueryItem(name: "order", value: "startDate.asc")]
-            case .sermons(let limit, let offset, let search, let tag):
+            case .sermons(let limit, let offset, let search, let tag, let year):
                 var items = [
                     URLQueryItem(name: "select", value: "*"),
                     URLQueryItem(name: "order", value: "date.desc")
@@ -61,15 +61,18 @@ struct MobileAPIService {
                 if let search = search, !search.isEmpty {
                     // Search in title using ILIKE with proper Supabase PostgREST syntax
                     // Supabase PostgREST uses * as wildcard: title=ilike.*search*
-                    // URLQueryItem will encode * to %2A, which Supabase should handle
-                    // But to be safe, we'll use the or() filter with multiple conditions
-                    let encodedSearch = search.addingPercentEncoding(withAllowedCharacters: .alphanumerics.union(.init(charactersIn: " "))) ?? search
-                    items.append(URLQueryItem(name: "title", value: "ilike.*\(encodedSearch)*"))
+                    // Let URLQueryItem handle encoding so we don't double-encode
+                    items.append(URLQueryItem(name: "title", value: "ilike.*\(search)*"))
                 }
                 
                 if let tag = tag, !tag.isEmpty {
                     // Filter by tag in array column: tags=cs.{tag}
+                    // Filter by tag in array column: tags=cs.{tag}
                     items.append(URLQueryItem(name: "tags", value: "cs.{\(tag)}"))
+                }
+                
+                if let year = year {
+                    items.append(URLQueryItem(name: "year", value: "eq.\(year)"))
                 }
                 
                 return items
@@ -89,9 +92,9 @@ struct MobileAPIService {
         var baseURLOverride: String? { APIConfig.supabaseURL }
     }
     
-    func fetchSermons(limit: Int? = nil, offset: Int? = nil, search: String? = nil, tag: String? = nil) async throws -> [Sermon] {
+    func fetchSermons(limit: Int? = nil, offset: Int? = nil, search: String? = nil, tag: String? = nil, year: Int? = nil) async throws -> [Sermon] {
         do {
-            let response: [Sermon] = try await client.request(SupabaseEndpoint.sermons(limit: limit, offset: offset, search: search, tag: tag))
+            let response: [Sermon] = try await client.request(SupabaseEndpoint.sermons(limit: limit, offset: offset, search: search, tag: tag, year: year))
             return response
         } catch {
             // Don't log cancellation errors - they're expected when cancelling previous requests
@@ -105,7 +108,7 @@ struct MobileAPIService {
             
             #if DEBUG
             print("❌ Supabase Sermons Error: \(error)")
-            if let url = try? SupabaseEndpoint.sermons(limit: limit, offset: offset, search: search, tag: tag).urlRequest(config: APIConfig.self).url {
+            if let url = try? SupabaseEndpoint.sermons(limit: limit, offset: offset, search: search, tag: tag, year: year).urlRequest(config: APIConfig.self).url {
                 print("🔗 Request URL: \(url.absoluteString)")
             }
             #endif

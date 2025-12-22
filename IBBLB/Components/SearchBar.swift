@@ -87,22 +87,18 @@ struct SearchBar: View {
         }
         .padding(.horizontal, padding)
         .padding(.vertical, verticalPadding)
-        .background(
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(Color(.systemBackground))
-                .shadow(
-                    color: isFocused ? Color.black.opacity(0.15) : Color.black.opacity(0.06),
-                    radius: isFocused ? (isTV ? 12 : 8) : (isTV ? 8 : 6),
-                    x: 0,
-                    y: isFocused ? 2 : 2
-                )
-        )
         .overlay(
             RoundedRectangle(cornerRadius: cornerRadius)
                 .stroke(
-                    isFocused ? Color.accentColor.opacity(0.6) : Color(.separator).opacity(0.2),
+                    isFocused ? Color.accentColor.opacity(0.5) : Color.white.opacity(0.1),
                     lineWidth: isFocused ? (isTV ? 2.5 : 1.5) : (isTV ? 1.0 : 0.5)
                 )
+        )
+        .shadow(
+            color: isFocused ? Color.black.opacity(0.2) : Color.black.opacity(0.08),
+            radius: isFocused ? (isTV ? 12 : 10) : (isTV ? 8 : 6),
+            x: 0,
+            y: isFocused ? 4 : 2
         )
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isFocused)
     }
