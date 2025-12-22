@@ -40,9 +40,13 @@ struct LiveView: View {
                                             .cornerRadius(12)
                                             .frame(maxWidth: .infinity)
                                             .padding(.horizontal)
-                                    } else {
-                                        // UPCOMING/OFFLINE: Show Countdown Card
+                                    } else if status.state == .upcoming, status.event != nil {
+                                        // UPCOMING: Show Countdown Card
                                         WebStyleCountdownCard(status: status, viewModel: viewModel, darkColor: webDarkColor)
+                                            .padding(.horizontal)
+                                    } else {
+                                        // OFFLINE: No upcoming service scheduled
+                                        NoUpcomingServiceCard()
                                             .padding(.horizontal)
                                     }
                                 }
@@ -141,9 +145,17 @@ struct WebStyleCountdownCard: View {
 
             // Countdown Digits
             HStack(spacing: 12) {
-                timeBlock(value: hours, label: "HORAS")
-                timeBlock(value: minutes, label: "MINUTOS")
-                timeBlock(value: seconds, label: "SEGUNDOS")
+                if timeComponents.d > 0 {
+                    // >= 1 day: Show Days / Hours / Minutes
+                    timeBlock(value: days, label: "DÍAS")
+                    timeBlock(value: hours, label: "HORAS")
+                    timeBlock(value: minutes, label: "MINUTOS")
+                } else {
+                    // < 1 day: Show Hours / Minutes / Seconds
+                    timeBlock(value: hours, label: "HORAS")
+                    timeBlock(value: minutes, label: "MINUTOS")
+                    timeBlock(value: seconds, label: "SEGUNDOS")
+                }
             }
 
             Divider()
@@ -168,14 +180,17 @@ struct WebStyleCountdownCard: View {
     }
 
     // Time Parsing
-    private var timeComponents: (h: Int, m: Int, s: Int) {
-        guard let timeRemaining = viewModel.timeRemaining else { return (0, 0, 0) }
-        let h = Int(timeRemaining) / 3600
-        let m = (Int(timeRemaining) % 3600) / 60
-        let s = Int(timeRemaining) % 60
-        return (h, m, s)
+    private var timeComponents: (d: Int, h: Int, m: Int, s: Int) {
+        guard let timeRemaining = viewModel.timeRemaining else { return (0, 0, 0, 0) }
+        let totalSeconds = Int(timeRemaining)
+        let d = totalSeconds / 86400  // Days
+        let h = (totalSeconds % 86400) / 3600  // Hours within day (0-23)
+        let m = (totalSeconds % 3600) / 60  // Minutes within hour (0-59)
+        let s = totalSeconds % 60  // Seconds within minute (0-59)
+        return (d, h, m, s)
     }
 
+    private var days: String { String(format: "%02d", timeComponents.d) }
     private var hours: String { String(format: "%02d", timeComponents.h) }
     private var minutes: String { String(format: "%02d", timeComponents.m) }
     private var seconds: String { String(format: "%02d", timeComponents.s) }
@@ -225,6 +240,31 @@ struct PreviousServiceVideoCard: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
         }
+    }
+}
+
+struct NoUpcomingServiceCard: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "calendar.badge.clock")
+                .font(.system(size: 40))
+                .foregroundColor(.secondary)
+
+            Text("No hay servicio programado")
+                .font(.headline)
+                .foregroundColor(.primary)
+
+            Text("Consulta los horarios de servicio abajo")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.vertical, 32)
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity)
+        .background(Color.white)
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 5)
     }
 }
 
