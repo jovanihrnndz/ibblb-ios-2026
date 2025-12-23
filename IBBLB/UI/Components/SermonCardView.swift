@@ -51,24 +51,14 @@ struct SermonCardView: View {
             .fill(Color(.systemGray6))
             .aspectRatio(16/9, contentMode: .fit)
             .overlay {
-                if let urlString = sermon.thumbnailUrl,
-                   !urlString.isEmpty,
-                   let url = URL(string: urlString) {
-                    
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .empty:
-                            loadingContent
-                        case .success(let image):
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        case .failure:
-                            placeholderContent
-                        @unknown default:
-                            placeholderContent
-                        }
+                if let fallbackURLs = thumbnailFallbackURLs {
+                    FallbackAsyncImage(urls: fallbackURLs) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } placeholder: {
+                        loadingContent
                     }
                 } else {
                     placeholderContent
@@ -82,6 +72,33 @@ struct SermonCardView: View {
             }
             .frame(maxWidth: .infinity)
             .clipped()
+    }
+    
+    /// Generates fallback URLs for the sermon thumbnail
+    private var thumbnailFallbackURLs: [URL]? {
+        // Try to get video ID from thumbnailUrl first
+        if let thumbnailUrlString = sermon.thumbnailUrl,
+           !thumbnailUrlString.isEmpty {
+            // Check if it's a YouTube thumbnail URL and extract video ID
+            if let videoId = YouTubeThumbnail.videoId(from: thumbnailUrlString) {
+                return YouTubeThumbnail.fallbackURLs(videoId: videoId)
+            }
+            // If it's not a YouTube URL but exists, return as single URL array
+            if let url = URL(string: thumbnailUrlString) {
+                return [url]
+            }
+        }
+        
+        // Fallback to youtubeVideoId if available
+        if let videoId = sermon.youtubeVideoId,
+           !videoId.trimmingCharacters(in: .whitespaces).isEmpty {
+            let extractedId = YouTubeVideoIDExtractor.extractVideoID(from: videoId)
+            if let id = extractedId {
+                return YouTubeThumbnail.fallbackURLs(videoId: id)
+            }
+        }
+        
+        return nil
     }
 
     private var loadingContent: some View {

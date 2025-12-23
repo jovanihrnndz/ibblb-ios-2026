@@ -8,20 +8,33 @@ class LiveViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var timeRemaining: TimeInterval?
-    
+
     private let apiService: MobileAPIService
     private var timer: AnyCancellable?
-    
+    private var hasLoadedInitial = false
+
     init(apiService: MobileAPIService = MobileAPIService()) {
         self.apiService = apiService
     }
-    
+
+    /// Load initial data only once
+    func loadInitial() async {
+        guard !hasLoadedInitial else { return }
+        hasLoadedInitial = true
+        await fetchLivestream()
+    }
+
+    /// Force refresh (pull-to-refresh)
     func refresh() async {
+        await fetchLivestream()
+    }
+
+    private func fetchLivestream() async {
         guard !isLoading else { return }
-        
+
         isLoading = true
         errorMessage = nil
-        
+
         do {
             let fetchedStatus = try await apiService.fetchLivestream()
             self.status = fetchedStatus
@@ -29,13 +42,14 @@ class LiveViewModel: ObservableObject {
             let nsError = error as NSError
             if (nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled) || error is CancellationError {
                 // Silently handle cancellation
+                isLoading = false
                 return
             }
-            
+
             print("⚠️ API error fetching livestream: \(error)")
             self.errorMessage = "No se pudo cargar la información del servicio."
         }
-        
+
         isLoading = false
         setupTimer()
     }

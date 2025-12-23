@@ -17,28 +17,26 @@ class SermonsViewModel: ObservableObject {
     
     init(apiService: MobileAPIService = MobileAPIService()) {
         self.apiService = apiService
-        
-        // Listen for search changes - only trigger if text actually changed
+
+        // Listen for search changes - only trigger after initial load and if text changed
         $searchText
             .dropFirst()
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .removeDuplicates()
             .sink { [weak self] newSearchText in
-                guard let self = self else { return }
-                // Only fetch if search text actually changed
-                if newSearchText != self.lastSearchText {
-                    self.lastSearchText = newSearchText
-                    Task {
-                        await self.fetchSermons()
-                    }
+                guard let self = self,
+                      self.hasLoadedInitial,
+                      newSearchText != self.lastSearchText else { return }
+                self.lastSearchText = newSearchText
+                Task {
+                    await self.fetchSermons()
                 }
             }
             .store(in: &cancellables)
     }
-    
+
     func loadInitial() async {
-        // Only load once
-        guard !hasLoadedInitial && sermons.isEmpty else { return }
+        guard !hasLoadedInitial else { return }
         hasLoadedInitial = true
         await fetchSermons()
     }
@@ -60,13 +58,16 @@ class SermonsViewModel: ObservableObject {
     }
     
     private var fetchTask: Task<Void, Never>?
-    
+
     private func fetchSermons() async {
-        // Cancel any existing fetch task to prevent duplicate requests
-        fetchTask?.cancel()
-        
+        // Prevent concurrent fetches
+        guard !isLoading else { return }
+
         isLoading = true
         errorMessage = nil
+
+        // Cancel any previous pending task
+        fetchTask?.cancel()
         
         fetchTask = Task { @MainActor in
             do {

@@ -25,12 +25,12 @@ struct YouTubePlayerView: UIViewRepresentable {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
         config.mediaTypesRequiringUserActionForPlayback = []
-        
+
         // Enable JavaScript (required for YouTube embeds)
         let preferences = WKWebpagePreferences()
         preferences.allowsContentJavaScript = true
         config.defaultWebpagePreferences = preferences
-        
+
         // Set data store to allow cookies and cache (important for YouTube to not think we're a bot)
         // Note: WKProcessPool is deprecated in iOS 15+ as it's now handled automatically
         if #available(iOS 14.0, *) {
@@ -41,7 +41,7 @@ struct YouTubePlayerView: UIViewRepresentable {
         webView.scrollView.isScrollEnabled = false
         webView.isOpaque = false
         webView.backgroundColor = .clear
-        
+
         // ✅ Anti-bot measures: Use realistic Safari user agent
         // This makes YouTube think we're a real Safari browser, not a bot
         webView.customUserAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
@@ -49,6 +49,8 @@ struct YouTubePlayerView: UIViewRepresentable {
         // ✅ Set delegate to detect failures
         webView.navigationDelegate = context.coordinator
 
+        // ✅ Set currentVideoID BEFORE loading to prevent duplicate load in updateUIView
+        context.coordinator.currentVideoID = videoID
         load(videoID: videoID, into: webView)
         return webView
     }

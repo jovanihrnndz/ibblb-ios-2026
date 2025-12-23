@@ -9,43 +9,21 @@ import SwiftUI
 
 struct SermonDetailView: View {
     let sermon: Sermon
-    @State private var isAudioPlayerExpanded = false
     @State private var outline: SermonOutline?
     @State private var isOutlineLoading = false
 
     private let outlineService = SanityOutlineService()
+    private let audioManager = AudioPlayerManager.shared
 
     var body: some View {
         VStack(spacing: 0) {
             BannerView()
                 .frame(maxWidth: .infinity)
-            
+
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     // YouTube Video Player
-                    if let rawVideoId = sermon.youtubeVideoId,
-                       let videoId = YouTubeVideoIDExtractor.extractVideoID(from: rawVideoId) {
-                        YouTubePlayerView(videoID: videoId)
-                            .aspectRatio(16/9, contentMode: .fit)
-                            .cornerRadius(12)
-                            .frame(maxWidth: .infinity)
-                            .onAppear {
-                                #if DEBUG
-                                print("✅ SermonDetailView: Rendering YouTube player with video ID: '\(videoId)' (raw: '\(rawVideoId)')")
-                                #endif
-                            }
-                    } else {
-                        EmptyView()
-                            .onAppear {
-                                #if DEBUG
-                                if let rawVideoId = sermon.youtubeVideoId {
-                                    print("❌ SermonDetailView: Failed to extract video ID from: '\(rawVideoId)'")
-                                } else {
-                                    print("⚠️ SermonDetailView: No YouTube video ID found for sermon: '\(sermon.title)'")
-                                }
-                                #endif
-                            }
-                    }
+                    videoPlayerSection
                     
                     // Metadata
                     if let speaker = sermon.speaker, !speaker.isEmpty {
@@ -58,21 +36,42 @@ struct SermonDetailView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-                    
-                    if let date = sermon.date {
-                        HStack(spacing: 6) {
-                            Image(systemName: "calendar")
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundColor(.secondary)
-                            Text(date.formattedSermonDate)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+
+                    // Date and Audio Button Row
+                    HStack(spacing: 12) {
+                        if let date = sermon.date {
+                            HStack(spacing: 6) {
+                                Image(systemName: "calendar")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(.secondary)
+                                Text(date.formattedSermonDate)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
                         }
-                    }
-                    
-                    // Audio Player Section
-                    if let audioURL = audioURL {
-                        audioSection(audioURL: audioURL)
+                        
+                        if let audioURL = audioURL {
+                            Button {
+                                playAudio(url: audioURL)
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Image(systemName: isCurrentlyPlaying(url: audioURL) ? "pause.fill" : "play.fill")
+                                        .font(.system(size: 12, weight: .semibold))
+                                    Text(isCurrentlyPlaying(url: audioURL) ? "Playing" : "Play Audio")
+                                        .font(.system(size: 14, weight: .semibold))
+                                }
+                                .foregroundColor(.accentColor)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(
+                                    Capsule()
+                                        .fill(Color.accentColor.opacity(0.12))
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        
+                        Spacer()
                     }
 
                     // Bosquejo/Outline Section
@@ -89,19 +88,41 @@ struct SermonDetailView: View {
         .background(Color(.systemBackground))
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
-        .toolbar {
+        .toolbar(content: {
             ToolbarItem(placement: .principal) {
                 EmptyView()
             }
-        }
+        })
         .task {
             await loadOutline()
         }
     }
 
+    // MARK: - Video Player Section
+
+    @ViewBuilder
+    private var videoPlayerSection: some View {
+        if let rawVideoId = sermon.youtubeVideoId,
+           let videoId = YouTubeVideoIDExtractor.extractVideoID(from: rawVideoId) {
+            YouTubePlayerView(videoID: videoId)
+                .aspectRatio(16/9, contentMode: .fit)
+                .cornerRadius(12)
+                .frame(maxWidth: .infinity)
+                .id(videoId) // Stable ID prevents reloading when same video
+        } else {
+            EmptyView()
+        }
+    }
+
+
     // MARK: - Outline Loading
 
+    @State private var hasLoadedOutline = false
+
     private func loadOutline() async {
+        // Only load once per sermon
+        guard !hasLoadedOutline && !isOutlineLoading else { return }
+        hasLoadedOutline = true
         isOutlineLoading = true
         defer { isOutlineLoading = false }
 
@@ -110,75 +131,48 @@ struct SermonDetailView: View {
             youtubeId: sermon.youtubeVideoId
         )
     }
-    
-    // MARK: - Audio Section
-    private func audioSection(audioURL: URL) -> some View {
-        VStack(spacing: 0) {
-            // Audio Card
-            Button(action: {
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                    isAudioPlayerExpanded.toggle()
-                }
-            }) {
-                HStack(spacing: 16) {
-                    // Icon
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .fill(Color.accentColor.opacity(0.12))
-                            .frame(width: 60, height: 60)
-                        
-                        Image(systemName: "waveform")
-                            .font(.system(size: 22, weight: .medium))
-                            .foregroundColor(.accentColor)
-                    }
-                    
-                    // Content
-                    VStack(alignment: .leading, spacing: 4) {
-                        if let speaker = sermon.speaker, !speaker.isEmpty {
-                            Text(speaker)
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.primary)
-                                .lineLimit(1)
-                        } else {
-                            Text("Audio")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.primary)
-                                .lineLimit(1)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    // Action Indicator
-                    Image(systemName: isAudioPlayerExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.secondary)
-                }
-                .padding(18)
-                .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(Color(.secondarySystemGroupedBackground))
-                )
-                .shadow(color: Color.black.opacity(0.05), radius: 12, x: 0, y: 3)
-            }
-            .buttonStyle(.plain)
+
+    private func playAudio(url: URL) {
+        let artworkURL: URL? = {
+            // Try to get video ID from thumbnailUrl or youtubeVideoId
+            var videoId: String?
             
-            // Expanded Audio Player
-            if isAudioPlayerExpanded {
-                AudioPlayerView(
-                    url: audioURL,
-                    title: sermon.title,
-                    subtitle: sermon.speaker,
-                    showInfo: false
-                )
-                .padding(.top, 16)
-                .transition(.asymmetric(
-                    insertion: .move(edge: .top).combined(with: .opacity),
-                    removal: .move(edge: .top).combined(with: .opacity)
-                ))
+            if let thumbnailString = sermon.thumbnailUrl,
+               !thumbnailString.isEmpty {
+                // Extract video ID from thumbnail URL if it's a YouTube thumbnail
+                videoId = YouTubeThumbnail.videoId(from: thumbnailString)
             }
-        }
+            
+            // Fallback to youtubeVideoId if we don't have a video ID yet
+            if videoId == nil,
+               let youtubeId = sermon.youtubeVideoId,
+               !youtubeId.trimmingCharacters(in: .whitespaces).isEmpty {
+                videoId = YouTubeVideoIDExtractor.extractVideoID(from: youtubeId)
+            }
+            
+            // If we have a video ID, generate the best quality URL (maxresdefault)
+            if let id = videoId {
+                return YouTubeThumbnail.url(videoId: id, quality: .maxres)
+            }
+            
+            // Fallback to original thumbnailUrl if it exists and isn't a YouTube URL
+            if let thumbnailString = sermon.thumbnailUrl,
+               !thumbnailString.isEmpty,
+               let url = URL(string: thumbnailString),
+               !YouTubeThumbnail.isYouTubeThumbnail(url) {
+                return url
+            }
+            
+            return nil
+        }()
+
+        audioManager.play(url: url, title: sermon.title, artworkURL: artworkURL)
     }
-    
+
+    private func isCurrentlyPlaying(url: URL) -> Bool {
+        audioManager.currentTrack?.audioURL == url && audioManager.isPlaying
+    }
+
     // MARK: - Computed Properties
     private var audioURL: URL? {
         guard let audioUrlString = sermon.audioUrl else {

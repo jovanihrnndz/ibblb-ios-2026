@@ -118,7 +118,7 @@ struct LiveView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .navigationBar)
             .task {
-                await viewModel.refresh()
+                await viewModel.loadInitial()
             }
         }
     }
