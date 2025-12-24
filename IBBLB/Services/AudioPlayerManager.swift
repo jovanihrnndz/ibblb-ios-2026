@@ -2,6 +2,7 @@ import Foundation
 import AVFoundation
 import Combine
 import MediaPlayer
+import UIKit
 
 /// Metadata for the currently playing audio track
 struct AudioTrackInfo: Equatable {
@@ -44,11 +45,14 @@ final class AudioPlayerManager: ObservableObject {
     private var playerItem: AVPlayerItem?
     private var timeObserver: Any?
     private var cancellables = Set<AnyCancellable>()
+    private var cachedArtwork: MPMediaItemArtwork?
 
     // MARK: - Initialization
 
     private init() {
-        configureAudioSession()
+        // NOTE: Do NOT call configureAudioSession() here.
+        // Audio session activation interrupts external audio (Spotify, etc).
+        // Session is activated lazily in play() when user initiates playback.
         setupRemoteCommandCenter()
     }
 
@@ -121,7 +125,29 @@ final class AudioPlayerManager: ObservableObject {
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration
         nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
 
+        if let artwork = cachedArtwork {
+            nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+        }
+
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+    }
+
+    private func loadArtwork(from url: URL) {
+        Task.detached(priority: .userInitiated) {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                guard let image = UIImage(data: data) else { return }
+
+                let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+
+                await MainActor.run {
+                    self.cachedArtwork = artwork
+                    self.updateNowPlayingInfo()
+                }
+            } catch {
+                print("AudioPlayerManager: Failed to load artwork - \(error.localizedDescription)")
+            }
+        }
     }
 
     // MARK: - Playback Control
@@ -146,6 +172,14 @@ final class AudioPlayerManager: ObservableObject {
 
         // Stop current playback
         stopInternal(clearTrack: false)
+
+        // Clear cached artwork for new track
+        cachedArtwork = nil
+
+        // Load artwork if available
+        if let artworkURL = artworkURL {
+            loadArtwork(from: artworkURL)
+        }
 
         // Ensure audio session is active
         configureAudioSession()
@@ -251,6 +285,13 @@ final class AudioPlayerManager: ObservableObject {
         if clearTrack {
             currentTrack = nil
             MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+
+            // Deactivate audio session so other apps (Spotify, etc.) can resume
+            do {
+                try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            } catch {
+                print("AudioPlayerManager: Failed to deactivate audio session - \(error.localizedDescription)")
+            }
         }
     }
 
