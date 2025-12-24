@@ -1,13 +1,44 @@
 import Foundation
 
-
-
 struct MobileAPIService {
     private let client: APIClient
 
-    
     nonisolated init(client: APIClient? = nil) {
         self.client = client ?? APIClient()
+    }
+
+    // MARK: - Input Sanitization
+
+    /// Sanitizes search input to prevent PostgREST query injection
+    private func sanitizeSearchInput(_ search: String) -> String {
+        // Remove PostgREST operators and special characters that could be used for injection
+        let forbidden = ["*", ".", ",", "{", "}", "[", "]", "(", ")", "=", "&", "|", "<", ">", ";", ":", "'", "\"", "\\"]
+        var sanitized = search
+        forbidden.forEach { sanitized = sanitized.replacingOccurrences(of: $0, with: "") }
+        return sanitized.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// Validates tag input - only allows alphanumeric, spaces, hyphens, and underscores
+    private func validateTag(_ tag: String) -> String? {
+        let allowedCharacters = CharacterSet.alphanumerics
+            .union(.whitespaces)
+            .union(CharacterSet(charactersIn: "-_"))
+
+        guard tag.count <= 100,
+              tag.unicodeScalars.allSatisfy({ allowedCharacters.contains($0) }) else {
+            return nil
+        }
+
+        return tag.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// Validates year input - ensures it's a reasonable year value
+    private func validateYear(_ year: Int) -> Int? {
+        // Only allow years between 1900 and 2100
+        guard year >= 1900 && year <= 2100 else {
+            return nil
+        }
+        return year
     }
     
     enum MobileEndpoint: Endpoint {
@@ -57,24 +88,26 @@ struct MobileAPIService {
                 ]
                 if let limit = limit { items.append(URLQueryItem(name: "limit", value: "\(limit)")) }
                 if let offset = offset { items.append(URLQueryItem(name: "offset", value: "\(offset)")) }
-                
+
+                // SECURITY: All user inputs are sanitized before being used in queries
                 if let search = search, !search.isEmpty {
-                    // Search in title using ILIKE with proper Supabase PostgREST syntax
-                    // Supabase PostgREST uses * as wildcard: title=ilike.*search*
-                    // Let URLQueryItem handle encoding so we don't double-encode
+                    // Note: The actual sanitization happens in fetchSermons
+                    // This assumes the search parameter passed here is already sanitized
                     items.append(URLQueryItem(name: "title", value: "ilike.*\(search)*"))
                 }
-                
+
                 if let tag = tag, !tag.isEmpty {
-                    // Filter by tag in array column: tags=cs.{tag}
-                    // Filter by tag in array column: tags=cs.{tag}
+                    // Note: The actual validation happens in fetchSermons
+                    // This assumes the tag parameter passed here is already validated
                     items.append(URLQueryItem(name: "tags", value: "cs.{\(tag)}"))
                 }
-                
+
                 if let year = year {
+                    // Note: The actual validation happens in fetchSermons
+                    // This assumes the year parameter passed here is already validated
                     items.append(URLQueryItem(name: "year", value: "eq.\(year)"))
                 }
-                
+
                 return items
             }
         }
@@ -93,24 +126,46 @@ struct MobileAPIService {
     }
     
     func fetchSermons(limit: Int? = nil, offset: Int? = nil, search: String? = nil, tag: String? = nil, year: Int? = nil) async throws -> [Sermon] {
+        // SECURITY: Sanitize all user inputs before making the request
+        let sanitizedSearch: String? = {
+            guard let search = search, !search.isEmpty else { return nil }
+            let sanitized = sanitizeSearchInput(search)
+            return sanitized.isEmpty ? nil : sanitized
+        }()
+
+        let validatedTag: String? = {
+            guard let tag = tag, !tag.isEmpty else { return nil }
+            return validateTag(tag)
+        }()
+
+        let validatedYear: Int? = {
+            guard let year = year else { return nil }
+            return validateYear(year)
+        }()
+
         do {
-            let response: [Sermon] = try await client.request(SupabaseEndpoint.sermons(limit: limit, offset: offset, search: search, tag: tag, year: year))
+            let response: [Sermon] = try await client.request(
+                SupabaseEndpoint.sermons(
+                    limit: limit,
+                    offset: offset,
+                    search: sanitizedSearch,
+                    tag: validatedTag,
+                    year: validatedYear
+                )
+            )
             return response
         } catch {
             // Don't log cancellation errors - they're expected when cancelling previous requests
             let nsError = error as NSError
             if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
-                throw error // Re-throw but don't log
+                throw error
             }
             if error is CancellationError {
-                throw error // Re-throw but don't log
+                throw error
             }
-            
+
             #if DEBUG
-            print("❌ Supabase Sermons Error: \(error)")
-            if let url = try? SupabaseEndpoint.sermons(limit: limit, offset: offset, search: search, tag: tag, year: year).urlRequest(config: APIConfig.self).url {
-                print("🔗 Request URL: \(url.absoluteString)")
-            }
+            print("❌ Supabase Sermons Error")
             #endif
             throw error
         }

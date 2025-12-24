@@ -4,7 +4,7 @@ enum APIConfig {
     enum Environment {
         case development
         case production
-        
+
         var baseURL: String {
             switch self {
             case .development:
@@ -14,17 +14,32 @@ enum APIConfig {
             }
         }
     }
-    
+
     // Change this flag to switch environments
     static let currentEnvironment: Environment = .development
-    
+
     static var baseURL: String {
         currentEnvironment.baseURL
     }
-    
-    static let supabaseURL = "https://kxqxnqbgebhqbvfbmgzv.supabase.co"
-    static let supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4cXhucWJnZWJocWJ2ZmJtZ3p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM0ODQzODIsImV4cCI6MjA3OTA2MDM4Mn0.jW1x6SY6it_RknwUlkKiLdaPHi1XelSJEd551DhccZw"
-    
+
+    // SECURITY: Credentials are now loaded from Info.plist (injected via Secrets.xcconfig)
+    // This prevents hardcoded secrets from being committed to version control
+    static var supabaseURL: String {
+        guard let url = Bundle.main.object(forInfoDictionaryKey: "SUPABASE_URL") as? String,
+              !url.isEmpty else {
+            fatalError("SUPABASE_URL not configured in Info.plist. Please ensure Secrets.xcconfig is properly set up.")
+        }
+        return url
+    }
+
+    static var supabaseAnonKey: String {
+        guard let key = Bundle.main.object(forInfoDictionaryKey: "SUPABASE_ANON_KEY") as? String,
+              !key.isEmpty else {
+            fatalError("SUPABASE_ANON_KEY not configured in Info.plist. Please ensure Secrets.xcconfig is properly set up.")
+        }
+        return key
+    }
+
     static let sanityProjectID = "bck48elw"
     static let sanityDataset = "production"
 }

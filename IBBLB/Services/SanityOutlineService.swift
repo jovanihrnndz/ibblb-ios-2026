@@ -8,6 +8,34 @@ struct SanityOutlineService {
         self.client = client ?? APIClient()
     }
 
+    // MARK: - Input Validation
+
+    /// Validates and sanitizes input to prevent GROQ injection attacks
+    /// Only allows alphanumeric characters, hyphens, and underscores
+    private func sanitizeInput(_ input: String) -> String? {
+        // YouTube IDs are typically 11 characters: alphanumeric, hyphens, underscores
+        // Slugs can be longer but follow similar pattern
+        let allowedCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
+
+        // Check if all characters are allowed
+        guard input.unicodeScalars.allSatisfy({ allowedCharacters.contains($0) }) else {
+            #if DEBUG
+            print("⚠️ SanityOutlineService: Invalid characters detected in input: '\(input)'")
+            #endif
+            return nil
+        }
+
+        // Length validation (reasonable limits)
+        guard input.count >= 1 && input.count <= 200 else {
+            #if DEBUG
+            print("⚠️ SanityOutlineService: Input length out of bounds: \(input.count)")
+            #endif
+            return nil
+        }
+
+        return input
+    }
+
     // MARK: - Sanity Endpoint
 
     private enum SanityOutlineEndpoint: Endpoint {
@@ -24,11 +52,21 @@ struct SanityOutlineService {
             let query: String
             switch self {
             case .bySlug(let slug):
-                query = buildQuery(filter: "slug.current == \"\(slug)\"")
+                // Escape quotes and backslashes to prevent GROQ injection
+                let escapedSlug = escapeGroqString(slug)
+                query = buildQuery(filter: "slug.current == \"\(escapedSlug)\"")
             case .byYouTubeId(let youtubeId):
-                query = buildQuery(filter: "youtubeId == \"\(youtubeId)\"")
+                // Escape quotes and backslashes to prevent GROQ injection
+                let escapedYoutubeId = escapeGroqString(youtubeId)
+                query = buildQuery(filter: "youtubeId == \"\(escapedYoutubeId)\"")
             }
             return [URLQueryItem(name: "query", value: query)]
+        }
+
+        /// Escapes special characters in GROQ query strings to prevent injection
+        private func escapeGroqString(_ str: String) -> String {
+            str.replacingOccurrences(of: "\\", with: "\\\\")
+               .replacingOccurrences(of: "\"", with: "\\\"")
         }
 
         var body: Data? { nil }
@@ -67,23 +105,25 @@ struct SanityOutlineService {
     /// - Parameter slug: The sermon slug
     /// - Returns: SermonOutline if found, nil otherwise
     func fetchOutline(bySlug slug: String) async -> SermonOutline? {
+        // Validate and sanitize input to prevent injection attacks
+        guard let sanitizedSlug = sanitizeInput(slug) else {
+            #if DEBUG
+            print("❌ SanityOutlineService: Invalid slug format rejected: '\(slug)'")
+            #endif
+            return nil
+        }
+
         do {
             let response: SanityResponse<SermonOutline?> = try await client.request(
-                SanityOutlineEndpoint.bySlug(slug)
+                SanityOutlineEndpoint.bySlug(sanitizedSlug)
             )
             if let outline = response.result, outline.hasContent {
-                #if DEBUG
-                print("✅ SanityOutlineService: Found outline by slug '\(slug)'")
-                #endif
                 return outline
             }
-            #if DEBUG
-            print("⚠️ SanityOutlineService: No outline content for slug '\(slug)'")
-            #endif
             return nil
         } catch {
             #if DEBUG
-            print("❌ SanityOutlineService: Failed to fetch outline by slug '\(slug)': \(error)")
+            print("❌ SanityOutlineService: Failed to fetch outline")
             #endif
             return nil
         }
@@ -93,23 +133,25 @@ struct SanityOutlineService {
     /// - Parameter youtubeId: The YouTube video ID
     /// - Returns: SermonOutline if found, nil otherwise
     func fetchOutline(byYouTubeId youtubeId: String) async -> SermonOutline? {
+        // Validate and sanitize input to prevent injection attacks
+        guard let sanitizedYoutubeId = sanitizeInput(youtubeId) else {
+            #if DEBUG
+            print("❌ SanityOutlineService: Invalid YouTube ID format rejected: '\(youtubeId)'")
+            #endif
+            return nil
+        }
+
         do {
             let response: SanityResponse<SermonOutline?> = try await client.request(
-                SanityOutlineEndpoint.byYouTubeId(youtubeId)
+                SanityOutlineEndpoint.byYouTubeId(sanitizedYoutubeId)
             )
             if let outline = response.result, outline.hasContent {
-                #if DEBUG
-                print("✅ SanityOutlineService: Found outline by youtubeId '\(youtubeId)'")
-                #endif
                 return outline
             }
-            #if DEBUG
-            print("⚠️ SanityOutlineService: No outline content for youtubeId '\(youtubeId)'")
-            #endif
             return nil
         } catch {
             #if DEBUG
-            print("❌ SanityOutlineService: Failed to fetch outline by youtubeId '\(youtubeId)': \(error)")
+            print("❌ SanityOutlineService: Failed to fetch outline")
             #endif
             return nil
         }
@@ -135,9 +177,6 @@ struct SanityOutlineService {
             }
         }
 
-        #if DEBUG
-        print("⚠️ SanityOutlineService: No outline found for slug='\(slug ?? "nil")' or youtubeId='\(youtubeId ?? "nil")'")
-        #endif
         return nil
     }
 }

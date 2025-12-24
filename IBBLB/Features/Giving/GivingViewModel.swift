@@ -37,21 +37,50 @@ class GivingViewModel: ObservableObject {
     }
     
     func openGivingURL() {
-        guard let urlString = givingPage?.onlineGivingUrl,
-              let url = URL(string: urlString) else {
+        guard let urlString = givingPage?.onlineGivingUrl else {
+            errorMessage = "Giving URL not available"
             return
         }
-        UIApplication.shared.open(url)
+
+        // SECURITY: Validate URL before opening
+        let success = SecureURLHandler.openURL(
+            urlString,
+            trustedDomains: ["give.ibblb.org", "giving.ibblb.org", "donate.ibblb.org", "ibblb.org"]
+        ) { untrustedURL in
+            // Handle untrusted URL - in a real app, show an alert to user
+            #if DEBUG
+            print("⚠️ Giving URL is untrusted: \(untrustedURL)")
+            #endif
+            self.errorMessage = "The giving link appears to be external. Please contact support."
+        }
+
+        if !success {
+            errorMessage = "Unable to open giving link. Please check the URL."
+        }
     }
-    
+
     func openManageAccount() {
         // This would open the manage account URL or screen
         // For now, we'll use the same giving URL with a parameter
-        guard let urlString = givingPage?.onlineGivingUrl,
-              let url = URL(string: urlString) else {
+        guard let urlString = givingPage?.onlineGivingUrl else {
+            errorMessage = "Account management URL not available"
             return
         }
-        UIApplication.shared.open(url)
+
+        // SECURITY: Validate URL before opening
+        let success = SecureURLHandler.openURL(
+            urlString,
+            trustedDomains: ["give.ibblb.org", "giving.ibblb.org", "ibblb.org"]
+        ) { untrustedURL in
+            #if DEBUG
+            print("⚠️ Account management URL is untrusted: \(untrustedURL)")
+            #endif
+            self.errorMessage = "The account link appears to be external. Please contact support."
+        }
+
+        if !success {
+            errorMessage = "Unable to open account management link."
+        }
     }
 }
 
