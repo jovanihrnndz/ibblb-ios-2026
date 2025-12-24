@@ -17,22 +17,12 @@ enum YouTubeVideoIDExtractor {
     static func extractVideoID(from string: String?) -> String? {
         guard let input = string?.trimmingCharacters(in: .whitespacesAndNewlines),
               !input.isEmpty else {
-            #if DEBUG
-            print("🔍 YouTubeVideoIDExtractor: Empty or nil input")
-            #endif
             return nil
         }
-        
-        #if DEBUG
-        print("🔍 YouTubeVideoIDExtractor: Processing input: '\(input)'")
-        #endif
-        
+
         // If it's already just an ID (no slashes, no query params, reasonable length)
         // YouTube IDs are typically 11 characters
         if !input.contains("/") && !input.contains("?") && !input.contains("&") && input.count <= 20 {
-            #if DEBUG
-            print("✅ YouTubeVideoIDExtractor: Direct ID detected: '\(input)'")
-            #endif
             return input
         }
         
@@ -57,25 +47,14 @@ enum YouTubeVideoIDExtractor {
                 if let match = regex.firstMatch(in: input, options: [], range: range),
                    let videoIDRange = Range(match.range(at: 1), in: input) {
                     let extracted = String(input[videoIDRange])
-                    #if DEBUG
-                    print("✅ YouTubeVideoIDExtractor: Extracted ID '\(extracted)' using pattern: \(pattern)")
-                    #endif
                     return extracted
                 }
             }
         }
-        
+
         // If no pattern matched, return the original string if it looks like an ID
         // This handles edge cases where the ID might be slightly different
-        let result = input.count <= 20 ? input : nil
-        #if DEBUG
-        if let result = result {
-            print("⚠️ YouTubeVideoIDExtractor: No pattern matched, using input as-is: '\(result)'")
-        } else {
-            print("❌ YouTubeVideoIDExtractor: Could not extract video ID from: '\(input)'")
-        }
-        #endif
-        return result
+        return input.count <= 20 ? input : nil
     }
 }
 

@@ -3,9 +3,27 @@ import Foundation
 struct APIClient {
     private let session: URLSession
     private let decoder: JSONDecoder
-    
+
+    // Shared certificate pinning delegate instance
+    private static let pinningDelegate = CertificatePinningDelegate()
+
     nonisolated init(session: URLSession? = nil) {
-        self.session = session ?? URLSession.shared
+        if let session = session {
+            // Use provided session (useful for testing)
+            self.session = session
+        } else {
+            // Create session with certificate pinning delegate
+            let configuration = URLSessionConfiguration.default
+            configuration.timeoutIntervalForRequest = 30
+            configuration.timeoutIntervalForResource = 60
+
+            self.session = URLSession(
+                configuration: configuration,
+                delegate: Self.pinningDelegate,
+                delegateQueue: nil
+            )
+        }
+
         self.decoder = JSONDecoder()
         self.decoder.dateDecodingStrategy = .iso8601
         self.decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -15,30 +33,25 @@ struct APIClient {
         let urlRequest = try endpoint.urlRequest(config: APIConfig.self)
         
         #if DEBUG
-        print("🚀 API Request: \(urlRequest.url?.absoluteString ?? "Invalid URL")")
+        print("🚀 API Request initiated")
         if let method = urlRequest.httpMethod {
             print("📝 Method: \(method)")
         }
         #endif
-        
+
         let (data, response) = try await session.data(for: urlRequest)
-        
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw APIError.invalidResponse
         }
-        
+
         #if DEBUG
         print("✅ API Response Status: \(httpResponse.statusCode)")
         #endif
-        
+
         switch httpResponse.statusCode {
         case 200...299:
             do {
-                #if DEBUG
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("📦 Response Data (first 500 chars): \(String(jsonString.prefix(500)))")
-                }
-                #endif
                 let decoded = try decoder.decode(T.self, from: data)
                 #if DEBUG
                 if let array = decoded as? [Any] {
@@ -50,10 +63,8 @@ struct APIClient {
                 return decoded
             } catch {
                 #if DEBUG
-                print("❌ Decoding Error: \(error)")
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("📦 Raw Response: \(jsonString)")
-                }
+                print("❌ Decoding Error")
+                // SECURITY: Do not log response data - may contain sensitive information
                 #endif
                 throw APIError.decodingError(error)
             }

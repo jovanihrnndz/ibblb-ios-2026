@@ -41,16 +41,38 @@ enum YouTubeThumbnail {
         return nil
     }
     
-    /// Generates a YouTube thumbnail URL for a given video ID and quality
-    static func url(videoId: String, quality: YouTubeThumbnailQuality) -> URL {
-        let urlString = "https://i.ytimg.com/vi/\(videoId)/\(quality.filename)"
-        return URL(string: urlString)!
+    /// Validates a YouTube video ID format
+    /// YouTube IDs are typically 11 characters: alphanumeric, hyphens, underscores
+    private static func isValidVideoId(_ videoId: String) -> Bool {
+        let videoIdPattern = "^[a-zA-Z0-9_-]{11,12}$"
+        guard let regex = try? NSRegularExpression(pattern: videoIdPattern) else {
+            return false
+        }
+        let range = NSRange(videoId.startIndex..., in: videoId)
+        return regex.firstMatch(in: videoId, range: range) != nil
     }
-    
+
+    /// Generates a YouTube thumbnail URL for a given video ID and quality
+    /// SECURITY: Validates video ID to prevent path traversal and injection
+    /// - Returns: URL if video ID is valid, nil otherwise
+    static func url(videoId: String, quality: YouTubeThumbnailQuality) -> URL? {
+        // Validate video ID format
+        guard isValidVideoId(videoId) else {
+            #if DEBUG
+            print("⚠️ YouTubeThumbnail: Invalid video ID format: '\(videoId)'")
+            #endif
+            return nil
+        }
+
+        let urlString = "https://i.ytimg.com/vi/\(videoId)/\(quality.filename)"
+        return URL(string: urlString)
+    }
+
     /// Generates fallback URLs for a YouTube video ID
     /// Returns URLs in order: [maxresdefault, sddefault, hqdefault]
+    /// Only returns valid URLs (invalid video IDs result in empty array)
     static func fallbackURLs(videoId: String) -> [URL] {
-        return YouTubeThumbnailQuality.allCases.map { quality in
+        return YouTubeThumbnailQuality.allCases.compactMap { quality in
             url(videoId: videoId, quality: quality)
         }
     }
