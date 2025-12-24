@@ -77,12 +77,20 @@ private struct MiniPlayerContainer: View {
                 AudioMiniPlayerBar(audioManager: audioManager) {
                     showNowPlaying = true
                 }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .transition(
+                    .asymmetric(
+                        insertion: .move(edge: .bottom)
+                            .combined(with: .opacity)
+                            .combined(with: .scale(scale: 0.95, anchor: .bottom)),
+                        removal: .move(edge: .bottom)
+                            .combined(with: .opacity)
+                    )
+                )
                 .padding(.bottom, 49) // Standard tab bar height
                 .allowsHitTesting(true)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: audioManager.showMiniPlayer)
+        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: audioManager.showMiniPlayer)
     }
 }
 
