@@ -13,8 +13,6 @@ struct AppRootView: View {
     @State private var showSplash = true
     @State private var showNowPlaying = false
 
-    @StateObject private var audioManager = AudioPlayerManager.shared
-
     var body: some View {
         ZStack(alignment: .top) {
             mainContent
@@ -26,7 +24,7 @@ struct AppRootView: View {
             }
         }
         .sheet(isPresented: $showNowPlaying) {
-            NowPlayingView(audioManager: audioManager)
+            NowPlayingView(audioManager: AudioPlayerManager.shared)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.hidden)
         }
@@ -60,7 +58,21 @@ struct AppRootView: View {
                     .tag(AppTab.giving)
             }
 
-            // Mini player overlay (above tab bar)
+            // Mini player overlay - isolated in its own observing view
+            // to prevent AudioPlayerManager updates from re-rendering the entire app
+            MiniPlayerContainer(showNowPlaying: $showNowPlaying)
+        }
+    }
+}
+
+/// Isolates AudioPlayerManager observation to prevent parent (AppRootView) from re-rendering
+/// on every currentTime update (every 0.5s). Only this subtree re-renders on audio state changes.
+private struct MiniPlayerContainer: View {
+    @ObservedObject private var audioManager = AudioPlayerManager.shared
+    @Binding var showNowPlaying: Bool
+
+    var body: some View {
+        Group {
             if audioManager.showMiniPlayer {
                 AudioMiniPlayerBar(audioManager: audioManager) {
                     showNowPlaying = true
@@ -72,7 +84,6 @@ struct AppRootView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: audioManager.showMiniPlayer)
     }
-
 }
 
 #Preview {

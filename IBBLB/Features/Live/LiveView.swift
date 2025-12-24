@@ -120,6 +120,12 @@ struct LiveView: View {
             .task {
                 await viewModel.loadInitial()
             }
+            .onAppear {
+                viewModel.onAppear()
+            }
+            .onDisappear {
+                viewModel.onDisappear()
+            }
         }
     }
 }
