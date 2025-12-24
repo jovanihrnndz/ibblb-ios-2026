@@ -282,11 +282,13 @@ struct NowPlayingView: View {
                         .font(.system(size: 34, weight: .semibold))
                         .foregroundColor(.white)
                         .offset(x: audioManager.isPlaying ? 0 : 3)
+                        .contentTransition(.symbolEffect(.replace.downUp))
                 }
                 .shadow(color: Color.accentColor.opacity(0.4), radius: 12, x: 0, y: 6)
                 .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
             }
             .buttonStyle(.plain)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: audioManager.isPlaying)
 
             // Skip forward 30s
             Button {

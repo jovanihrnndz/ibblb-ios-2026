@@ -36,8 +36,10 @@ struct AudioMiniPlayerBar: View {
                             .foregroundColor(.primary)
                             .frame(width: 36, height: 36)
                             .contentShape(Circle())
+                            .contentTransition(.symbolEffect(.replace.downUp))
                     }
                     .buttonStyle(.plain)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: audioManager.isPlaying)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 10)
@@ -55,6 +57,7 @@ struct AudioMiniPlayerBar: View {
                     Rectangle()
                         .fill(Color.primary.opacity(0.7))
                         .frame(width: geometry.size.width * audioManager.progress, height: 2)
+                        .animation(.linear(duration: 0.3), value: audioManager.progress)
                 }
             }
             .frame(height: 2)

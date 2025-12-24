@@ -11,31 +11,20 @@ struct AppRootView: View {
     @State private var selectedTab: AppTab = .sermons
     @State private var hideTabBar: Bool = false
     @State private var showSplash = true
-    @State private var splashOpacity: Double = 1
-    @State private var appIsReady = false
     @State private var showNowPlaying = false
-
-    @StateObject private var audioManager = AudioPlayerManager.shared
-
-    private let splashDuration: TimeInterval = 1.2
 
     var body: some View {
         ZStack(alignment: .top) {
             mainContent
                 .zIndex(0)
-                .opacity(showSplash ? 0 : 1)
 
             if showSplash {
-                SplashView()
-                    .opacity(splashOpacity)
+                ModernPowerOffSplash(isPresented: $showSplash)
                     .zIndex(100)
             }
         }
-        .onAppear {
-            scheduleSplashDismissal()
-        }
         .sheet(isPresented: $showNowPlaying) {
-            NowPlayingView(audioManager: audioManager)
+            NowPlayingView(audioManager: AudioPlayerManager.shared)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.hidden)
         }
@@ -69,38 +58,39 @@ struct AppRootView: View {
                     .tag(AppTab.giving)
             }
 
-            // Mini player overlay (above tab bar)
+            // Mini player overlay - isolated in its own observing view
+            // to prevent AudioPlayerManager updates from re-rendering the entire app
+            MiniPlayerContainer(showNowPlaying: $showNowPlaying)
+        }
+    }
+}
+
+/// Isolates AudioPlayerManager observation to prevent parent (AppRootView) from re-rendering
+/// on every currentTime update (every 0.5s). Only this subtree re-renders on audio state changes.
+private struct MiniPlayerContainer: View {
+    @ObservedObject private var audioManager = AudioPlayerManager.shared
+    @Binding var showNowPlaying: Bool
+
+    var body: some View {
+        Group {
             if audioManager.showMiniPlayer {
                 AudioMiniPlayerBar(audioManager: audioManager) {
                     showNowPlaying = true
                 }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .transition(
+                    .asymmetric(
+                        insertion: .move(edge: .bottom)
+                            .combined(with: .opacity)
+                            .combined(with: .scale(scale: 0.95, anchor: .bottom)),
+                        removal: .move(edge: .bottom)
+                            .combined(with: .opacity)
+                    )
+                )
                 .padding(.bottom, 49) // Standard tab bar height
                 .allowsHitTesting(true)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: audioManager.showMiniPlayer)
-    }
-
-    private func scheduleSplashDismissal() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + splashDuration) {
-            dismissSplash()
-        }
-    }
-
-    private func dismissSplash() {
-        guard showSplash else { return }
-        withAnimation(.easeInOut(duration: 0.4)) {
-            splashOpacity = 0
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-            showSplash = false
-        }
-    }
-
-    func markAppReady() {
-        appIsReady = true
-        dismissSplash()
+        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: audioManager.showMiniPlayer)
     }
 }
 

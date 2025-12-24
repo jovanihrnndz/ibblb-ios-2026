@@ -20,7 +20,9 @@ class AudioPlaybackController: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     private init() {
-        setupAudioSession()
+        // NOTE: Do NOT call setupAudioSession() here.
+        // Audio session activation interrupts external audio (Spotify, etc).
+        // Session is activated lazily in play() when user initiates playback.
     }
     
     private func setupAudioSession() {
@@ -139,6 +141,13 @@ class AudioPlaybackController: ObservableObject {
         isPlaying = false
         currentTime = 0
         duration = 0
+
+        // Deactivate audio session so other apps (Spotify, etc.) can resume
+        do {
+            try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("❌ Failed to deactivate AVAudioSession: \(error)")
+        }
     }
     
     /// Seeks to the specified time in seconds.
