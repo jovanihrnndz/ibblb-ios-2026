@@ -3,7 +3,6 @@ import MapKit
 
 struct EventDetailView: View {
     let event: Event
-    @Environment(\.dismiss) private var dismiss
     @State private var showingCalendarAlert = false
     @State private var alertMessage = ""
     @State private var isSuccess = false
@@ -12,31 +11,19 @@ struct EventDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // Hero Image
-                ZStack(alignment: .topLeading) {
-                    if let imageUrl = event.imageUrl {
-                        AsyncImage(url: URL(string: imageUrl)) { image in
-                            image.resizable()
-                                .aspectRatio(16/9, contentMode: .fill)
-                        } placeholder: {
-                            Color.gray.opacity(0.3)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .clipped()
-                    } else {
-                        Color.accentColor.opacity(0.1)
-                            .frame(maxWidth: .infinity)
+                if let imageUrl = event.imageUrl {
+                    AsyncImage(url: URL(string: imageUrl)) { image in
+                        image.resizable()
                             .aspectRatio(16/9, contentMode: .fill)
+                    } placeholder: {
+                        Color.gray.opacity(0.3)
                     }
-
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 30))
-                            .foregroundColor(.white)
-                            .shadow(radius: 4)
-                    }
-                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .clipped()
+                } else {
+                    Color.accentColor.opacity(0.1)
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(16/9, contentMode: .fill)
                 }
 
                 VStack(alignment: .leading, spacing: 20) {
@@ -96,8 +83,8 @@ struct EventDetailView: View {
                 .padding(24)
             }
         }
-        .edgesIgnoringSafeArea(.top)
-        .navigationBarHidden(true)
+        .navigationTitle("Evento")
+        .navigationBarTitleDisplayMode(.inline)
         .alert(isSuccess ? "Éxito" : "Error", isPresented: $showingCalendarAlert) {
             Button("OK", role: .cancel) { }
         } message: {
