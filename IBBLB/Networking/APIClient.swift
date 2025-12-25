@@ -5,7 +5,8 @@ struct APIClient {
     private let decoder: JSONDecoder
 
     // Shared certificate pinning delegate instance
-    private static let pinningDelegate = CertificatePinningDelegate()
+    // Marked as nonisolated to allow access from nonisolated contexts
+    nonisolated private static let pinningDelegate = CertificatePinningDelegate()
 
     nonisolated init(session: URLSession? = nil) {
         if let session = session {
@@ -75,3 +76,4 @@ struct APIClient {
         }
     }
 }
+

@@ -20,7 +20,26 @@ protocol Endpoint {
 extension Endpoint {
     func urlRequest(config: APIConfig.Type) throws -> URLRequest {
         let base = baseURLOverride ?? config.baseURL
+        
+        // Validate base URL is not empty and is a valid URL
+        guard !base.isEmpty else {
+            #if DEBUG
+            print("❌ Endpoint: Base URL is empty. Check APIConfig configuration.")
+            #endif
+            throw APIError.invalidURL
+        }
+        
+        guard base.hasPrefix("http://") || base.hasPrefix("https://") else {
+            #if DEBUG
+            print("❌ Endpoint: Base URL is invalid (must start with http:// or https://): '\(base)'")
+            #endif
+            throw APIError.invalidURL
+        }
+        
         guard var components = URLComponents(string: base) else {
+            #if DEBUG
+            print("❌ Endpoint: Failed to create URLComponents from base: '\(base)'")
+            #endif
             throw APIError.invalidURL
         }
         

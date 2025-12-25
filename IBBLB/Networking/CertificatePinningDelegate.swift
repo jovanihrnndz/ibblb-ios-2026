@@ -86,8 +86,32 @@ class CertificatePinningDelegate: NSObject, URLSessionDelegate {
             return
         }
 
-        // Get the certificate from the server
-        guard let certificate = SecTrustGetCertificateAtIndex(serverTrust, 0) else {
+        // Get the certificate from the server (leaf certificate is at index 0)
+        // Use modern API for iOS 15+, fallback to deprecated API for older versions
+        let certificate: SecCertificate?
+        if #available(iOS 15.0, *) {
+            guard let certificateChain = SecTrustCopyCertificateChain(serverTrust) as? [SecCertificate],
+                  !certificateChain.isEmpty else {
+                #if DEBUG
+                print("❌ CertificatePinning: Could not retrieve certificate chain for \(host)")
+                #endif
+                completionHandler(.cancelAuthenticationChallenge, nil)
+                return
+            }
+            certificate = certificateChain[0] // Leaf certificate is first
+        } else {
+            let certificateCount = SecTrustGetCertificateCount(serverTrust)
+            guard certificateCount > 0 else {
+                #if DEBUG
+                print("❌ CertificatePinning: Could not retrieve certificate for \(host)")
+                #endif
+                completionHandler(.cancelAuthenticationChallenge, nil)
+                return
+            }
+            certificate = SecTrustGetCertificateAtIndex(serverTrust, 0)
+        }
+        
+        guard let certificate = certificate else {
             #if DEBUG
             print("❌ CertificatePinning: Could not retrieve certificate for \(host)")
             #endif
