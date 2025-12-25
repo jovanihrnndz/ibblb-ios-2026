@@ -52,5 +52,9 @@
 	<string>$(SUPABASE_URL)</string>
 	<key>SUPABASE_ANON_KEY</key>
 	<string>$(SUPABASE_ANON_KEY)</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Necesitamos acceso a tu calendario para agregar eventos de la iglesia.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Necesitamos acceso a tu calendario para agregar eventos de la iglesia.</string>
 </dict>
 </plist>
