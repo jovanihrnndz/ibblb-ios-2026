@@ -52,6 +52,18 @@
 	<string>$(SUPABASE_URL)</string>
 	<key>SUPABASE_ANON_KEY</key>
 	<string>$(SUPABASE_ANON_KEY)</string>
+	<key>CERT_PIN_SUPABASE</key>
+	<string>$(CERT_PIN_SUPABASE)</string>
+	<key>CERT_PIN_SANITY</key>
+	<string>$(CERT_PIN_SANITY)</string>
+	<key>CERT_PIN_YOUTUBE</key>
+	<string>$(CERT_PIN_YOUTUBE)</string>
+	<key>CERT_PIN_VERCEL</key>
+	<string>$(CERT_PIN_VERCEL)</string>
+	<key>SANITY_PROJECT_ID</key>
+	<string>$(SANITY_PROJECT_ID)</string>
+	<key>SANITY_DATASET</key>
+	<string>$(SANITY_DATASET)</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Necesitamos acceso a tu calendario para agregar eventos de la iglesia.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>

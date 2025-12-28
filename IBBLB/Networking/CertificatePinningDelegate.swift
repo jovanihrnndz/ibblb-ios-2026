@@ -3,38 +3,38 @@ import CryptoKit
 
 /// Implements SSL certificate pinning for enhanced network security
 /// Prevents man-in-the-middle attacks by validating server certificates against known fingerprints
-class CertificatePinningDelegate: NSObject, URLSessionDelegate {
+/// Fingerprints are loaded from Info.plist (injected via Secrets.xcconfig)
+/// SECURITY: Fails closed - rejects connections if fingerprints are configured but don't match
+final class CertificatePinningDelegate: NSObject, URLSessionDelegate {
 
-    // MARK: - Certificate Fingerprints
+    // MARK: - Configuration
 
-    /// SHA-256 fingerprints of trusted certificates for each domain
-    /// To update these fingerprints, use the following command:
-    /// ```
-    /// echo | openssl s_client -connect <domain>:443 2>/dev/null | \
-    ///   openssl x509 -fingerprint -sha256 -noout
-    /// ```
-    private let trustedCertificates: [String: Set<String>] = [
-        // Supabase - Update these with actual certificate fingerprints
-        "kxqxnqbgebhqbvfbmgzv.supabase.co": [
-            // TODO: Add actual SHA-256 fingerprints for Supabase certificates
-            // Example: "AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99"
-        ],
-
-        // Sanity.io - Update these with actual certificate fingerprints
-        "bck48elw.api.sanity.io": [
-            // TODO: Add actual SHA-256 fingerprints for Sanity certificates
-        ],
-
-        // YouTube thumbnails - Update these with actual certificate fingerprints
-        "i.ytimg.com": [
-            // TODO: Add actual SHA-256 fingerprints for YouTube certificates
-        ],
-
-        // Vercel API - Update these with actual certificate fingerprints
-        "ibblb-website.vercel.app": [
-            // TODO: Add actual SHA-256 fingerprints for Vercel certificates
-        ]
+    /// Maps hostnames to their Info.plist key for fingerprint lookup
+    private let hostToPlistKey: [String: String] = [
+        "kxqxnqbgebhqbvfbmgzv.supabase.co": "CERT_PIN_SUPABASE",
+        "bck48elw.api.sanity.io": "CERT_PIN_SANITY",
+        "i.ytimg.com": "CERT_PIN_YOUTUBE",
+        "ibblb-website.vercel.app": "CERT_PIN_VERCEL"
     ]
+
+    /// Loads fingerprints from Info.plist for a given host
+    /// Returns nil if host is not configured for pinning
+    /// Returns empty set if configured but no fingerprints provided (will fail closed)
+    private func loadFingerprints(for host: String) -> Set<String>? {
+        guard let plistKey = hostToPlistKey[host] else {
+            return nil // Host not configured for pinning
+        }
+
+        guard let fingerprints = Bundle.main.object(forInfoDictionaryKey: plistKey) as? String,
+              !fingerprints.isEmpty,
+              !fingerprints.hasPrefix("$(") else {
+            // Key exists but no valid fingerprints - return empty set to fail closed
+            return Set()
+        }
+
+        // Support multiple fingerprints separated by commas (for certificate rotation)
+        return Set(fingerprints.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) })
+    }
 
     // MARK: - URLSessionDelegate
 
@@ -52,13 +52,18 @@ class CertificatePinningDelegate: NSObject, URLSessionDelegate {
         let host = challenge.protectionSpace.host
 
         // Check if we have pinning rules for this host
-        guard let trustedFingerprints = trustedCertificates[host],
-              !trustedFingerprints.isEmpty else {
-            // No pinning configured for this host, use default validation
-            #if DEBUG
-            print("⚠️ CertificatePinning: No pins configured for \(host), using default validation")
-            #endif
+        guard let trustedFingerprints = loadFingerprints(for: host) else {
+            // Host not configured for pinning - use default validation
             completionHandler(.performDefaultHandling, nil)
+            return
+        }
+
+        // FAIL CLOSED: If fingerprints set is empty, reject the connection
+        guard !trustedFingerprints.isEmpty else {
+            #if DEBUG
+            print("❌ CertificatePinning: No fingerprints configured for \(host) - failing closed")
+            #endif
+            completionHandler(.cancelAuthenticationChallenge, nil)
             return
         }
 
@@ -86,8 +91,7 @@ class CertificatePinningDelegate: NSObject, URLSessionDelegate {
             return
         }
 
-        // Get the certificate from the server (leaf certificate is at index 0)
-        // Use modern API for iOS 15+, fallback to deprecated API for older versions
+        // Get the leaf certificate from the server
         let certificate: SecCertificate?
         if #available(iOS 15.0, *) {
             guard let certificateChain = SecTrustCopyCertificateChain(serverTrust) as? [SecCertificate],
@@ -98,7 +102,7 @@ class CertificatePinningDelegate: NSObject, URLSessionDelegate {
                 completionHandler(.cancelAuthenticationChallenge, nil)
                 return
             }
-            certificate = certificateChain[0] // Leaf certificate is first
+            certificate = certificateChain[0]
         } else {
             let certificateCount = SecTrustGetCertificateCount(serverTrust)
             guard certificateCount > 0 else {
@@ -110,7 +114,7 @@ class CertificatePinningDelegate: NSObject, URLSessionDelegate {
             }
             certificate = SecTrustGetCertificateAtIndex(serverTrust, 0)
         }
-        
+
         guard let certificate = certificate else {
             #if DEBUG
             print("❌ CertificatePinning: Could not retrieve certificate for \(host)")
@@ -119,7 +123,7 @@ class CertificatePinningDelegate: NSObject, URLSessionDelegate {
             return
         }
 
-        // Get certificate data and compute SHA-256 fingerprint
+        // Compute SHA-256 fingerprint of the certificate
         let certificateData = SecCertificateCopyData(certificate) as Data
         let fingerprint = SHA256.hash(data: certificateData)
             .map { String(format: "%02X", $0) }
@@ -139,48 +143,11 @@ class CertificatePinningDelegate: NSObject, URLSessionDelegate {
             completionHandler(.useCredential, credential)
         } else {
             #if DEBUG
-            print("❌ CertificatePinning: Certificate mismatch for \(host)")
+            print("❌ CertificatePinning: Certificate mismatch for \(host) - REJECTING")
             print("   Expected one of: \(trustedFingerprints)")
             print("   Received: \(fingerprint)")
             #endif
             completionHandler(.cancelAuthenticationChallenge, nil)
         }
-    }
-}
-
-// MARK: - Helper Extension
-
-extension CertificatePinningDelegate {
-    /// Generates the fingerprint for a given certificate
-    /// - Parameter certificate: The certificate to fingerprint
-    /// - Returns: SHA-256 fingerprint in colon-separated hex format
-    static func fingerprint(for certificate: SecCertificate) -> String {
-        let certificateData = SecCertificateCopyData(certificate) as Data
-        return SHA256.hash(data: certificateData)
-            .map { String(format: "%02X", $0) }
-            .joined(separator: ":")
-    }
-
-    /// Convenience method to print the fingerprint of a certificate from a URL
-    /// Use this in DEBUG builds to get fingerprints for configuration
-    /// - Parameter url: The URL to fetch the certificate from
-    static func printCertificateFingerprint(for url: String) async {
-        #if DEBUG
-        guard let url = URL(string: url) else {
-            print("❌ Invalid URL: \(url)")
-            return
-        }
-
-        let task = URLSession.shared.dataTask(with: url) { _, response, error in
-            if let error = error {
-                print("❌ Error fetching certificate: \(error)")
-                return
-            }
-
-            print("⚠️ Note: Use openssl command instead for accurate fingerprints:")
-            print("   echo | openssl s_client -connect \(url.host ?? ""):\(url.port ?? 443) 2>/dev/null | openssl x509 -fingerprint -sha256 -noout")
-        }
-        task.resume()
-        #endif
     }
 }

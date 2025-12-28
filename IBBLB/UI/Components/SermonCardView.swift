@@ -21,6 +21,7 @@ struct SermonCardView: View {
                     .font(isTV ? .system(size: 28, weight: .semibold) : .headline)
                     .lineLimit(isTV ? 3 : 2)
                     .foregroundColor(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 HStack(spacing: isTV ? 8 : 4) {
                     if let speaker = sermon.speaker, !speaker.isEmpty {
@@ -39,6 +40,7 @@ struct SermonCardView: View {
                 .foregroundColor(.secondary)
             }
             .padding(isTV ? 24 : 16)
+            .frame(maxWidth: .infinity, minHeight: isTV ? 140 : 100, alignment: .top)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(.secondarySystemGroupedBackground))

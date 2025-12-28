@@ -19,6 +19,20 @@ struct AudioTrackInfo: Equatable {
     let audioURL: URL
 }
 
+/// Saved playback info for resume listening feature
+/// Includes metadata for offline display when sermon list is unavailable
+struct SavedPlaybackInfo: Equatable {
+    let audioURL: String
+    let time: TimeInterval
+    let title: String?
+    let thumbnailURL: String?
+
+    /// Whether this is a legacy payload (pre-title/thumbnail)
+    var isLegacy: Bool {
+        title == nil && thumbnailURL == nil
+    }
+}
+
 /// Global audio player manager that persists across all views.
 /// Provides playback state, progress updates, and metadata for the mini player.
 @MainActor
@@ -58,27 +72,174 @@ final class AudioPlayerManager: ObservableObject {
     private var hasClearedOnFinish = false
     
     // MARK: - UserDefaults Keys
-    
+
     private enum UserDefaultsKeys {
         static let lastPlayedAudioURL = "AudioPlayerManager.lastPlayedAudioURL"
         static let lastPlaybackTime = "AudioPlayerManager.lastPlaybackTime"
+        // New keys for extended payload (added for offline resilience)
+        static let lastPlayedTitle = "AudioPlayerManager.lastPlayedTitle"
+        static let lastPlayedThumbnailURL = "AudioPlayerManager.lastPlayedThumbnailURL"
     }
     
     // MARK: - Resume Listening Access
-    
-    /// Returns the saved playback URL and time if available
-    func getSavedPlaybackInfo() -> (url: String, time: TimeInterval)? {
+
+    /// Returns the saved playback info if available
+    /// Backward compatible: returns nil for title/thumbnailURL if saved with old format
+    func getSavedPlaybackInfo() -> SavedPlaybackInfo? {
         guard let savedURLString = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastPlayedAudioURL),
               !savedURLString.isEmpty else {
             return nil
         }
-        
+
         let savedTime = UserDefaults.standard.double(forKey: UserDefaultsKeys.lastPlaybackTime)
         guard savedTime > 0 && savedTime.isFinite else {
             return nil
         }
-        
-        return (url: savedURLString, time: savedTime)
+
+        // Load extended metadata (may be nil for legacy payloads)
+        let savedTitle = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastPlayedTitle)
+        let savedThumbnailURL = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastPlayedThumbnailURL)
+
+        return SavedPlaybackInfo(
+            audioURL: savedURLString,
+            time: savedTime,
+            title: savedTitle,
+            thumbnailURL: savedThumbnailURL
+        )
+    }
+
+    /// Finds the sermon that matches the saved playback URL from the provided list
+    /// - Parameter sermons: Array of sermons to search through
+    /// - Returns: The matching sermon, or nil if not found
+    func findContinueListeningSermon(from sermons: [Sermon]) -> Sermon? {
+        guard let savedInfo = getSavedPlaybackInfo() else { return nil }
+        let savedURLString = savedInfo.audioURL.trimmingCharacters(in: .whitespaces)
+        guard !savedURLString.isEmpty else { return nil }
+
+        return sermons.first { sermon in
+            guard let audioUrlString = sermon.audioUrl else { return false }
+            let trimmedAudioUrl = audioUrlString.trimmingCharacters(in: .whitespaces)
+            guard !trimmedAudioUrl.isEmpty else { return false }
+
+            // Direct string comparison (most reliable)
+            if trimmedAudioUrl == savedURLString {
+                return true
+            }
+
+            // URL-based comparison (handles encoding differences)
+            guard let savedURL = URL(string: savedURLString),
+                  let sermonURL = URL(string: trimmedAudioUrl) else {
+                return false
+            }
+
+            return sermonURL.absoluteString == savedURL.absoluteString
+        }
+    }
+
+    /// Continue listening result that can use saved metadata as fallback
+    struct ContinueListeningResult: Equatable {
+        let sermon: Sermon?
+        let savedTime: TimeInterval
+        let savedInfo: SavedPlaybackInfo
+
+        /// Title to display - prefer sermon title, fall back to saved title
+        var displayTitle: String {
+            sermon?.title ?? savedInfo.title ?? "Unknown"
+        }
+
+        /// Thumbnail URL to display - prefer sermon, fall back to saved
+        var displayThumbnailURL: String? {
+            sermon?.thumbnailUrl ?? savedInfo.thumbnailURL
+        }
+
+        /// Whether we have a matching sermon from the list
+        var hasMatchingSermon: Bool {
+            sermon != nil
+        }
+    }
+
+    /// Returns continue listening info with offline fallback
+    /// - Parameter sermons: Array of sermons to search through
+    /// - Returns: ContinueListeningResult with sermon (if found) and saved metadata, or nil if no saved playback
+    func getContinueListeningInfo(from sermons: [Sermon]) -> ContinueListeningResult? {
+        guard let savedInfo = getSavedPlaybackInfo() else { return nil }
+        let sermon = findContinueListeningSermon(from: sermons)
+
+        return ContinueListeningResult(
+            sermon: sermon,
+            savedTime: savedInfo.time,
+            savedInfo: savedInfo
+        )
+    }
+
+    /// Resumes listening for the given sermon from saved position
+    /// - Parameter sermon: The sermon to resume playing
+    func resumeListening(sermon: Sermon) {
+        guard let audioUrlString = sermon.audioUrl,
+              let audioURL = URL(string: audioUrlString.trimmingCharacters(in: .whitespaces)) else {
+            return
+        }
+
+        // Construct artwork URL
+        let artworkURL: URL? = buildArtworkURL(
+            thumbnailUrl: sermon.thumbnailUrl,
+            youtubeVideoId: sermon.youtubeVideoId
+        )
+
+        // Play audio (will auto-resume from saved position)
+        play(url: audioURL, title: sermon.title, artworkURL: artworkURL)
+    }
+
+    /// Resumes listening from continue listening result (supports offline fallback)
+    /// - Parameter result: The continue listening result containing sermon or saved info
+    func resumeListening(from result: ContinueListeningResult) {
+        // Prefer sermon if available
+        if let sermon = result.sermon {
+            resumeListening(sermon: sermon)
+            return
+        }
+
+        // Fallback to saved info for offline case
+        guard let audioURL = URL(string: result.savedInfo.audioURL) else { return }
+
+        let artworkURL: URL? = {
+            if let thumbnailString = result.savedInfo.thumbnailURL,
+               !thumbnailString.isEmpty {
+                return URL(string: thumbnailString)
+            }
+            return nil
+        }()
+
+        play(url: audioURL, title: result.displayTitle, artworkURL: artworkURL)
+    }
+
+    /// Helper to build artwork URL from sermon metadata
+    private func buildArtworkURL(thumbnailUrl: String?, youtubeVideoId: String?) -> URL? {
+        var videoId: String?
+
+        if let thumbnailString = thumbnailUrl,
+           !thumbnailString.isEmpty {
+            videoId = YouTubeThumbnail.videoId(from: thumbnailString)
+        }
+
+        if videoId == nil,
+           let youtubeId = youtubeVideoId,
+           !youtubeId.trimmingCharacters(in: .whitespaces).isEmpty {
+            videoId = YouTubeVideoIDExtractor.extractVideoID(from: youtubeId)
+        }
+
+        if let id = videoId {
+            return YouTubeThumbnail.url(videoId: id, quality: .maxres)
+        }
+
+        if let thumbnailString = thumbnailUrl,
+           !thumbnailString.isEmpty,
+           let url = URL(string: thumbnailString),
+           !YouTubeThumbnail.isYouTubeThumbnail(url) {
+            return url
+        }
+
+        return nil
     }
 
     // MARK: - Initialization
@@ -92,30 +253,42 @@ final class AudioPlayerManager: ObservableObject {
     }
     
     // MARK: - Resume Listening Persistence
-    
+
     private func savePlaybackPosition() {
-        guard let url = currentTrack?.audioURL else { return }
-        UserDefaults.standard.set(url.absoluteString, forKey: UserDefaultsKeys.lastPlayedAudioURL)
+        guard let track = currentTrack else { return }
+
+        // Save core playback info
+        UserDefaults.standard.set(track.audioURL.absoluteString, forKey: UserDefaultsKeys.lastPlayedAudioURL)
         UserDefaults.standard.set(currentTime, forKey: UserDefaultsKeys.lastPlaybackTime)
+
+        // Save extended metadata for offline resilience
+        UserDefaults.standard.set(track.title, forKey: UserDefaultsKeys.lastPlayedTitle)
+        if let artworkURL = track.artworkURL {
+            UserDefaults.standard.set(artworkURL.absoluteString, forKey: UserDefaultsKeys.lastPlayedThumbnailURL)
+        } else {
+            UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.lastPlayedThumbnailURL)
+        }
     }
-    
+
     private func loadPlaybackPosition(for url: URL) -> TimeInterval? {
         guard let savedURLString = UserDefaults.standard.string(forKey: UserDefaultsKeys.lastPlayedAudioURL),
               savedURLString == url.absoluteString else {
             return nil
         }
-        
+
         let savedTime = UserDefaults.standard.double(forKey: UserDefaultsKeys.lastPlaybackTime)
         guard savedTime > 0 && savedTime.isFinite else {
             return nil
         }
-        
+
         return savedTime
     }
-    
+
     private func clearPlaybackPosition() {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.lastPlayedAudioURL)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.lastPlaybackTime)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.lastPlayedTitle)
+        UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.lastPlayedThumbnailURL)
     }
     
     private func setupBackgroundNotifications() {
