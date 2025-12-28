@@ -47,20 +47,6 @@ struct SermonsView: View {
         audioManager.getContinueListeningInfo(from: viewModel.sermons)
     }
     
-    // Search suggestions based on current sermons
-    private var searchSuggestions: [String] {
-        let query = viewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return [] }
-        let lowercasedQuery = query.lowercased()
-        let titles = listSermons.map { $0.title }
-        let uniqueTitles = Array(Set(titles))
-        return uniqueTitles
-            .filter { $0.lowercased().contains(lowercasedQuery) }
-            .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
-            .prefix(5)
-            .map { $0 }
-    }
-    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
@@ -81,43 +67,11 @@ struct SermonsView: View {
                 }
                 
                 // Search bar overlaying content - content bleeds underneath
-                VStack(spacing: 0) {
-                    UIKitSearchBar(text: $viewModel.searchText, placeholder: "Search sermons")
-                        .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 16))
-                        .padding(.vertical, isTV ? 16 : (useGridLayout ? 22 : 12))
-                    
-                    // Search suggestions
-                    if !searchSuggestions.isEmpty {
-                        VStack(alignment: .leading, spacing: 8) {
-                            ForEach(searchSuggestions, id: \.self) { suggestion in
-                                Button(action: {
-                                    viewModel.searchText = suggestion
-                                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                                }) {
-                                    HStack {
-                                        Image(systemName: "magnifyingglass")
-                                            .foregroundColor(.secondary)
-                                        Text(suggestion)
-                                            .foregroundColor(.primary)
-                                            .lineLimit(1)
-                                        Spacer()
-                                    }
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 8)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                        .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 16))
-                        .padding(.vertical, 8)
-                        .background(.regularMaterial)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.top, useGridLayout ? 140 : 100) // Position below banner (140 on iPad, 100 on iPhone)
+                UIKitSearchBar(text: $viewModel.searchText, placeholder: "Search sermons")
+                    .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 16))
+                    .padding(.vertical, isTV ? 16 : (useGridLayout ? 22 : 12))
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, useGridLayout ? 140 : 100) // Position below banner (140 on iPad, 100 on iPhone)
             }
             .toolbar(.hidden, for: .navigationBar)
             .task {

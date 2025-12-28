@@ -149,6 +149,9 @@ struct LiveView: View {
             }
             .padding(.bottom, 24)
         }
+        .refreshable {
+            await viewModel.refresh()
+        }
     }
 
     // MARK: - iPhone Layout (Scrollable)
@@ -201,6 +204,9 @@ struct LiveView: View {
                     .padding(.bottom, 40)
             }
             .padding(.top, 8)
+        }
+        .refreshable {
+            await viewModel.refresh()
         }
     }
 }
