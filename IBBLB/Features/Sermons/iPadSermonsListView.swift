@@ -5,9 +5,81 @@ import SwiftUI
 struct iPadSermonsListView: View {
     @StateObject private var viewModel = SermonsViewModel()
     @Binding var selectedSermon: Sermon?
+    @ObservedObject private var audioManager = AudioPlayerManager.shared
 
     private var listSermons: [Sermon] {
         viewModel.sermons
+    }
+    
+    private var continueListeningSermon: Sermon? {
+        guard let savedInfo = audioManager.getSavedPlaybackInfo() else { return nil }
+        let savedURLString = savedInfo.url.trimmingCharacters(in: .whitespaces)
+        guard !savedURLString.isEmpty else { return nil }
+        
+        return viewModel.sermons.first { sermon in
+            guard let audioUrlString = sermon.audioUrl else { return false }
+            let trimmedAudioUrl = audioUrlString.trimmingCharacters(in: .whitespaces)
+            guard !trimmedAudioUrl.isEmpty else { return false }
+            
+            // Direct string comparison (most reliable)
+            if trimmedAudioUrl == savedURLString {
+                return true
+            }
+            
+            // URL-based comparison (handles encoding differences)
+            guard let savedURL = URL(string: savedURLString),
+                  let sermonURL = URL(string: trimmedAudioUrl) else {
+                return false
+            }
+            
+            return sermonURL.absoluteString == savedURL.absoluteString
+        }
+    }
+    
+    private var continueListeningSavedTime: TimeInterval? {
+        guard let savedInfo = audioManager.getSavedPlaybackInfo(),
+              continueListeningSermon != nil else { return nil }
+        return savedInfo.time
+    }
+    
+    private func resumeListening() {
+        guard let sermon = continueListeningSermon,
+              let audioUrlString = sermon.audioUrl,
+              let audioURL = URL(string: audioUrlString.trimmingCharacters(in: .whitespaces)) else {
+            return
+        }
+        
+        let artworkURL: URL? = {
+            var videoId: String?
+            
+            if let thumbnailString = sermon.thumbnailUrl,
+               !thumbnailString.isEmpty {
+                videoId = YouTubeThumbnail.videoId(from: thumbnailString)
+            }
+            
+            if videoId == nil,
+               let youtubeId = sermon.youtubeVideoId,
+               !youtubeId.trimmingCharacters(in: .whitespaces).isEmpty {
+                videoId = YouTubeVideoIDExtractor.extractVideoID(from: youtubeId)
+            }
+            
+            if let id = videoId {
+                return YouTubeThumbnail.url(videoId: id, quality: .maxres)
+            }
+            
+            if let thumbnailString = sermon.thumbnailUrl,
+               !thumbnailString.isEmpty,
+               let url = URL(string: thumbnailString),
+               !YouTubeThumbnail.isYouTubeThumbnail(url) {
+                return url
+            }
+            
+            return nil
+        }()
+        
+        // Play audio (will auto-resume from saved position via AudioPlayerManager)
+        audioManager.play(url: audioURL, title: sermon.title, artworkURL: artworkURL)
+        // Note: Does NOT navigate - stays on list view
     }
 
     private var searchSuggestions: [String] {
@@ -171,21 +243,39 @@ struct iPadSermonsListView: View {
     // MARK: - Sermons Grid (Selection-Driven, Width-Adaptive)
 
     private func sermonsGridContent(metrics: LayoutMetrics) -> some View {
-        LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: metrics.minCardWidth), spacing: metrics.gridSpacing)],
-            spacing: metrics.gridSpacing
-        ) {
-            ForEach(listSermons) { sermon in
-                Button {
-                    selectedSermon = sermon
-                } label: {
-                    SermonCardView(sermon: sermon)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(selectedSermon?.id == sermon.id ? Color.accentColor : Color.clear, lineWidth: 3)
-                        )
+        VStack(spacing: metrics.gridSpacing) {
+            // Continue Listening Card (if available and no active playback)
+            if audioManager.currentTrack == nil,
+               let sermon = continueListeningSermon,
+               let savedTime = continueListeningSavedTime {
+                ContinueListeningCardView(
+                    sermon: sermon,
+                    savedTime: savedTime,
+                    duration: nil, // Duration not available in list view
+                    onCardTap: {
+                        selectedSermon = sermon
+                    },
+                    onResume: resumeListening
+                )
+            }
+            
+            // Sermons grid
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: metrics.minCardWidth), spacing: metrics.gridSpacing)],
+                spacing: metrics.gridSpacing
+            ) {
+                ForEach(listSermons) { sermon in
+                    Button {
+                        selectedSermon = sermon
+                    } label: {
+                        SermonCardView(sermon: sermon)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(selectedSermon?.id == sermon.id ? Color.accentColor : Color.clear, lineWidth: 3)
+                            )
+                    }
+                    .buttonStyle(SermonCardButtonStyle())
                 }
-                .buttonStyle(SermonCardButtonStyle())
             }
         }
     }
