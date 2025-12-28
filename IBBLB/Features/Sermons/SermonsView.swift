@@ -38,6 +38,14 @@ struct SermonsView: View {
     private var listSermons: [Sermon] {
         return viewModel.sermons
     }
+
+    // Audio manager for continue listening feature
+    @ObservedObject private var audioManager = AudioPlayerManager.shared
+
+    // Continue listening info from shared helper (supports offline fallback)
+    private var continueListeningInfo: AudioPlayerManager.ContinueListeningResult? {
+        audioManager.getContinueListeningInfo(from: viewModel.sermons)
+    }
     
     // Search suggestions based on current sermons
     private var searchSuggestions: [String] {
@@ -76,7 +84,7 @@ struct SermonsView: View {
                 VStack(spacing: 0) {
                     UIKitSearchBar(text: $viewModel.searchText, placeholder: "Search sermons")
                         .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 16))
-                        .padding(.vertical, isTV ? 16 : (useGridLayout ? 16 : 12))
+                        .padding(.vertical, isTV ? 16 : (useGridLayout ? 22 : 12))
                     
                     // Search suggestions
                     if !searchSuggestions.isEmpty {
@@ -159,31 +167,51 @@ struct SermonsView: View {
     
     @ViewBuilder
     private var sermonsListContent: some View {
-        if useGridLayout {
-            // iPad: adaptive grid with larger cards (typically 2 columns)
-            LazyVGrid(
-                columns: [GridItem(.adaptive(minimum: iPadGridMinWidth), spacing: iPadGridSpacing)],
-                spacing: iPadGridSpacing
-            ) {
-                ForEach(listSermons) { sermon in
-                    Button {
-                        selectedSermon = sermon
-                    } label: {
-                        SermonCardView(sermon: sermon)
+        VStack(spacing: useGridLayout ? iPadGridSpacing : (isTV ? 32 : 16)) {
+            // Continue Listening Card (if available, not on tvOS, and no active playback)
+            if !isTV, audioManager.currentTrack == nil,
+               let info = continueListeningInfo {
+                ContinueListeningCardView(
+                    result: info,
+                    duration: nil, // Duration not available in list view
+                    onCardTap: info.hasMatchingSermon ? {
+                        selectedSermon = info.sermon
+                    } : nil,
+                    onResume: {
+                        audioManager.resumeListening(from: info)
                     }
-                    .buttonStyle(SermonCardButtonStyle())
-                }
+                )
+                .padding(.top, useGridLayout ? 28 : 24)
+                .padding(.bottom, useGridLayout ? -8 : 0)
             }
-        } else {
-            // iPhone / tvOS: single column list
-            LazyVStack(spacing: isTV ? 32 : 16) {
-                ForEach(listSermons) { sermon in
-                    Button {
-                        selectedSermon = sermon
-                    } label: {
-                        SermonCardView(sermon: sermon)
+            
+            // Sermons list
+            if useGridLayout {
+                // iPad: adaptive grid with larger cards (typically 2 columns)
+                LazyVGrid(
+                    columns: [GridItem(.adaptive(minimum: iPadGridMinWidth), spacing: iPadGridSpacing)],
+                    spacing: iPadGridSpacing
+                ) {
+                    ForEach(listSermons) { sermon in
+                        Button {
+                            selectedSermon = sermon
+                        } label: {
+                            SermonCardView(sermon: sermon)
+                        }
+                        .buttonStyle(SermonCardButtonStyle())
                     }
-                    .buttonStyle(SermonCardButtonStyle())
+                }
+            } else {
+                // iPhone / tvOS: single column list
+                LazyVStack(spacing: isTV ? 32 : 16) {
+                    ForEach(listSermons) { sermon in
+                        Button {
+                            selectedSermon = sermon
+                        } label: {
+                            SermonCardView(sermon: sermon)
+                        }
+                        .buttonStyle(SermonCardButtonStyle())
+                    }
                 }
             }
         }

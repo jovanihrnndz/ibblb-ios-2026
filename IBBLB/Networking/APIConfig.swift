@@ -150,6 +150,61 @@ enum APIConfig {
         return value
     }
 
-    static let sanityProjectID = "bck48elw"
-    static let sanityDataset = "production"
+    // MARK: - Sanity CMS Configuration
+
+    /// Sanity project ID loaded from Info.plist (injected via Secrets.xcconfig)
+    static var sanityProjectID: String {
+        let value = info("SANITY_PROJECT_ID", defaultValue: "preview-mode-placeholder")
+
+        // Validate in normal runtime
+        if (value.hasPrefix("$(") && value.hasSuffix(")")) || value.isEmpty {
+            #if DEBUG
+            if isPreviewMode {
+                print("⚠️ [Preview Mode] SANITY_PROJECT_ID not configured. Using placeholder.")
+            } else {
+                print("❌ SANITY_PROJECT_ID substitution failed!")
+                print("   Ensure Secrets.xcconfig contains SANITY_PROJECT_ID and is properly linked.")
+            }
+            #endif
+            if !isPreviewMode {
+                fatalError("SANITY_PROJECT_ID not configured. Please add it to Secrets.xcconfig.")
+            }
+        }
+
+        #if DEBUG
+        if !value.isEmpty && !value.hasPrefix("$(") {
+            print("✅ Using Sanity Project ID: \(value)")
+        }
+        #endif
+
+        return value
+    }
+
+    /// Sanity dataset loaded from Info.plist (injected via Secrets.xcconfig)
+    static var sanityDataset: String {
+        let value = info("SANITY_DATASET", defaultValue: "production")
+
+        // Validate in normal runtime
+        if (value.hasPrefix("$(") && value.hasSuffix(")")) || value.isEmpty {
+            #if DEBUG
+            if isPreviewMode {
+                print("⚠️ [Preview Mode] SANITY_DATASET not configured. Using placeholder.")
+            } else {
+                print("❌ SANITY_DATASET substitution failed!")
+                print("   Ensure Secrets.xcconfig contains SANITY_DATASET and is properly linked.")
+            }
+            #endif
+            if !isPreviewMode {
+                fatalError("SANITY_DATASET not configured. Please add it to Secrets.xcconfig.")
+            }
+        }
+
+        #if DEBUG
+        if !value.isEmpty && !value.hasPrefix("$(") {
+            print("✅ Using Sanity Dataset: \(value)")
+        }
+        #endif
+
+        return value
+    }
 }

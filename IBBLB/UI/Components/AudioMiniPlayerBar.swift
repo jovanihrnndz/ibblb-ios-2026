@@ -6,9 +6,13 @@ struct AudioMiniPlayerBar: View {
     @ObservedObject var audioManager: AudioPlayerManager
     let onTap: () -> Void
 
-    private let barHeight: CGFloat = 56
-    private let thumbnailSize: CGFloat = 40
-    private let cornerRadius: CGFloat = 28 // Pill shape (half of height)
+    private var barHeight: CGFloat {
+        UIDevice.current.userInterfaceIdiom == .pad ? 76 : 68
+    }
+    private let thumbnailSize: CGFloat = 48
+    private var cornerRadius: CGFloat {
+        barHeight / 2 // Pill shape (half of height)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -32,9 +36,9 @@ struct AudioMiniPlayerBar: View {
                         audioManager.togglePlayPause()
                     } label: {
                         Image(systemName: audioManager.isPlaying ? "pause.fill" : "play.fill")
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(.primary)
-                            .frame(width: 36, height: 36)
+                            .frame(width: 40, height: 40)
                             .contentShape(Circle())
                             .contentTransition(.symbolEffect(.replace.downUp))
                     }
@@ -42,8 +46,8 @@ struct AudioMiniPlayerBar: View {
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: audioManager.isPlaying)
                 }
                 .padding(.horizontal, 16)
-                .padding(.top, 10)
-                .padding(.bottom, 8)
+                .padding(.top, 14)
+                .padding(.bottom, 10)
             }
             .buttonStyle(.plain)
             
@@ -62,7 +66,7 @@ struct AudioMiniPlayerBar: View {
             }
             .frame(height: 2)
             .padding(.horizontal, 16)
-            .padding(.bottom, 8)
+            .padding(.bottom, 10)
         }
         .frame(height: barHeight)
         .padding(.horizontal, 12)

@@ -5,9 +5,15 @@ import SwiftUI
 struct iPadSermonsListView: View {
     @StateObject private var viewModel = SermonsViewModel()
     @Binding var selectedSermon: Sermon?
+    @ObservedObject private var audioManager = AudioPlayerManager.shared
 
     private var listSermons: [Sermon] {
         viewModel.sermons
+    }
+
+    // Continue listening info from shared helper (supports offline fallback)
+    private var continueListeningInfo: AudioPlayerManager.ContinueListeningResult? {
+        audioManager.getContinueListeningInfo(from: viewModel.sermons)
     }
 
     private var searchSuggestions: [String] {
@@ -86,7 +92,7 @@ struct iPadSermonsListView: View {
 
         /// Search bar vertical padding
         var searchBarVerticalPadding: CGFloat {
-            containerWidth >= 700 ? 16 : 12
+            containerWidth >= 700 ? 22 : 12
         }
 
         /// Top padding below banner for search bar overlay
@@ -97,7 +103,7 @@ struct iPadSermonsListView: View {
 
         /// Content top padding (below search bar area)
         var contentTopPadding: CGFloat {
-            containerWidth >= 700 ? 60 : 50
+            containerWidth >= 700 ? 80 : 60
         }
     }
 
@@ -171,21 +177,41 @@ struct iPadSermonsListView: View {
     // MARK: - Sermons Grid (Selection-Driven, Width-Adaptive)
 
     private func sermonsGridContent(metrics: LayoutMetrics) -> some View {
-        LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: metrics.minCardWidth), spacing: metrics.gridSpacing)],
-            spacing: metrics.gridSpacing
-        ) {
-            ForEach(listSermons) { sermon in
-                Button {
-                    selectedSermon = sermon
-                } label: {
-                    SermonCardView(sermon: sermon)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(selectedSermon?.id == sermon.id ? Color.accentColor : Color.clear, lineWidth: 3)
-                        )
+        VStack(spacing: metrics.gridSpacing) {
+            // Continue Listening Card (if available and no active playback)
+            if audioManager.currentTrack == nil,
+               let info = continueListeningInfo {
+                ContinueListeningCardView(
+                    result: info,
+                    duration: nil, // Duration not available in list view
+                    onCardTap: info.hasMatchingSermon ? {
+                        selectedSermon = info.sermon
+                    } : nil,
+                    onResume: {
+                        audioManager.resumeListening(from: info)
+                    }
+                )
+                .padding(.top, 40)
+                .padding(.bottom, 0)
+            }
+            
+            // Sermons grid
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: metrics.minCardWidth), spacing: metrics.gridSpacing)],
+                spacing: metrics.gridSpacing
+            ) {
+                ForEach(listSermons) { sermon in
+                    Button {
+                        selectedSermon = sermon
+                    } label: {
+                        SermonCardView(sermon: sermon)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(selectedSermon?.id == sermon.id ? Color.accentColor : Color.clear, lineWidth: 3)
+                            )
+                    }
+                    .buttonStyle(SermonCardButtonStyle())
                 }
-                .buttonStyle(SermonCardButtonStyle())
             }
         }
     }
