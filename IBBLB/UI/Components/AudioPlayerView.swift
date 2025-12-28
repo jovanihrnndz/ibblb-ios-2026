@@ -8,7 +8,9 @@ struct AudioPlayerView: View {
     let subtitle: String?
     var showInfo: Bool = true
     
-    @StateObject private var controller = AudioPlaybackController.shared
+    @ObservedObject private var audioManager = AudioPlayerManager.shared
+    @State private var sliderValue: Double = 0
+    @State private var isDragging = false
     
     var body: some View {
         VStack(spacing: 12) {
@@ -30,23 +32,27 @@ struct AudioPlayerView: View {
             
             // Progress Slider
             VStack(spacing: 4) {
-                Slider(value: Binding(
-                    get: { controller.currentTime },
-                    set: { newValue in
-                        controller.currentTime = newValue
-                    }
-                ), in: 0...max(0, controller.duration)) { editing in
-                    controller.isScrubbing = editing
+                Slider(value: $sliderValue, in: 0...max(1, audioManager.duration)) { editing in
+                    isDragging = editing
+                    audioManager.isScrubbing = editing
                     if !editing {
-                        controller.seek(to: controller.currentTime)
+                        audioManager.seek(to: sliderValue)
                     }
                 }
                 .tint(.accentColor)
+                .onChange(of: audioManager.currentTime) { _, newValue in
+                    if !isDragging {
+                        sliderValue = newValue
+                    }
+                }
+                .onAppear {
+                    sliderValue = audioManager.currentTime
+                }
                 
                 HStack {
-                    Text(formatTime(controller.currentTime))
+                    Text(formatTime(isDragging ? sliderValue : audioManager.currentTime))
                     Spacer()
-                    Text(formatTime(controller.duration))
+                    Text(formatTime(audioManager.duration))
                 }
                 .font(.caption2)
                 .monospacedDigit()
@@ -55,7 +61,7 @@ struct AudioPlayerView: View {
             
             // Controls
             HStack(spacing: 40) {
-                Button(action: { controller.skip(by: -15) }) {
+                Button(action: { audioManager.skip(by: -15) }) {
                     Image(systemName: "gobackward.15")
                         .font(.title2)
                 }
@@ -66,15 +72,15 @@ struct AudioPlayerView: View {
                             .fill(Color.accentColor)
                             .frame(width: 64, height: 64)
                         
-                        Image(systemName: controller.isPlaying ? "pause.fill" : "play.fill")
+                        Image(systemName: audioManager.isPlaying ? "pause.fill" : "play.fill")
                             .font(.title)
                             .foregroundColor(.white)
-                            .offset(x: controller.isPlaying ? 0 : 2)
+                            .offset(x: audioManager.isPlaying ? 0 : 2)
                     }
                     .shadow(color: Color.accentColor.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
                 
-                Button(action: { controller.skip(by: 15) }) {
+                Button(action: { audioManager.skip(by: 15) }) {
                     Image(systemName: "goforward.15")
                         .font(.title2)
                 }
@@ -85,10 +91,10 @@ struct AudioPlayerView: View {
         .background(Color(.secondarySystemGroupedBackground))
         .cornerRadius(24)
         .onAppear {
-            controller.play(url: url)
+            audioManager.play(url: url, title: title, artworkURL: nil)
         }
         .onDisappear {
-            // Don't stop here - let controller manage lifecycle
+            // Don't stop here - let audioManager manage lifecycle
             // Audio can continue playing when view disappears
         }
     }
@@ -96,18 +102,15 @@ struct AudioPlayerView: View {
     // MARK: - Helper Methods
     
     private func togglePlayback() {
-        if controller.isPlaying {
-            controller.pause()
+        if audioManager.isPlaying {
+            audioManager.pause()
         } else {
-            controller.play(url: url)
+            audioManager.resume()
         }
     }
     
-    private func formatTime(_ seconds: Double) -> String {
-        guard seconds.isFinite else { return "0:00" }
-        let mins = Int(seconds) / 60
-        let secs = Int(seconds) % 60
-        return String(format: "%d:%02d", mins, secs)
+    private func formatTime(_ seconds: TimeInterval) -> String {
+        return AudioPlayerManager.formatTime(seconds)
     }
 }
 

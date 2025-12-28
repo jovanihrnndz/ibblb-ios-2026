@@ -9,31 +9,48 @@ class EventsViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     private let apiService: MobileAPIService
+    private var fetchTask: Task<Void, Never>?
     
     init(apiService: MobileAPIService = MobileAPIService()) {
         self.apiService = apiService
     }
     
     func refresh() async {
-        isLoading = true
-        errorMessage = nil
+        // Cancel previous task to prevent race conditions
+        fetchTask?.cancel()
+        
+        fetchTask = Task { @MainActor in
+            guard !Task.isCancelled else { return }
+            isLoading = true
+            errorMessage = nil
 
-        do {
-            let fetchedEvents = try await apiService.fetchEvents()
-            let upcomingEvents = filterUpcomingEvents(fetchedEvents)
-            self.events = upcomingEvents.sorted(by: { $0.startDate < $1.startDate })
-        } catch {
-            let nsError = error as NSError
-            if (nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled) || error is CancellationError {
-                // Silently handle cancellation
-                return
+            do {
+                let fetchedEvents = try await apiService.fetchEvents()
+                guard !Task.isCancelled else { return }
+                let upcomingEvents = filterUpcomingEvents(fetchedEvents)
+                self.events = upcomingEvents.sorted(by: { $0.startDate < $1.startDate })
+            } catch {
+                // Handle cancellation silently
+                if error is CancellationError {
+                    return
+                }
+                let nsError = error as NSError
+                if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                    return
+                }
+                
+                // Only show errors for actual failures
+                print("⚠️ API error fetching events: \(error)")
+                self.errorMessage = "No se pudieron cargar los eventos."
             }
             
-            print("⚠️ API error fetching events: \(error)")
-            self.errorMessage = "No se pudieron cargar los eventos."
+            // Only update loading state if task wasn't cancelled
+            if !Task.isCancelled {
+                isLoading = false
+            }
         }
         
-        isLoading = false
+        await fetchTask?.value
     }
 
     /// Filters events to only include upcoming ones.

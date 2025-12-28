@@ -17,23 +17,45 @@ class GivingViewModel: ObservableObject {
     @Published var totalGiven: Double = 0.0 // This would come from user account data
     
     private let apiService: MobileAPIService
+    private var fetchTask: Task<Void, Never>?
     
     init(apiService: MobileAPIService = MobileAPIService()) {
         self.apiService = apiService
     }
     
     func loadGivingPage() async {
-        isLoading = true
-        errorMessage = nil
+        // Cancel previous task to prevent race conditions
+        fetchTask?.cancel()
         
-        do {
-            givingPage = try await apiService.fetchGiving()
-        } catch {
-            errorMessage = "Failed to load giving information. Please try again."
-            print("Error loading giving page: \(error)")
+        fetchTask = Task { @MainActor in
+            guard !Task.isCancelled else { return }
+            isLoading = true
+            errorMessage = nil
+            
+            do {
+                givingPage = try await apiService.fetchGiving()
+                guard !Task.isCancelled else { return }
+            } catch {
+                // Handle cancellation silently
+                if error is CancellationError {
+                    return
+                }
+                let nsError = error as NSError
+                if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                    return
+                }
+                
+                errorMessage = "Failed to load giving information. Please try again."
+                print("Error loading giving page: \(error)")
+            }
+            
+            // Only update loading state if task wasn't cancelled
+            if !Task.isCancelled {
+                isLoading = false
+            }
         }
         
-        isLoading = false
+        await fetchTask?.value
     }
     
     func openGivingURL() {

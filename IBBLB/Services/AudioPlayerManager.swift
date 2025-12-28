@@ -297,7 +297,7 @@ final class AudioPlayerManager: ObservableObject {
 
     /// Seeks to the specified time
     func seek(to time: TimeInterval) {
-        guard let player else { return }
+        guard let player, duration > 0 else { return }
 
         let clampedTime = max(0, min(time, duration))
         self.currentTime = clampedTime
@@ -309,12 +309,20 @@ final class AudioPlayerManager: ObservableObject {
 
     /// Skips backward 15 seconds
     func skipBackward() {
-        seek(to: currentTime - 15)
+        skip(by: -15)
     }
 
     /// Skips forward 30 seconds
     func skipForward() {
-        seek(to: currentTime + 30)
+        skip(by: 30)
+    }
+
+    /// Skips forward or backward by the specified number of seconds
+    /// - Parameter seconds: Positive value to skip forward, negative to skip backward
+    func skip(by seconds: TimeInterval) {
+        guard duration > 0 else { return }
+        let newTime = max(0, min(currentTime + seconds, duration))
+        seek(to: newTime)
     }
 
     // MARK: - Time Formatting

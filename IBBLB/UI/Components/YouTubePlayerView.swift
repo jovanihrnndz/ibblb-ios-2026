@@ -25,6 +25,11 @@ struct YouTubePlayerView: UIViewRepresentable {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
         config.mediaTypesRequiringUserActionForPlayback = []
+        
+        // Enable Picture-in-Picture for video playback (iOS 15+)
+        if #available(iOS 15.0, *) {
+            config.allowsPictureInPictureMediaPlayback = true
+        }
 
         // Enable JavaScript (required for YouTube embeds)
         let preferences = WKWebpagePreferences()

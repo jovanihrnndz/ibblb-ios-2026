@@ -14,7 +14,7 @@ struct SermonDetailView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     private let outlineService = SanityOutlineService()
-    private let audioManager = AudioPlayerManager.shared
+    @ObservedObject private var audioManager = AudioPlayerManager.shared
 
     /// Video height scales with size class
     private var videoHeight: CGFloat {
