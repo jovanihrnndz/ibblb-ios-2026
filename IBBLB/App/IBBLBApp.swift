@@ -4,7 +4,7 @@ import SwiftUI
 struct IBBLBApp: App {
     var body: some Scene {
         WindowGroup {
-            AppRootView()
+            AdaptiveRootView()
         }
     }
 }

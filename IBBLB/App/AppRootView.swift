@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum AppTab {
+enum AppTab: String, Hashable {
     case sermons
     case live
     case events

@@ -9,15 +9,22 @@
 import SwiftUI
 
 struct BannerView: View {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    /// Banner height scales with size class
+    private var bannerHeight: CGFloat {
+        horizontalSizeClass == .regular ? 140 : 100
+    }
+
     var body: some View {
         GeometryReader { geometry in
             Image("churchBanner")
                 .resizable()
                 .scaledToFill()
-                .frame(width: geometry.size.width, height: 100)
+                .frame(width: geometry.size.width, height: bannerHeight)
                 .clipped()
         }
-        .frame(height: 100)
+        .frame(height: bannerHeight)
     }
 }
 

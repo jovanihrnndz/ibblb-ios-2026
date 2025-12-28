@@ -13,7 +13,8 @@ struct SermonsView: View {
     @State private var selectedSermon: Sermon?
     @Binding var hideTabBar: Bool
     @Namespace private var animationNamespace
-    
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     // Platform detection
     private var isTV: Bool {
         #if os(tvOS)
@@ -22,6 +23,16 @@ struct SermonsView: View {
         return false
         #endif
     }
+
+    /// True when on iPad or wide split-screen
+    private var useGridLayout: Bool {
+        horizontalSizeClass == .regular && !isTV
+    }
+
+    /// iPad grid configuration - larger cards with more spacing
+    private var iPadGridMinWidth: CGFloat { 400 }
+    private var iPadGridSpacing: CGFloat { 24 }
+    private var iPadHorizontalPadding: CGFloat { 24 }
     
     // All sermons for the list
     private var listSermons: [Sermon] {
@@ -64,8 +75,8 @@ struct SermonsView: View {
                 // Search bar overlaying content - content bleeds underneath
                 VStack(spacing: 0) {
                     UIKitSearchBar(text: $viewModel.searchText, placeholder: "Search sermons")
-                        .padding(.horizontal, isTV ? 60 : 16)
-                        .padding(.vertical, isTV ? 16 : 12)
+                        .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 16))
+                        .padding(.vertical, isTV ? 16 : (useGridLayout ? 16 : 12))
                     
                     // Search suggestions
                     if !searchSuggestions.isEmpty {
@@ -89,7 +100,7 @@ struct SermonsView: View {
                                 .buttonStyle(.plain)
                             }
                         }
-                        .padding(.horizontal, isTV ? 60 : 16)
+                        .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 16))
                         .padding(.vertical, 8)
                         .background(.regularMaterial)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -98,7 +109,7 @@ struct SermonsView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.top, 100) // Position below banner
+                .padding(.top, useGridLayout ? 140 : 100) // Position below banner (140 on iPad, 100 on iPhone)
             }
             .toolbar(.hidden, for: .navigationBar)
             .task {
@@ -127,9 +138,9 @@ struct SermonsView: View {
                     sermonsListContent
                 }
             }
-            .padding(.horizontal, isTV ? 60 : 16)
-            .padding(.top, isTV ? 24 : 50) // Small padding - content starts just below search bar, then scrolls under
-            .padding(.bottom, isTV ? 32 : 16)
+            .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 16))
+            .padding(.top, isTV ? 24 : (useGridLayout ? 60 : 50)) // More top padding on iPad
+            .padding(.bottom, isTV ? 32 : (useGridLayout ? 24 : 16))
         }
         .scrollIndicators(.hidden)
         .scrollDismissesKeyboard(.interactively) // Dismiss keyboard when scrolling
@@ -146,15 +157,34 @@ struct SermonsView: View {
         .frame(maxWidth: .infinity, minHeight: 200)
     }
     
+    @ViewBuilder
     private var sermonsListContent: some View {
-        LazyVStack(spacing: isTV ? 32 : 16) {
-            ForEach(listSermons) { sermon in
-                Button {
-                    selectedSermon = sermon
-                } label: {
-                    SermonCardView(sermon: sermon)
+        if useGridLayout {
+            // iPad: adaptive grid with larger cards (typically 2 columns)
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: iPadGridMinWidth), spacing: iPadGridSpacing)],
+                spacing: iPadGridSpacing
+            ) {
+                ForEach(listSermons) { sermon in
+                    Button {
+                        selectedSermon = sermon
+                    } label: {
+                        SermonCardView(sermon: sermon)
+                    }
+                    .buttonStyle(SermonCardButtonStyle())
                 }
-                .buttonStyle(SermonCardButtonStyle())
+            }
+        } else {
+            // iPhone / tvOS: single column list
+            LazyVStack(spacing: isTV ? 32 : 16) {
+                ForEach(listSermons) { sermon in
+                    Button {
+                        selectedSermon = sermon
+                    } label: {
+                        SermonCardView(sermon: sermon)
+                    }
+                    .buttonStyle(SermonCardButtonStyle())
+                }
             }
         }
     }

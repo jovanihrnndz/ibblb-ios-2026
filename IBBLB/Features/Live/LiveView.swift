@@ -4,9 +4,14 @@ import Combine
 struct LiveView: View {
     @StateObject private var viewModel = LiveViewModel()
     @State private var activeVideoId: String? = nil
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     // Website-aligned dark blue/black color
     private let webDarkColor = Color(red: 22/255, green: 26/255, blue: 35/255)
+
+    private var isRegularWidth: Bool {
+        horizontalSizeClass == .regular
+    }
 
     var body: some View {
         NavigationStack {
@@ -21,58 +26,14 @@ struct LiveView: View {
                     if viewModel.isLoading && viewModel.status == nil {
                         ProgressView()
                     } else if let status = viewModel.status {
-                        ScrollView(showsIndicators: false) {
-                            VStack(spacing: 32) {
-                                // 1. Header & Main Hero (Countdown or Live Stream)
-                                VStack(spacing: 24) {
-                                    Text("Únete a nosotros para servicios de\nadoración en vivo")
-                                        .font(.system(size: 24, weight: .bold))
-                                        .multilineTextAlignment(.center)
-                                        .foregroundColor(.black)
-                                        .padding(.horizontal, 20)
-
-                                    if status.state == .live,
-                                       let rawVideoId = status.event?.youtubeVideoId,
-                                       let videoId = YouTubeVideoIDExtractor.extractVideoID(from: rawVideoId) {
-                                        // LIVE: Show Video Player Directly (matching SermonDetailView styling)
-                                        YouTubePlayerView(videoID: videoId)
-                                            .aspectRatio(16/9, contentMode: .fit)
-                                            .cornerRadius(12)
-                                            .frame(maxWidth: .infinity)
-                                            .padding(.horizontal)
-                                    } else if status.state == .upcoming, status.event != nil {
-                                        // UPCOMING: Show Countdown Card
-                                        WebStyleCountdownCard(status: status, viewModel: viewModel, darkColor: webDarkColor)
-                                            .padding(.horizontal)
-                                    } else {
-                                        // OFFLINE: No upcoming service scheduled
-                                        NoUpcomingServiceCard()
-                                            .padding(.horizontal)
-                                    }
-                                }
-
-                                // 2. Previous Service Section
-                                if let lastEvent = status.lastEvent {
-                                    VStack(spacing: 16) {
-                                        Text("Servicio Anterior")
-                                            .font(.title3)
-                                            .fontWeight(.bold)
-                                            .foregroundColor(.black)
-
-                                        PreviousServiceVideoCard(event: lastEvent)
-                                    }
-                                    .padding(.horizontal)
-                                }
-
-                                // 3. Info Section (Service Times)
-                                ServiceTimesCard()
-                                    .padding(.horizontal)
-                                    .padding(.bottom, 40)
+                        Group {
+                            if isRegularWidth {
+                                // iPad: No-scroll layout
+                                iPadLiveContent(status: status)
+                            } else {
+                                // iPhone: Scrollable layout
+                                iPhoneLiveContent(status: status)
                             }
-                            .padding(.top, 8)
-                        }
-                        .refreshable {
-                            await viewModel.refresh()
                         }
                         // Inline Video Player Overlay (matching SermonDetailView player styling)
                         .overlay {
@@ -126,6 +87,114 @@ struct LiveView: View {
             .onDisappear {
                 viewModel.onDisappear()
             }
+        }
+    }
+
+    // MARK: - iPad Layout (No Scroll)
+
+    @ViewBuilder
+    private func iPadLiveContent(status: LivestreamStatus) -> some View {
+        VStack(spacing: 16) {
+            // Header
+            Text("Únete a nosotros para servicios de adoración en vivo")
+                .font(.system(size: 22, weight: .bold))
+                .multilineTextAlignment(.center)
+                .foregroundColor(.black)
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
+
+            // Main content - horizontal layout
+            HStack(alignment: .top, spacing: 24) {
+                // Left: Countdown or Live status
+                VStack(spacing: 16) {
+                    if status.state == .live,
+                       let rawVideoId = status.event?.youtubeVideoId,
+                       let videoId = YouTubeVideoIDExtractor.extractVideoID(from: rawVideoId) {
+                        YouTubePlayerView(videoID: videoId)
+                            .aspectRatio(16/9, contentMode: .fit)
+                            .cornerRadius(12)
+                    } else if status.state == .upcoming, status.event != nil {
+                        WebStyleCountdownCard(status: status, viewModel: viewModel, darkColor: webDarkColor)
+                    } else {
+                        NoUpcomingServiceCard()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+
+                // Right: Previous service video
+                if let lastEvent = status.lastEvent {
+                    VStack(spacing: 12) {
+                        Text("Servicio Anterior")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+
+                        PreviousServiceVideoCard(event: lastEvent)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            .padding(.horizontal, 24)
+
+            // Service Info Card
+            ServiceInfoCardView()
+                .frame(maxWidth: 900)
+                .padding(.horizontal, 24)
+
+            Spacer()
+        }
+    }
+
+    // MARK: - iPhone Layout (Scrollable)
+
+    @ViewBuilder
+    private func iPhoneLiveContent(status: LivestreamStatus) -> some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 32) {
+                // 1. Header & Main Hero (Countdown or Live Stream)
+                VStack(spacing: 24) {
+                    Text("Únete a nosotros para\nservicios en vivo")
+                        .font(.system(size: 24, weight: .bold))
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 20)
+
+                    if status.state == .live,
+                       let rawVideoId = status.event?.youtubeVideoId,
+                       let videoId = YouTubeVideoIDExtractor.extractVideoID(from: rawVideoId) {
+                        YouTubePlayerView(videoID: videoId)
+                            .aspectRatio(16/9, contentMode: .fit)
+                            .cornerRadius(12)
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal)
+                    } else if status.state == .upcoming, status.event != nil {
+                        WebStyleCountdownCard(status: status, viewModel: viewModel, darkColor: webDarkColor)
+                            .padding(.horizontal)
+                    } else {
+                        NoUpcomingServiceCard()
+                            .padding(.horizontal)
+                    }
+                }
+
+                // 2. Previous Service Section
+                if let lastEvent = status.lastEvent {
+                    VStack(spacing: 16) {
+                        Text("Servicio Anterior")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+
+                        PreviousServiceVideoCard(event: lastEvent)
+                    }
+                    .padding(.horizontal)
+                }
+
+                // 3. Service Info Section
+                ServiceInfoCardView()
+                    .padding(.horizontal)
+                    .padding(.bottom, 40)
+            }
+            .padding(.top, 8)
         }
     }
 }

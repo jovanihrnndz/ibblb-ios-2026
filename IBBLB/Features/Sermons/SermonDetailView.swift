@@ -11,26 +11,44 @@ struct SermonDetailView: View {
     let sermon: Sermon
     @State private var outline: SermonOutline?
     @State private var isOutlineLoading = false
-    
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     private let outlineService = SanityOutlineService()
     private let audioManager = AudioPlayerManager.shared
-    
-    // Video sizing
-    private let fullVideoHeight: CGFloat = 220
+
+    /// Video height scales with size class
+    private var videoHeight: CGFloat {
+        horizontalSizeClass == .regular ? 480 : 220
+    }
+
+    /// Max content width for readability on wide screens
+    private var maxContentWidth: CGFloat {
+        horizontalSizeClass == .regular ? 900 : .infinity
+    }
+
+    /// Section spacing scales with size class
+    private var sectionSpacing: CGFloat {
+        horizontalSizeClass == .regular ? 24 : 16
+    }
+
+    /// Horizontal padding scales with size class
+    private var horizontalPadding: CGFloat {
+        horizontalSizeClass == .regular ? 24 : 16
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             BannerView()
                 .frame(maxWidth: .infinity)
-            
+
             ZStack(alignment: .top) {
                 // Scrollable content
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: sectionSpacing) {
                         // Spacer for video
                         Color.clear
-                            .frame(height: fullVideoHeight + 16)
-                        
+                            .frame(height: videoHeight + 16)
+
                         // Metadata
                         if let speaker = sermon.speaker, !speaker.isEmpty {
                             HStack(spacing: 6) {
@@ -55,7 +73,7 @@ struct SermonDetailView: View {
                                         .foregroundColor(.secondary)
                                 }
                             }
-                            
+
                             if let audioURL = audioURL {
                                 Button {
                                     playAudio(url: audioURL)
@@ -76,7 +94,7 @@ struct SermonDetailView: View {
                                 }
                                 .buttonStyle(.plain)
                             }
-                            
+
                             Spacer()
                         }
 
@@ -86,19 +104,23 @@ struct SermonDetailView: View {
                                 .padding(.top, 8)
                         }
                     }
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, horizontalPadding)
                     .padding(.top, 8)
                     .padding(.bottom, 100)
+                    .frame(maxWidth: maxContentWidth, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
-                
+
                 // Sticky video overlay with background
                 VStack(spacing: 0) {
                     videoPlayerSection
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, horizontalPadding)
                         .padding(.top, 8)
                         .padding(.bottom, 8)
+                        .frame(maxWidth: maxContentWidth)
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .background(Color(.systemBackground))
-                    
+
                     Spacer()
                 }
             }
@@ -106,6 +128,7 @@ struct SermonDetailView: View {
         .background(Color(.systemBackground))
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
+        .enableSwipeBack()
         .toolbar {
             ToolbarItem(placement: .principal) {
                 EmptyView()
@@ -126,7 +149,7 @@ struct SermonDetailView: View {
                 .aspectRatio(16/9, contentMode: .fit)
                 .cornerRadius(12)
                 .frame(maxWidth: .infinity)
-                .frame(height: fullVideoHeight)
+                .frame(height: videoHeight)
                 .id(videoId)
         }
     }
@@ -150,29 +173,29 @@ struct SermonDetailView: View {
     private func playAudio(url: URL) {
         let artworkURL: URL? = {
             var videoId: String?
-            
+
             if let thumbnailString = sermon.thumbnailUrl,
                !thumbnailString.isEmpty {
                 videoId = YouTubeThumbnail.videoId(from: thumbnailString)
             }
-            
+
             if videoId == nil,
                let youtubeId = sermon.youtubeVideoId,
                !youtubeId.trimmingCharacters(in: .whitespaces).isEmpty {
                 videoId = YouTubeVideoIDExtractor.extractVideoID(from: youtubeId)
             }
-            
+
             if let id = videoId {
                 return YouTubeThumbnail.url(videoId: id, quality: .maxres)
             }
-            
+
             if let thumbnailString = sermon.thumbnailUrl,
                !thumbnailString.isEmpty,
                let url = URL(string: thumbnailString),
                !YouTubeThumbnail.isYouTubeThumbnail(url) {
                 return url
             }
-            
+
             return nil
         }()
 
