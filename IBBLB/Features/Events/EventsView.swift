@@ -3,17 +3,28 @@ import Combine
 
 struct EventsView: View {
     @StateObject private var viewModel = EventsViewModel()
-    
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    /// True when on iPad or wide split-screen
+    private var useGridLayout: Bool {
+        horizontalSizeClass == .regular
+    }
+
+    /// iPad grid configuration
+    private var iPadGridMinWidth: CGFloat { 400 }
+    private var iPadGridSpacing: CGFloat { 24 }
+    private var iPadHorizontalPadding: CGFloat { 24 }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 BannerView()
                     .frame(maxWidth: .infinity)
-                
+
                 ZStack {
                     Color(.systemGroupedBackground)
                         .ignoresSafeArea()
-                    
+
                     if viewModel.isLoading && viewModel.events.isEmpty {
                         ProgressView()
                     } else if let error = viewModel.errorMessage {
@@ -35,16 +46,10 @@ struct EventsView: View {
                         emptyState
                     } else {
                         ScrollView {
-                            LazyVStack(spacing: 20) {
-                                ForEach(viewModel.events) { event in
-                                    NavigationLink(value: event) {
-                                        eventCard(event: event)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                }
-                            }
-                            .padding([.horizontal, .bottom])
-                            .padding(.top, 8)
+                            eventsListContent
+                                .padding(.horizontal, useGridLayout ? iPadHorizontalPadding : 16)
+                                .padding(.bottom, 16)
+                                .padding(.top, 8)
                         }
                         .navigationDestination(for: Event.self) { event in
                             EventDetailView(event: event)
@@ -55,6 +60,34 @@ struct EventsView: View {
                 .toolbar(.hidden, for: .navigationBar)
                 .task {
                     await viewModel.refresh()
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var eventsListContent: some View {
+        if useGridLayout {
+            // iPad: adaptive grid with larger cards
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: iPadGridMinWidth), spacing: iPadGridSpacing)],
+                spacing: iPadGridSpacing
+            ) {
+                ForEach(viewModel.events) { event in
+                    NavigationLink(value: event) {
+                        eventCard(event: event)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+        } else {
+            // iPhone: single column list
+            LazyVStack(spacing: 20) {
+                ForEach(viewModel.events) { event in
+                    NavigationLink(value: event) {
+                        eventCard(event: event)
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
         }

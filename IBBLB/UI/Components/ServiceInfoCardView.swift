@@ -14,10 +14,10 @@ struct ServiceInfoCardView: View {
     // MARK: - Church Info Constants
 
     private let churchName = "Iglesia Bautista Bíblica de Long Beach"
-    private let address = "1235 E Artesia Blvd, Long Beach, CA 90805"
+    private let address = "3824 Woodruff Ave, Long Beach, CA 90808"
     private let sundayTime = "Domingo 12:00 PM"
     private let thursdayTime = "Jueves 7:30 PM"
-    private let phone = "(562) 422-8595"
+    private let phone = "(562) 912-7107"
     private let email = "info@ibblb.org"
 
     private var isRegularWidth: Bool {

@@ -94,54 +94,60 @@ struct LiveView: View {
 
     @ViewBuilder
     private func iPadLiveContent(status: LivestreamStatus) -> some View {
-        VStack(spacing: 16) {
-            // Header
-            Text("Únete a nosotros para servicios de adoración en vivo")
-                .font(.system(size: 22, weight: .bold))
-                .multilineTextAlignment(.center)
-                .foregroundColor(.black)
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
+        ScrollView {
+            VStack(spacing: 24) {
+                // Header
+                Text("Únete a nosotros para servicios de adoración en vivo")
+                    .font(.system(size: 22, weight: .bold))
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
 
-            // Main content - horizontal layout
-            HStack(alignment: .top, spacing: 24) {
-                // Left: Countdown or Live status
-                VStack(spacing: 16) {
-                    if status.state == .live,
-                       let rawVideoId = status.event?.youtubeVideoId,
-                       let videoId = YouTubeVideoIDExtractor.extractVideoID(from: rawVideoId) {
-                        YouTubePlayerView(videoID: videoId)
-                            .aspectRatio(16/9, contentMode: .fit)
-                            .cornerRadius(12)
-                    } else if status.state == .upcoming, status.event != nil {
-                        WebStyleCountdownCard(status: status, viewModel: viewModel, darkColor: webDarkColor)
-                    } else {
-                        NoUpcomingServiceCard()
-                    }
-                }
-                .frame(maxWidth: .infinity)
-
-                // Right: Previous service video
-                if let lastEvent = status.lastEvent {
-                    VStack(spacing: 12) {
-                        Text("Servicio Anterior")
+                // Main content - horizontal layout
+                HStack(alignment: .top, spacing: 24) {
+                    // Left: Countdown or Live status
+                    VStack(alignment: .center, spacing: 12) {
+                        Text(status.state == .live ? "En Vivo" : "Próximo Servicio")
                             .font(.headline)
                             .fontWeight(.bold)
                             .foregroundColor(.black)
 
-                        PreviousServiceVideoCard(event: lastEvent)
+                        if status.state == .live,
+                           let rawVideoId = status.event?.youtubeVideoId,
+                           let videoId = YouTubeVideoIDExtractor.extractVideoID(from: rawVideoId) {
+                            YouTubePlayerView(videoID: videoId)
+                                .aspectRatio(16/9, contentMode: .fit)
+                                .cornerRadius(12)
+                        } else if status.state == .upcoming, status.event != nil {
+                            WebStyleCountdownCard(status: status, viewModel: viewModel, darkColor: webDarkColor)
+                        } else {
+                            NoUpcomingServiceCard()
+                        }
                     }
                     .frame(maxWidth: .infinity)
-                }
-            }
-            .padding(.horizontal, 24)
 
-            // Service Info Card
-            ServiceInfoCardView()
-                .frame(maxWidth: 900)
+                    // Right: Previous service video
+                    if let lastEvent = status.lastEvent {
+                        VStack(alignment: .center, spacing: 12) {
+                            Text("Servicio Anterior")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+
+                            PreviousServiceVideoCard(event: lastEvent)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }
                 .padding(.horizontal, 24)
 
-            Spacer()
+                // Service Info Card
+                ServiceInfoCardView()
+                    .frame(maxWidth: 900)
+                    .padding(.horizontal, 24)
+            }
+            .padding(.bottom, 24)
         }
     }
 
@@ -211,44 +217,51 @@ struct WebStyleCountdownCard: View {
     let darkColor: Color
 
     var body: some View {
-        VStack(spacing: 24) {
-            Text("COMIENZA EN")
-                .font(.caption)
-                .fontWeight(.bold)
-                .foregroundColor(.gray)
-                .tracking(1.5)
+        ZStack {
+            // 16:9 aspect ratio container
+            Color.clear
+                .aspectRatio(16/9, contentMode: .fit)
 
-            // Countdown Digits
-            HStack(spacing: 12) {
-                if timeComponents.d > 0 {
-                    // >= 1 day: Show Days / Hours / Minutes
-                    timeBlock(value: days, label: "DÍAS")
-                    timeBlock(value: hours, label: "HORAS")
-                    timeBlock(value: minutes, label: "MINUTOS")
-                } else {
-                    // < 1 day: Show Hours / Minutes / Seconds
-                    timeBlock(value: hours, label: "HORAS")
-                    timeBlock(value: minutes, label: "MINUTOS")
-                    timeBlock(value: seconds, label: "SEGUNDOS")
+            // Card content centered in the container
+            VStack(spacing: 24) {
+                Text("COMIENZA EN")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.gray)
+                    .tracking(1.5)
+
+                // Countdown Digits
+                HStack(spacing: 12) {
+                    if timeComponents.d > 0 {
+                        // >= 1 day: Show Days / Hours / Minutes
+                        timeBlock(value: days, label: "DÍAS")
+                        timeBlock(value: hours, label: "HORAS")
+                        timeBlock(value: minutes, label: "MINUTOS")
+                    } else {
+                        // < 1 day: Show Hours / Minutes / Seconds
+                        timeBlock(value: hours, label: "HORAS")
+                        timeBlock(value: minutes, label: "MINUTOS")
+                        timeBlock(value: seconds, label: "SEGUNDOS")
+                    }
+                }
+
+                Divider()
+                    .padding(.horizontal, 20)
+
+                // Detailed Date
+                if let date = status.event?.startsAt {
+                    HStack(spacing: 6) {
+                        Image(systemName: "clock")
+                        Text(date.formatted(date: .long, time: .shortened))
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.black)
                 }
             }
-
-            Divider()
-                .padding(.horizontal, 20)
-
-            // Detailed Date
-            if let date = status.event?.startsAt {
-                HStack(spacing: 6) {
-                    Image(systemName: "clock")
-                    Text(date.formatted(date: .long, time: .shortened))
-                }
-                .font(.subheadline)
-                .fontWeight(.bold)
-                .foregroundColor(.black)
-            }
+            .padding(.vertical, 32)
+            .padding(.horizontal, 16)
         }
-        .padding(.vertical, 32)
-        .padding(.horizontal, 16)
         .background(Color.white)
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 5)
@@ -320,22 +333,28 @@ struct PreviousServiceVideoCard: View {
 
 struct NoUpcomingServiceCard: View {
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "calendar.badge.clock")
-                .font(.system(size: 40))
-                .foregroundColor(.secondary)
+        ZStack {
+            // 16:9 aspect ratio container
+            Color.clear
+                .aspectRatio(16/9, contentMode: .fit)
 
-            Text("No hay servicio programado")
-                .font(.headline)
-                .foregroundColor(.primary)
+            VStack(spacing: 16) {
+                Image(systemName: "calendar.badge.clock")
+                    .font(.system(size: 40))
+                    .foregroundColor(.secondary)
 
-            Text("Consulta los horarios de servicio abajo")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
+                Text("No hay servicio programado")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+
+                Text("Consulta los horarios de servicio abajo")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.vertical, 32)
+            .padding(.horizontal, 16)
         }
-        .padding(.vertical, 32)
-        .padding(.horizontal, 16)
         .frame(maxWidth: .infinity)
         .background(Color.white)
         .cornerRadius(16)
