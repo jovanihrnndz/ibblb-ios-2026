@@ -34,29 +34,46 @@ actor PlaylistRegistryService {
 
     /// Get the playlist registry, fetching from cache or network as needed
     func getRegistry() async -> [PlaylistRegistryItem] {
-        // Return in-memory cache if available
-        if let cached = cachedRegistry {
+        // Return in-memory cache if available and not empty
+        if let cached = cachedRegistry, !cached.isEmpty {
+            #if DEBUG
+            print("📦 Using in-memory cache (\(cached.count) items)")
+            #endif
             return cached
         }
 
-        // Try to load from UserDefaults cache
-        if let cache = loadCacheFromDisk(), cache.isValid() {
+        // Try to load from UserDefaults cache (only if valid AND not empty)
+        if let cache = loadCacheFromDisk(), cache.isValid(), !cache.items.isEmpty {
             cachedRegistry = cache.items
+            #if DEBUG
+            print("💾 Loaded from disk cache (\(cache.items.count) items)")
+            #endif
             return cache.items
         }
 
         // Fetch from network
         do {
             let items = try await fetchFromNetwork()
+            // If network returns empty, use fallback (table might not exist)
+            if items.isEmpty {
+                #if DEBUG
+                print("⚠️ Network returned empty, using fallback")
+                #endif
+                let fallback = loadFallbackRegistry()
+                cachedRegistry = fallback
+                return fallback
+            }
             cachedRegistry = items
             saveCacheToDisk(items: items)
             return items
         } catch {
             #if DEBUG
-            print("❌ PlaylistRegistry fetch failed: \(error)")
+            print("❌ Network failed: \(error), using fallback")
             #endif
             // Fall back to bundled JSON
-            return loadFallbackRegistry()
+            let fallback = loadFallbackRegistry()
+            cachedRegistry = fallback
+            return fallback
         }
     }
 
@@ -64,6 +81,13 @@ actor PlaylistRegistryService {
     func refreshRegistry() async -> [PlaylistRegistryItem] {
         do {
             let items = try await fetchFromNetwork()
+            // If network returns empty, use fallback
+            if items.isEmpty {
+                #if DEBUG
+                print("⚠️ PlaylistRegistry refresh returned empty, using fallback")
+                #endif
+                return loadFallbackRegistry()
+            }
             cachedRegistry = items
             saveCacheToDisk(items: items)
             return items
@@ -79,6 +103,10 @@ actor PlaylistRegistryService {
     /// Search playlists by query string with human-friendly matching
     func searchPlaylists(_ query: String) async -> PlaylistSearchResult {
         let registry = await getRegistry()
+
+        #if DEBUG
+        print("🔍 PlaylistRegistry search: query='\(query)', registry has \(registry.count) items")
+        #endif
 
         guard !query.trimmingCharacters(in: .whitespaces).isEmpty else {
             return PlaylistSearchResult(playlists: [])
@@ -96,6 +124,10 @@ actor PlaylistRegistryService {
         if !queryWithoutYears.isEmpty {
             uniqueVariants.insert(queryWithoutYears)
         }
+
+        #if DEBUG
+        print("🔍 Normalized: '\(normalizedQuery)', years: \(queryYears), variants: \(uniqueVariants)")
+        #endif
 
         // Build search tokens from query variants
         var searchTokens = Set<String>()
@@ -201,6 +233,14 @@ actor PlaylistRegistryService {
         print("✅ PlaylistRegistry fetched \(items.count) items from network")
         #endif
 
+        // If network returns empty, treat as error and fall back
+        if items.isEmpty {
+            #if DEBUG
+            print("⚠️ PlaylistRegistry network returned 0 items, will use fallback")
+            #endif
+            throw APIError.invalidResponse
+        }
+
         return items
     }
 
@@ -265,7 +305,8 @@ actor PlaylistRegistryService {
         do {
             let data = try Data(contentsOf: url)
             let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            // Don't use convertFromSnakeCase - the CodingKeys already define the mapping
+            // The JSON uses snake_case keys which match the CodingKeys definitions
             let items = try decoder.decode([PlaylistRegistryItem].self, from: data)
             #if DEBUG
             print("✅ PlaylistRegistry loaded \(items.count) items from fallback")

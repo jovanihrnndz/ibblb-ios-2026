@@ -96,7 +96,9 @@ struct MobileAPIService {
                 if let search = search, !search.isEmpty {
                     // Note: The actual sanitization happens in fetchSermons
                     // This assumes the search parameter passed here is already sanitized
-                    items.append(URLQueryItem(name: "title", value: "ilike.*\(search)*"))
+                    // Search across title and description using OR filter
+                    // Note: Speaker name is typically embedded in the title (e.g., "Sermon Title - Speaker Name")
+                    items.append(URLQueryItem(name: "or", value: "(title.ilike.*\(search)*,description.ilike.*\(search)*)"))
                 }
 
                 if let tag = tag, !tag.isEmpty {
@@ -199,10 +201,17 @@ struct MobileAPIService {
     func fetchSermonsByPlaylistIds(_ playlistIds: [String], limit: Int? = nil) async throws -> [Sermon] {
         guard !playlistIds.isEmpty else { return [] }
 
+        #if DEBUG
+        print("🌐 API: Fetching sermons for playlist IDs: \(playlistIds)")
+        #endif
+
         do {
             let response: [Sermon] = try await client.request(
                 SupabaseEndpoint.sermonsByPlaylistIds(playlistIds: playlistIds, limit: limit)
             )
+            #if DEBUG
+            print("🌐 API: Got \(response.count) sermons for playlist query")
+            #endif
             return response
         } catch {
             let nsError = error as NSError

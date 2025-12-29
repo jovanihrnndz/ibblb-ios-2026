@@ -128,10 +128,14 @@ class SermonsViewModel: ObservableObject {
         let playlistResult = await PlaylistRegistryService.shared.searchPlaylists(query)
 
         #if DEBUG
-        print("🔍 Playlist search for '\(query)': \(playlistResult.playlists.count) matches")
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        print("🔍 HYBRID SEARCH for '\(query)'")
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        print("📋 Playlist matches: \(playlistResult.playlists.count)")
         for playlist in playlistResult.playlists {
-            print("   - \(playlist.title) (year: \(playlist.year ?? 0))")
+            print("   → \(playlist.title) | ID: \(playlist.youtubePlaylistId)")
         }
+        print("📋 Playlist IDs to query: \(playlistResult.playlistIds)")
         #endif
 
         // Step 2: Parallel fetch - sermons by playlist IDs + text search
@@ -141,7 +145,10 @@ class SermonsViewModel: ObservableObject {
         let (fromPlaylists, fromText) = try await (playlistSermons, textSermons)
 
         #if DEBUG
-        print("🔍 Playlist sermons: \(fromPlaylists.count), Text sermons: \(fromText.count)")
+        print("📊 Results: Playlist sermons=\(fromPlaylists.count), Text sermons=\(fromText.count)")
+        if fromPlaylists.isEmpty && playlistResult.hasMatches {
+            print("⚠️ WARNING: Playlists matched but no sermons found! Check playlist_id in sermons table.")
+        }
         #endif
 
         // Step 3: Combine and deduplicate by sermon ID

@@ -193,7 +193,20 @@ enum SearchUtilities: Sendable {
             )
         }
 
-        // jovenes/youth synonyms
+        // jovenes/youth synonyms (including common misspellings)
+        // Common misspellings: joenes, jovnes, joven, jovens
+        let jovenesMisspellings = ["joenes", "jovnes", "joven", "jovens"]
+        for misspelling in jovenesMisspellings {
+            if normalized.contains(misspelling) {
+                variants.insert(
+                    normalized.replacingOccurrences(of: misspelling, with: "jovenes")
+                )
+                variants.insert(
+                    normalized.replacingOccurrences(of: misspelling, with: "youth")
+                )
+            }
+        }
+
         if normalized.contains("jovenes") {
             variants.insert(
                 normalized.replacingOccurrences(
