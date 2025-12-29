@@ -1,0 +1,93 @@
+[
+  {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "youtube_playlist_id": "PL5NMvYQjJDiAZ2GRDJMJxWjeHH-SNE3aG",
+    "title": "Predicaciones 2025",
+    "kind": "year_bucket",
+    "content_type": "sermon",
+    "series_id": "predicaciones",
+    "year": 2025,
+    "slug": "predicaciones-2025",
+    "tags": ["series:predicaciones", "year:2025", "kind:year_bucket", "content:sermon"],
+    "aliases": ["predicaciones", "sermons", "sermones"],
+    "short_code": "p"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000002",
+    "youtube_playlist_id": "PL5NMvYQjJDiDbdfoGGf7Wj2GTNPu3mRnX",
+    "title": "Conferencia de Jóvenes 2025",
+    "kind": "event",
+    "content_type": "sermon",
+    "series_id": "youth-conference",
+    "year": 2025,
+    "slug": "youth-conference-2025",
+    "tags": ["series:youth-conference", "year:2025", "kind:event", "content:sermon"],
+    "aliases": ["youth conference", "conferencia de jovenes", "jovenes", "youth"],
+    "short_code": "yc"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000003",
+    "youtube_playlist_id": "PLACEHOLDER_FUNDAMENTOS_2025",
+    "title": "Conferencia Los Fundamentos 2025",
+    "kind": "event",
+    "content_type": "sermon",
+    "series_id": "fundamentos",
+    "year": 2025,
+    "slug": "fundamentos-2025",
+    "tags": ["series:fundamentos", "year:2025", "kind:event", "content:sermon"],
+    "aliases": ["fundamentos", "conferencia los fundamentos", "the fundamentals"],
+    "short_code": "f"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000004",
+    "youtube_playlist_id": "PLACEHOLDER_DAMAS_2025",
+    "title": "Conferencia de Damas 2025",
+    "kind": "event",
+    "content_type": "sermon",
+    "series_id": "damas",
+    "year": 2025,
+    "slug": "damas-2025",
+    "tags": ["series:damas", "year:2025", "kind:event", "content:sermon"],
+    "aliases": ["damas", "conferencia de damas", "ladies conference", "women"],
+    "short_code": "d"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000005",
+    "youtube_playlist_id": "PLACEHOLDER_ANUNCIOS",
+    "title": "Anuncios",
+    "kind": "category",
+    "content_type": "announcement",
+    "series_id": "announcements",
+    "year": null,
+    "slug": "announcements",
+    "tags": ["series:announcements", "kind:category", "content:announcement"],
+    "aliases": ["anuncios", "announcements"],
+    "short_code": null
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000006",
+    "youtube_playlist_id": "PLACEHOLDER_MUSICA",
+    "title": "Música",
+    "kind": "category",
+    "content_type": "music",
+    "series_id": "music",
+    "year": null,
+    "slug": "music",
+    "tags": ["series:music", "kind:category", "content:music"],
+    "aliases": ["music", "musica", "songs", "canciones"],
+    "short_code": null
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000007",
+    "youtube_playlist_id": "PLACEHOLDER_MOVIES_SKITS",
+    "title": "Movies & Skits",
+    "kind": "category",
+    "content_type": "skit",
+    "series_id": "movies-skits",
+    "year": null,
+    "slug": "movies-skits",
+    "tags": ["series:movies-skits", "kind:category", "content:skit"],
+    "aliases": ["skits", "movies", "movies skits", "movies and skits", "dramas"],
+    "short_code": null
+  }
+]

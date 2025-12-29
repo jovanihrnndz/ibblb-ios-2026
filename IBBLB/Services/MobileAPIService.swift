@@ -64,6 +64,8 @@ struct MobileAPIService {
         case livestreamEvents
         case events
         case sermons(limit: Int?, offset: Int?, search: String?, tag: String?, year: Int?)
+        case sermonsByPlaylistIds(playlistIds: [String], limit: Int?)
+        case playlistRegistry
         
         var method: HTTPMethod { .get }
         
@@ -71,7 +73,8 @@ struct MobileAPIService {
             switch self {
             case .livestreamEvents: return "/rest/v1/livestream_events"
             case .events: return "/rest/v1/events"
-            case .sermons: return "/rest/v1/sermons"
+            case .sermons, .sermonsByPlaylistIds: return "/rest/v1/sermons"
+            case .playlistRegistry: return "/rest/v1/playlist_registry"
             }
         }
         
@@ -109,6 +112,27 @@ struct MobileAPIService {
                 }
 
                 return items
+
+            case .sermonsByPlaylistIds(let playlistIds, let limit):
+                var items = [
+                    URLQueryItem(name: "select", value: "*"),
+                    URLQueryItem(name: "order", value: "date.desc")
+                ]
+                if let limit = limit {
+                    items.append(URLQueryItem(name: "limit", value: "\(limit)"))
+                }
+                // Filter by playlist_id using PostgREST 'in' operator
+                if !playlistIds.isEmpty {
+                    let idsString = playlistIds.joined(separator: ",")
+                    items.append(URLQueryItem(name: "playlist_id", value: "in.(\(idsString))"))
+                }
+                return items
+
+            case .playlistRegistry:
+                return [
+                    URLQueryItem(name: "select", value: "*"),
+                    URLQueryItem(name: "order", value: "year.desc.nullslast,title.asc")
+                ]
             }
         }
         
@@ -170,7 +194,55 @@ struct MobileAPIService {
             throw error
         }
     }
-    
+
+    /// Fetch sermons by playlist IDs (for hybrid search)
+    func fetchSermonsByPlaylistIds(_ playlistIds: [String], limit: Int? = nil) async throws -> [Sermon] {
+        guard !playlistIds.isEmpty else { return [] }
+
+        do {
+            let response: [Sermon] = try await client.request(
+                SupabaseEndpoint.sermonsByPlaylistIds(playlistIds: playlistIds, limit: limit)
+            )
+            return response
+        } catch {
+            let nsError = error as NSError
+            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                throw error
+            }
+            if error is CancellationError {
+                throw error
+            }
+
+            #if DEBUG
+            print("❌ Supabase SermonsByPlaylistIds Error")
+            #endif
+            throw error
+        }
+    }
+
+    /// Fetch the playlist registry from Supabase
+    func fetchPlaylistRegistry() async throws -> [PlaylistRegistryItem] {
+        do {
+            let response: [PlaylistRegistryItem] = try await client.request(
+                SupabaseEndpoint.playlistRegistry
+            )
+            return response
+        } catch {
+            let nsError = error as NSError
+            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                throw error
+            }
+            if error is CancellationError {
+                throw error
+            }
+
+            #if DEBUG
+            print("❌ Supabase PlaylistRegistry Error")
+            #endif
+            throw error
+        }
+    }
+
     enum SanityEndpoint: Endpoint {
         case events
         
