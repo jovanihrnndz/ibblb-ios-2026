@@ -252,6 +252,14 @@ final class AudioPlayerManager: ObservableObject {
         setupBackgroundNotifications()
     }
     
+    deinit {
+        // Clean up time observer to prevent memory leaks
+        if let observer = timeObserver, let currentPlayer = player {
+            currentPlayer.removeTimeObserver(observer)
+        }
+        cancellables.removeAll()
+    }
+    
     // MARK: - Resume Listening Persistence
 
     private func savePlaybackPosition() {

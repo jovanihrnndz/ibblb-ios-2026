@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum AppTab: String, Hashable {
+enum AppTab: String, Hashable, CaseIterable {
     case sermons
     case live
     case events
@@ -8,7 +8,7 @@ enum AppTab: String, Hashable {
 }
 
 struct AppRootView: View {
-    @State private var selectedTab: AppTab = .sermons
+    @AppStorage("selectedTab") private var selectedTab: AppTab = .sermons
     @State private var hideTabBar: Bool = false
     @State private var showSplash = true
     @State private var showNowPlaying = false
@@ -57,6 +57,7 @@ struct AppRootView: View {
                     }
                     .tag(AppTab.giving)
             }
+            .toolbar(hideTabBar ? .hidden : .visible, for: .tabBar)
 
             // Mini player overlay - isolated in its own observing view
             // to prevent AudioPlayerManager updates from re-rendering the entire app
