@@ -12,11 +12,13 @@ struct SermonOutlineSectionView: View {
             // Section Header
             HStack {
                 Image(systemName: "list.bullet.rectangle")
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.headline.weight(.semibold))
                     .foregroundColor(.accentColor)
+                    .accessibilityHidden(true)
                 Text("Bosquejo")
                     .font(.title2)
                     .fontWeight(.bold)
+                    .accessibilityAddTraits(.isHeader)
             }
 
             // Scripture Passage
@@ -74,6 +76,8 @@ struct SermonOutlineSectionView: View {
                             selectedPoint = SelectedOutlinePoint(point: point, number: index + 1)
                         }
                     )
+                    .accessibilityLabel("Outline point \(index + 1): \(point.title)")
+                    .accessibilityHint("Double tap to view detailed notes for this point")
                 }
             }
         }
@@ -109,7 +113,7 @@ private struct OutlinePointRowView: View {
             HStack(spacing: 12) {
                 // Number Badge
                 Text("\(number)")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.caption.weight(.bold))
                     .foregroundColor(.white)
                     .frame(width: 26, height: 26)
                     .background(Circle().fill(Color.accentColor))
@@ -117,7 +121,7 @@ private struct OutlinePointRowView: View {
                 // Title and Preview
                 VStack(alignment: .leading, spacing: 3) {
                     Text(point.title)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.callout.weight(.semibold))
                         .foregroundColor(.primary)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
@@ -134,7 +138,7 @@ private struct OutlinePointRowView: View {
 
                 // Chevron
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.caption2.weight(.semibold))
                     .foregroundColor(.secondary.opacity(0.6))
             }
             .padding(.vertical, 10)

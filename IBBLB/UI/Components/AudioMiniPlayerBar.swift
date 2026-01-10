@@ -21,11 +21,12 @@ struct AudioMiniPlayerBar: View {
                 HStack(spacing: 12) {
                     // Thumbnail
                     thumbnailView
+                        .accessibilityHidden(true)
 
                     // Title
                     if let track = audioManager.currentTrack {
                         Text(track.title)
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.footnote.weight(.medium))
                             .foregroundColor(.primary)
                             .lineLimit(1)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -36,7 +37,7 @@ struct AudioMiniPlayerBar: View {
                         audioManager.togglePlayPause()
                     } label: {
                         Image(systemName: audioManager.isPlaying ? "pause.fill" : "play.fill")
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(.body.weight(.semibold))
                             .foregroundColor(.primary)
                             .frame(width: 40, height: 40)
                             .contentShape(Circle())
@@ -46,12 +47,16 @@ struct AudioMiniPlayerBar: View {
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: audioManager.isPlaying)
                     .accessibilityLabel(audioManager.isPlaying ? "Pause" : "Play")
                     .accessibilityHint("Double tap to \(audioManager.isPlaying ? "pause" : "play") audio")
+                    .accessibilityAddTraits(.isButton)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 14)
                 .padding(.bottom, 10)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Now playing: \(audioManager.currentTrack?.title ?? "Audio")")
+            .accessibilityHint("Double tap to open full player")
+            .accessibilityAddTraits(.isButton)
             
             // Progress bar (thin line at bottom, integrated into pill shape)
             GeometryReader { geometry in
@@ -69,6 +74,9 @@ struct AudioMiniPlayerBar: View {
             .frame(height: 2)
             .padding(.horizontal, 16)
             .padding(.bottom, 10)
+            .accessibilityLabel("Playback progress")
+            .accessibilityValue("\(Int(audioManager.progress * 100)) percent")
+            .accessibilityHidden(true) // Hidden because main button provides context
         }
         .frame(height: barHeight)
         .padding(.horizontal, 12)

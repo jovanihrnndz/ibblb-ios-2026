@@ -24,15 +24,15 @@ struct GivingView: View {
                         VStack(spacing: 24) {
                             // Subtitle
                             Text("Trust God with your finances by giving your first 10% back to Him.")
-                                .font(.system(size: 16))
+                                .font(.body)
                                 .foregroundColor(.gray)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 32)
                             
-                            // Total Given Box
+                            // Total Given Box - Large display number
                             VStack(spacing: 8) {
                                 Text("$\(Int(viewModel.totalGiven))")
-                                    .font(.system(size: 48, weight: .bold))
+                                    .font(.system(size: 48, weight: .bold, design: .rounded)) // Large display number - specific size for emphasis
                                     .foregroundColor(.gray)
                             }
                             .frame(maxWidth: .infinity)
@@ -49,10 +49,11 @@ struct GivingView: View {
                             }) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "creditcard.fill")
-                                        .font(.system(size: 18, weight: .semibold))
+                                        .font(.body.weight(.semibold))
+                                        .accessibilityHidden(true)
                                     
                                     Text("Give with Sharefaith Giving")
-                                        .font(.system(size: 17, weight: .bold))
+                                        .font(.body.weight(.bold))
                                 }
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -63,15 +64,21 @@ struct GivingView: View {
                                 )
                             }
                             .padding(.horizontal, 32)
+                            .accessibilityLabel("Give with Sharefaith Giving")
+                            .accessibilityHint("Double tap to open the giving page")
+                            .accessibilityAddTraits(.isButton)
                             
                             // Manage Account Link
                             Button(action: {
                                 viewModel.openManageAccount()
                             }) {
                                 Text("Manage Your Account & Scheduled Gifts.")
-                                    .font(.system(size: 14))
+                                    .font(.footnote)
                                     .foregroundColor(.gray)
                             }
+                            .accessibilityLabel("Manage your account and scheduled gifts")
+                            .accessibilityHint("Double tap to manage your giving account")
+                            .accessibilityAddTraits(.isButton)
                             
                             Spacer().frame(height: 20)
                         }

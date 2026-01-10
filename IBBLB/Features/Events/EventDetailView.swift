@@ -38,12 +38,18 @@ struct EventDetailView: View {
                                 labelValue(icon: "calendar", value: event.startDate.formatted(date: .long, time: .shortened))
                             }
                             .buttonStyle(PlainButtonStyle())
+                            .accessibilityLabel("Add event to calendar")
+                            .accessibilityHint("Double tap to add this event to your calendar")
+                            .accessibilityAddTraits(.isButton)
 
                             if let location = event.location {
                                 Button(action: openInMaps) {
                                     labelValue(icon: "mappin.and.ellipse", value: location)
                                 }
                                 .buttonStyle(PlainButtonStyle())
+                                .accessibilityLabel("Open location in Maps: \(location)")
+                                .accessibilityHint("Double tap to open the event location in Maps")
+                                .accessibilityAddTraits(.isButton)
                             }
                         }
                     }
@@ -78,6 +84,9 @@ struct EventDetailView: View {
                                 .background(Color.accentColor)
                                 .cornerRadius(12)
                         }
+                        .accessibilityLabel("Register for this event")
+                        .accessibilityHint("Double tap to register for this event")
+                        .accessibilityAddTraits(.isButton)
                     }
                 }
                 .padding(24)
@@ -151,9 +160,11 @@ struct EventDetailView: View {
         HStack(spacing: 6) {
             Image(systemName: icon)
                 .foregroundColor(.accentColor)
+                .accessibilityHidden(true)
             Text(value)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
+        .accessibilityElement(children: .combine)
     }
 }

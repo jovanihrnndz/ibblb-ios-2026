@@ -26,10 +26,17 @@ struct UIKitSearchBar: UIViewRepresentable {
         // Make text field transparent (iOS 13+)
         if #available(iOS 13.0, *) {
             searchBar.searchTextField.backgroundColor = .clear
+            // Accessibility configuration
+            searchBar.searchTextField.accessibilityLabel = "Search field"
+            searchBar.searchTextField.accessibilityHint = "Enter text to search"
         }
         
         // Set placeholder
         searchBar.placeholder = placeholder
+        
+        // Configure accessibility
+        searchBar.accessibilityLabel = "Search sermons"
+        searchBar.accessibilityHint = "Enter text to search for sermons by title, speaker, or topic"
         
         return searchBar
     }

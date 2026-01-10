@@ -40,6 +40,9 @@ struct AudioPlayerView: View {
                     }
                 }
                 .tint(.accentColor)
+                .accessibilityLabel("Audio progress")
+                .accessibilityValue("\(formatTime(isDragging ? sliderValue : audioManager.currentTime)) of \(formatTime(audioManager.duration))")
+                .accessibilityHint("Swipe up or down to adjust playback position")
                 .onChange(of: audioManager.currentTime) { _, newValue in
                     if !isDragging {
                         sliderValue = newValue
@@ -57,6 +60,7 @@ struct AudioPlayerView: View {
                 .font(.caption2)
                 .monospacedDigit()
                 .foregroundColor(.secondary)
+                .accessibilityHidden(true)
             }
             
             // Controls
@@ -64,7 +68,11 @@ struct AudioPlayerView: View {
                 Button(action: { audioManager.skip(by: -15) }) {
                     Image(systemName: "gobackward.15")
                         .font(.title2)
+                        .accessibilityHidden(true)
                 }
+                .accessibilityLabel("Skip backward 15 seconds")
+                .accessibilityHint("Double tap to skip backward 15 seconds")
+                .accessibilityAddTraits(.isButton)
                 
                 Button(action: togglePlayback) {
                     ZStack {
@@ -76,14 +84,22 @@ struct AudioPlayerView: View {
                             .font(.title)
                             .foregroundColor(.white)
                             .offset(x: audioManager.isPlaying ? 0 : 2)
+                            .accessibilityHidden(true)
                     }
                     .shadow(color: Color.accentColor.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
+                .accessibilityLabel(audioManager.isPlaying ? "Pause" : "Play")
+                .accessibilityHint("Double tap to \(audioManager.isPlaying ? "pause" : "play") audio")
+                .accessibilityAddTraits(.isButton)
                 
                 Button(action: { audioManager.skip(by: 15) }) {
                     Image(systemName: "goforward.15")
                         .font(.title2)
+                        .accessibilityHidden(true)
                 }
+                .accessibilityLabel("Skip forward 15 seconds")
+                .accessibilityHint("Double tap to skip forward 15 seconds")
+                .accessibilityAddTraits(.isButton)
             }
             .padding(.bottom)
         }

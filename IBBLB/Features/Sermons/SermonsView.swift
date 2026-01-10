@@ -72,6 +72,8 @@ struct SermonsView: View {
                     .padding(.vertical, isTV ? 16 : (useGridLayout ? 22 : 12))
                     .frame(maxWidth: .infinity)
                     .padding(.top, useGridLayout ? 140 : 100) // Position below banner (140 on iPad, 100 on iPhone)
+                    .accessibilityLabel("Search sermons")
+                    .accessibilityHint("Enter text to search for sermons by title, speaker, or topic")
             }
             .toolbar(.hidden, for: .navigationBar)
             .task {
@@ -117,6 +119,8 @@ struct SermonsView: View {
                 .padding(.top, 40)
         }
         .frame(maxWidth: .infinity, minHeight: 200)
+        .accessibilityLabel("Loading sermons")
+        .accessibilityHint("Please wait while sermons are being loaded")
     }
     
     @ViewBuilder
@@ -153,6 +157,9 @@ struct SermonsView: View {
                             SermonCardView(sermon: sermon)
                         }
                         .buttonStyle(SermonCardButtonStyle())
+                        .accessibilityLabel("Sermon: \(sermon.title)")
+                        .accessibilityHint("Double tap to view sermon details")
+                        .accessibilityAddTraits(.isButton)
                     }
                 }
             } else {
@@ -165,6 +172,9 @@ struct SermonsView: View {
                             SermonCardView(sermon: sermon)
                         }
                         .buttonStyle(SermonCardButtonStyle())
+                        .accessibilityLabel("Sermon: \(sermon.title)")
+                        .accessibilityHint("Double tap to view sermon details")
+                        .accessibilityAddTraits(.isButton)
                     }
                 }
             }
@@ -174,8 +184,9 @@ struct SermonsView: View {
     private func errorView(message: String) -> some View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 50))
+                .font(.system(size: 50)) // Large decorative error icon - size appropriate for error state
                 .foregroundColor(.amber)
+                .accessibilityHidden(true)
             
             Text("Something went wrong")
                 .font(.headline)
@@ -185,6 +196,7 @@ struct SermonsView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
+                .accessibilityLabel("Error message: \(message)")
             
             Button(action: {
                 Task {
@@ -199,6 +211,9 @@ struct SermonsView: View {
                     .background(Color.accentColor)
                     .cornerRadius(10)
             }
+            .accessibilityLabel("Retry loading sermons")
+            .accessibilityHint("Double tap to attempt loading sermons again")
+            .accessibilityAddTraits(.isButton)
         }
     }
     
@@ -208,12 +223,14 @@ struct SermonsView: View {
                 .frame(height: 60)
             
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 50))
+                .font(.system(size: 50)) // Large decorative empty state icon - size appropriate for empty state
                 .foregroundColor(.secondary)
+                .accessibilityHidden(true)
             
             Text("No sermons found")
                 .font(.headline)
                 .fontWeight(.bold)
+                .accessibilityAddTraits(.isHeader)
             
             Text("Try searching for something else.")
                 .font(.subheadline)
@@ -233,6 +250,9 @@ struct SermonsView: View {
                         .cornerRadius(10)
                 }
                 .padding(.top, 8)
+                .accessibilityLabel("Clear search")
+                .accessibilityHint("Double tap to clear the search field and show all sermons")
+                .accessibilityAddTraits(.isButton)
             }
             
             Spacer()

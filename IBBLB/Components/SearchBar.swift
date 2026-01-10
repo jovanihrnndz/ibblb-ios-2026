@@ -23,12 +23,9 @@ struct SearchBar: View {
         #endif
     }
     
+    // Icon sizes - using semantic font sizes will handle Dynamic Type automatically
     private var iconSize: CGFloat {
         isTV ? 24 : 16
-    }
-    
-    private var fontSize: CGFloat {
-        isTV ? 28 : 16
     }
     
     private var padding: CGFloat {
@@ -45,20 +42,23 @@ struct SearchBar: View {
     
     var body: some View {
         HStack(spacing: isTV ? 20 : 12) {
-            // Search icon
+            // Search icon - icon size is relatively fixed for UI consistency
             Image(systemName: "magnifyingglass")
                 .foregroundColor(isFocused ? .accentColor : .secondary)
                 .font(.system(size: iconSize, weight: .medium))
                 .animation(.easeInOut(duration: 0.2), value: isFocused)
+                .accessibilityHidden(true)
             
-            // Text field
+            // Text field - uses Dynamic Type semantic font
             TextField(placeholder, text: $text)
                 .focused($isFocused)
                 .foregroundColor(.primary)
-                .font(.system(size: fontSize))
+                .font(isTV ? .title3 : .body)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .submitLabel(.search)
+                .accessibilityLabel("Search field")
+                .accessibilityHint("Enter text to search")
                 .onChange(of: isFocused) { oldValue, newValue in
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         isEditing = newValue
@@ -80,9 +80,12 @@ struct SearchBar: View {
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.secondary)
-                        .font(.system(size: isTV ? 28 : 18))
+                        .font(isTV ? .title2 : .title3)
                 }
                 .transition(.scale.combined(with: .opacity))
+                .accessibilityLabel("Clear search")
+                .accessibilityHint("Double tap to clear the search text")
+                .accessibilityAddTraits(.isButton)
             }
         }
         .padding(.horizontal, padding)

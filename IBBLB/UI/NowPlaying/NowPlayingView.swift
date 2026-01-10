@@ -75,6 +75,7 @@ struct NowPlayingView: View {
             .fill(Color(.systemGray4))
             .frame(width: 36, height: 5)
             .opacity(0.6)
+            .accessibilityHidden(true)
     }
     
     @ViewBuilder
@@ -227,6 +228,9 @@ struct NowPlayingView: View {
                 }
             }
             .tint(.accentColor)
+            .accessibilityLabel("Playback position")
+            .accessibilityValue("\(AudioPlayerManager.formatTime(isDragging ? sliderValue : audioManager.currentTime)) of \(AudioPlayerManager.formatTime(audioManager.duration))")
+            .accessibilityHint("Swipe up or down to adjust playback position")
 
             HStack {
                 Text(AudioPlayerManager.formatTime(isDragging ? sliderValue : audioManager.currentTime))
@@ -241,6 +245,7 @@ struct NowPlayingView: View {
                     .foregroundColor(.secondary)
                     .fontWeight(.medium)
             }
+            .accessibilityHidden(true)
         }
     }
 
@@ -257,17 +262,22 @@ struct NowPlayingView: View {
                             .frame(width: 56, height: 56)
                         
                         Image(systemName: "gobackward.15")
-                            .font(.system(size: 24, weight: .semibold))
+                            .font(.title3.weight(.semibold))
                             .foregroundColor(.primary)
+                            .accessibilityHidden(true)
                     }
                     
                     Text("15")
                         .font(.caption2)
                         .foregroundColor(.secondary)
                         .fontWeight(.medium)
+                        .accessibilityHidden(true)
                 }
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Skip backward 15 seconds")
+            .accessibilityHint("Double tap to skip backward 15 seconds")
+            .accessibilityAddTraits(.isButton)
 
             // Play/Pause
             Button {
@@ -279,16 +289,20 @@ struct NowPlayingView: View {
                         .frame(width: 80, height: 80)
 
                     Image(systemName: audioManager.isPlaying ? "pause.fill" : "play.fill")
-                        .font(.system(size: 34, weight: .semibold))
+                        .font(.system(size: 34, weight: .semibold)) // Large play/pause icon - size appropriate for prominent control
                         .foregroundColor(.white)
                         .offset(x: audioManager.isPlaying ? 0 : 3)
                         .contentTransition(.symbolEffect(.replace.downUp))
+                        .accessibilityHidden(true)
                 }
                 .shadow(color: Color.accentColor.opacity(0.4), radius: 12, x: 0, y: 6)
                 .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
             }
             .buttonStyle(.plain)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: audioManager.isPlaying)
+            .accessibilityLabel(audioManager.isPlaying ? "Pause" : "Play")
+            .accessibilityHint("Double tap to \(audioManager.isPlaying ? "pause" : "play") audio")
+            .accessibilityAddTraits(.isButton)
 
             // Skip forward 30s
             Button {
@@ -301,17 +315,22 @@ struct NowPlayingView: View {
                             .frame(width: 56, height: 56)
                         
                         Image(systemName: "goforward.30")
-                            .font(.system(size: 24, weight: .semibold))
+                            .font(.title3.weight(.semibold))
                             .foregroundColor(.primary)
+                            .accessibilityHidden(true)
                     }
                     
                     Text("30")
                         .font(.caption2)
                         .foregroundColor(.secondary)
                         .fontWeight(.medium)
+                        .accessibilityHidden(true)
                 }
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Skip forward 30 seconds")
+            .accessibilityHint("Double tap to skip forward 30 seconds")
+            .accessibilityAddTraits(.isButton)
         }
     }
 
@@ -322,9 +341,10 @@ struct NowPlayingView: View {
         } label: {
             HStack(spacing: 8) {
                 Image(systemName: "stop.fill")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.caption.weight(.semibold))
+                    .accessibilityHidden(true)
                 Text("Stop")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.body.weight(.semibold))
             }
             .foregroundColor(.secondary)
             .padding(.horizontal, 24)
@@ -335,6 +355,9 @@ struct NowPlayingView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("Stop playback")
+        .accessibilityHint("Double tap to stop playback and close this view")
+        .accessibilityAddTraits(.isButton)
     }
 }
 

@@ -229,7 +229,7 @@ struct iPadSermonsListView: View {
     private func errorView(message: String) -> some View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 50))
+                .font(.system(size: 50)) // Large decorative error icon - size appropriate for error state
                 .foregroundColor(.amber)
 
             Text("Something went wrong")
@@ -263,7 +263,7 @@ struct iPadSermonsListView: View {
                 .frame(height: 60)
 
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 50))
+                .font(.system(size: 50)) // Large decorative empty state icon - size appropriate for empty state
                 .foregroundColor(.secondary)
 
             Text("No sermons found")

@@ -14,9 +14,10 @@ struct VideoThumbnailOverlay: View {
 
     var body: some View {
         Image(systemName: "play.circle.fill")
-            .font(.system(size: isTV ? 80 : 44))
+            .font(isTV ? .system(size: 80) : .system(size: 44)) // Large decorative play icon - size appropriate for thumbnail overlay
             .foregroundColor(.white)
             .shadow(color: .black.opacity(0.35), radius: isTV ? 12 : 8, x: 0, y: 5)
+            .accessibilityHidden(true)
     }
 }
 

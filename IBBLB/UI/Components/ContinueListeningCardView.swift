@@ -43,20 +43,29 @@ struct ContinueListeningCardView: View {
                     contentView
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Continue listening: \(result.displayTitle)")
+                .accessibilityHint("Double tap to view sermon details")
+                .accessibilityAddTraits(.isButton)
             } else {
                 contentView
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Continue listening: \(result.displayTitle)")
             }
 
             // Resume button - separate button that doesn't trigger navigation
             Button(action: onResume) {
                 Image(systemName: "play.fill")
-                    .font(.system(size: useGridLayout ? 20 : 18, weight: .semibold))
+                    .font(.body.weight(.semibold))
                     .foregroundColor(.white)
                     .frame(width: useGridLayout ? 48 : 44, height: useGridLayout ? 48 : 44)
                     .background(Color.accentColor)
                     .clipShape(Circle())
+                    .accessibilityHidden(true)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Resume playback")
+            .accessibilityHint("Double tap to resume playing from where you left off")
+            .accessibilityAddTraits(.isButton)
         }
         .padding(useGridLayout ? 20 : 16)
         .background(Color(.secondarySystemGroupedBackground))

@@ -38,41 +38,78 @@ struct APIClient {
         if let method = urlRequest.httpMethod {
             print("📝 Method: \(method)")
         }
-        #endif
-
-        let (data, response) = try await session.data(for: urlRequest)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.invalidResponse
+        if let url = urlRequest.url {
+            print("🌐 URL: \(url.absoluteString)")
         }
-
-        #if DEBUG
-        print("✅ API Response Status: \(httpResponse.statusCode)")
+        if let headers = urlRequest.allHTTPHeaderFields {
+            print("📋 Headers: \(headers.keys.joined(separator: ", "))")
+        }
         #endif
 
-        switch httpResponse.statusCode {
-        case 200...299:
-            do {
-                let decoded = try decoder.decode(T.self, from: data)
+        do {
+            let (data, response) = try await session.data(for: urlRequest)
+
+            guard let httpResponse = response as? HTTPURLResponse else {
                 #if DEBUG
-                if let array = decoded as? [Any] {
-                    print("✅ Decoded \(array.count) items")
-                } else {
-                    print("✅ Decoding successful")
-                }
+                print("❌ Invalid response type")
                 #endif
-                return decoded
-            } catch {
-                #if DEBUG
-                print("❌ Decoding Error")
-                // SECURITY: Do not log response data - may contain sensitive information
-                #endif
-                throw APIError.decodingError(error)
+                throw APIError.invalidResponse
             }
-        case 401:
-            throw APIError.unauthorized
-        default:
-            throw APIError.serverError(statusCode: httpResponse.statusCode)
+
+            #if DEBUG
+            print("✅ API Response Status: \(httpResponse.statusCode)")
+            print("📦 Response data size: \(data.count) bytes")
+            #endif
+
+            switch httpResponse.statusCode {
+            case 200...299:
+                do {
+                    let decoded = try decoder.decode(T.self, from: data)
+                    #if DEBUG
+                    if let array = decoded as? [Any] {
+                        print("✅ Decoded \(array.count) items")
+                    } else {
+                        print("✅ Decoding successful")
+                    }
+                    #endif
+                    return decoded
+                } catch {
+                    #if DEBUG
+                    print("❌ Decoding Error: \(error.localizedDescription)")
+                    if let decodingError = error as? DecodingError {
+                        print("   DecodingError details: \(decodingError)")
+                    }
+                    // SECURITY: Do not log response data - may contain sensitive information
+                    #endif
+                    throw APIError.decodingError(error)
+                }
+            case 401:
+                #if DEBUG
+                print("❌ Unauthorized (401)")
+                #endif
+                throw APIError.unauthorized
+            default:
+                #if DEBUG
+                print("❌ Server error: \(httpResponse.statusCode)")
+                #endif
+                throw APIError.serverError(statusCode: httpResponse.statusCode)
+            }
+        } catch let error as URLError {
+            #if DEBUG
+            print("❌ URLError: \(error.localizedDescription)")
+            print("   Code: \(error.code.rawValue)")
+            print("   Error code: \(error.code)")
+            if let url = error.failingURL {
+                print("   Failed URL: \(url.absoluteString)")
+            }
+            #endif
+            throw APIError.requestFailed(error)
+        } catch {
+            #if DEBUG
+            print("❌ Request failed with error: \(error.localizedDescription)")
+            print("   Error type: \(type(of: error))")
+            #endif
+            throw APIError.requestFailed(error)
         }
     }
 }

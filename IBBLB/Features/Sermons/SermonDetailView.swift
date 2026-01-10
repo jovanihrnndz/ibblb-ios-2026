@@ -53,12 +53,15 @@ struct SermonDetailView: View {
                         if let speaker = sermon.speaker, !speaker.isEmpty {
                             HStack(spacing: 6) {
                                 Image(systemName: "person.fill")
-                                    .font(.system(size: 13, weight: .medium))
+                                    .font(.caption.weight(.medium))
                                     .foregroundColor(.secondary)
+                                    .accessibilityHidden(true)
                                 Text(speaker)
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                             }
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel("Speaker: \(speaker)")
                         }
 
                         // Date and Audio Button Row
@@ -66,12 +69,15 @@ struct SermonDetailView: View {
                             if let date = sermon.date {
                                 HStack(spacing: 6) {
                                     Image(systemName: "calendar")
-                                        .font(.system(size: 13, weight: .medium))
+                                        .font(.caption.weight(.medium))
                                         .foregroundColor(.secondary)
+                                        .accessibilityHidden(true)
                                     Text(date.formattedSermonDate)
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                 }
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel("Date: \(date.formattedSermonDate)")
                             }
 
                             if let audioURL = audioURL {
@@ -80,9 +86,10 @@ struct SermonDetailView: View {
                                 } label: {
                                     HStack(spacing: 6) {
                                         Image(systemName: isCurrentlyPlaying(url: audioURL) ? "pause.fill" : "play.fill")
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .font(.caption2.weight(.semibold))
+                                            .accessibilityHidden(true)
                                         Text(isCurrentlyPlaying(url: audioURL) ? "Playing" : "Play Audio")
-                                            .font(.system(size: 14, weight: .semibold))
+                                            .font(.footnote.weight(.semibold))
                                     }
                                     .foregroundColor(.accentColor)
                                     .padding(.horizontal, 14)
@@ -93,6 +100,9 @@ struct SermonDetailView: View {
                                     )
                                 }
                                 .buttonStyle(.plain)
+                                .accessibilityLabel(isCurrentlyPlaying(url: audioURL) ? "Pause audio" : "Play audio")
+                                .accessibilityHint("Double tap to \(isCurrentlyPlaying(url: audioURL) ? "pause" : "play") the audio version of this sermon")
+                                .accessibilityAddTraits(.isButton)
                             }
 
                             Spacer()
@@ -102,6 +112,7 @@ struct SermonDetailView: View {
                         if let outline = outline {
                             SermonOutlineSectionView(outline: outline)
                                 .padding(.top, 8)
+                                .accessibilityLabel("Sermon outline")
                         }
                     }
                     .padding(.horizontal, horizontalPadding)
@@ -151,6 +162,8 @@ struct SermonDetailView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: videoHeight)
                 .id(videoId)
+                .accessibilityLabel("Video player: \(sermon.title)")
+                .accessibilityHint("Double tap to play or pause the video")
         }
     }
 

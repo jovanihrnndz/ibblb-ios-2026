@@ -31,11 +31,13 @@ struct ServiceInfoCardView: View {
                 Image(systemName: "info.circle.fill")
                     .font(.title2)
                     .foregroundColor(.accentColor)
+                    .accessibilityHidden(true)
 
                 Text("Información de la Iglesia")
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
+                    .accessibilityAddTraits(.isHeader)
 
                 Spacer()
             }
@@ -52,6 +54,9 @@ struct ServiceInfoCardView: View {
                 )
             }
             .buttonStyle(PlainButtonStyle())
+            .accessibilityLabel("Address: \(address)")
+            .accessibilityHint("Double tap to open directions in Maps")
+            .accessibilityAddTraits(.isButton)
 
             // Service Times
             VStack(alignment: .leading, spacing: 8) {
@@ -60,11 +65,13 @@ struct ServiceInfoCardView: View {
                         .font(.body)
                         .foregroundColor(.accentColor)
                         .frame(width: 24)
+                        .accessibilityHidden(true)
 
                     Text("Horarios de Servicio")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
+                        .accessibilityAddTraits(.isHeader)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -84,6 +91,7 @@ struct ServiceInfoCardView: View {
                             .font(.body)
                             .foregroundColor(.accentColor)
                             .frame(width: 24)
+                            .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Teléfono")
@@ -100,9 +108,13 @@ struct ServiceInfoCardView: View {
                         Image(systemName: "chevron.right")
                             .font(.caption)
                             .foregroundColor(.secondary)
+                            .accessibilityHidden(true)
                     }
                 }
                 .buttonStyle(PlainButtonStyle())
+                .accessibilityLabel("Phone: \(phone)")
+                .accessibilityHint("Double tap to call")
+                .accessibilityAddTraits(.isButton)
 
                 // Email
                 Button(action: sendEmail) {
@@ -111,6 +123,7 @@ struct ServiceInfoCardView: View {
                             .font(.body)
                             .foregroundColor(.accentColor)
                             .frame(width: 24)
+                            .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Correo Electrónico")
@@ -127,9 +140,13 @@ struct ServiceInfoCardView: View {
                         Image(systemName: "chevron.right")
                             .font(.caption)
                             .foregroundColor(.secondary)
+                            .accessibilityHidden(true)
                     }
                 }
                 .buttonStyle(PlainButtonStyle())
+                .accessibilityLabel("Email: \(email)")
+                .accessibilityHint("Double tap to send email")
+                .accessibilityAddTraits(.isButton)
             }
         }
         .padding(20)
@@ -150,6 +167,7 @@ struct ServiceInfoCardView: View {
                 .font(.body)
                 .foregroundColor(.accentColor)
                 .frame(width: 24)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
@@ -168,6 +186,7 @@ struct ServiceInfoCardView: View {
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundColor(.secondary)
+                    .accessibilityHidden(true)
             }
         }
     }
@@ -178,6 +197,7 @@ struct ServiceInfoCardView: View {
                 .fill(Color.accentColor.opacity(0.5))
                 .frame(width: 6, height: 6)
                 .padding(.trailing, 8)
+                .accessibilityHidden(true)
 
             Text("\(day) \(time)")
                 .font(.subheadline)
@@ -187,11 +207,14 @@ struct ServiceInfoCardView: View {
             Text(" — ")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+                .accessibilityHidden(true)
 
             Text(label)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(day) \(time), \(label)")
     }
 
     // MARK: - Actions

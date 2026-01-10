@@ -82,6 +82,12 @@ enum APIConfig {
     static var supabaseURL: String {
         let value = info("SUPABASE_URL", defaultValue: "https://preview-mode-placeholder.supabase.co")
         
+        #if DEBUG
+        print("🔍 APIConfig: Loading SUPABASE_URL")
+        print("   Raw value: \(value.isEmpty ? "(empty)" : value.prefix(50))")
+        print("   Is preview mode: \(isPreviewMode)")
+        #endif
+        
         // If value is just the project ID (not a full URL), construct the full URL
         if !value.isEmpty && !value.hasPrefix("http") && !value.hasPrefix("$(") {
             let fullURL = "https://\(value).supabase.co"
@@ -126,6 +132,12 @@ enum APIConfig {
     static var supabaseAnonKey: String {
         let rawValue = info("SUPABASE_ANON_KEY", defaultValue: "preview-mode-placeholder-key")
         
+        #if DEBUG
+        print("🔍 APIConfig: Loading SUPABASE_ANON_KEY")
+        print("   Raw value length: \(rawValue.count)")
+        print("   Is preview mode: \(isPreviewMode)")
+        #endif
+        
         // Remove quotes if present (xcconfig files sometimes add them, or they come from Info.plist)
         let value = rawValue.trimmingCharacters(in: CharacterSet(charactersIn: "\""))
         
@@ -146,6 +158,12 @@ enum APIConfig {
                 fatalError("SUPABASE_ANON_KEY not configured. Please ensure Secrets.xcconfig is properly linked in Xcode project settings.")
             }
         }
+        
+        #if DEBUG
+        if !value.isEmpty && !value.hasPrefix("$(") {
+            print("✅ Using Supabase Anon Key (length: \(value.count))")
+        }
+        #endif
         
         return value
     }

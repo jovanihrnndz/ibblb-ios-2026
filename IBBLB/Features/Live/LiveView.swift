@@ -54,6 +54,9 @@ struct LiveView: View {
                                                     .foregroundColor(.white)
                                             }
                                             .padding()
+                                            .accessibilityLabel("Close video player")
+                                            .accessibilityHint("Double tap to close the video overlay")
+                                            .accessibilityAddTraits(.isButton)
                                         }
 
                                         // YouTube player matching SermonDetailView styling
@@ -98,7 +101,7 @@ struct LiveView: View {
             VStack(spacing: 24) {
                 // Header
                 Text("Únete a nosotros para servicios de adoración en vivo")
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.title3.weight(.bold))
                     .multilineTextAlignment(.center)
                     .foregroundColor(.black)
                     .padding(.horizontal, 20)
@@ -163,7 +166,7 @@ struct LiveView: View {
                 // 1. Header & Main Hero (Countdown or Live Stream)
                 VStack(spacing: 24) {
                     Text("Únete a nosotros para\nservicios en vivo")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.title2.weight(.bold))
                         .multilineTextAlignment(.center)
                         .foregroundColor(.black)
                         .padding(.horizontal, 20)
@@ -298,12 +301,12 @@ struct WebStyleCountdownCard: View {
                     .frame(width: 80, height: 80)
 
                 Text(value)
-                    .font(.system(size: 36, weight: .bold))
+                    .font(.system(size: 36, weight: .bold, design: .rounded)) // Large display numbers - kept specific size for countdown timer
                     .foregroundColor(Color(red: 140/255, green: 130/255, blue: 255/255))
             }
 
             Text(label)
-                .font(.system(size: 10, weight: .bold))
+                .font(.caption2.weight(.bold))
                 .foregroundColor(.gray)
         }
     }
@@ -328,7 +331,7 @@ struct PreviousServiceVideoCard: View {
                     .aspectRatio(16/9, contentMode: .fit)
                     .overlay {
                         Image(systemName: "play.rectangle.fill")
-                            .font(.system(size: 40))
+                            .font(.largeTitle) // Decorative placeholder icon
                             .foregroundColor(Color(.systemGray3))
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -346,12 +349,14 @@ struct NoUpcomingServiceCard: View {
 
             VStack(spacing: 16) {
                 Image(systemName: "calendar.badge.clock")
-                    .font(.system(size: 40))
+                    .font(.largeTitle) // Decorative icon
                     .foregroundColor(.secondary)
+                    .accessibilityHidden(true)
 
                 Text("No hay servicio programado")
                     .font(.headline)
                     .foregroundColor(.primary)
+                    .accessibilityAddTraits(.isHeader)
 
                 Text("Consulta los horarios de servicio abajo")
                     .font(.subheadline)
@@ -403,10 +408,10 @@ struct ServiceTimesCard: View {
             Circle().fill(Color.gray).frame(width: 4, height: 4).padding(.top, 6)
             VStack(alignment: .leading, spacing: 2) {
                 Text("\(day) \(time)")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.footnote.weight(.bold))
                     .foregroundColor(.black)
                 Text(label)
-                    .font(.system(size: 13))
+                    .font(.footnote)
                     .foregroundColor(.gray)
             }
         }
@@ -424,20 +429,26 @@ struct ElevationErrorView: View {
             Image(systemName: "wifi.slash")
                 .font(.largeTitle)
                 .foregroundColor(.secondary)
+                .accessibilityHidden(true)
 
             Text("Connection Error")
                 .font(.headline)
+                .accessibilityAddTraits(.isHeader)
 
             Text(error)
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
+                .accessibilityLabel("Error message: \(error)")
 
             Button("Retry") {
                 onRetry()
             }
             .buttonStyle(.bordered)
+            .accessibilityLabel("Retry loading live stream")
+            .accessibilityHint("Double tap to attempt loading live stream information again")
+            .accessibilityAddTraits(.isButton)
         }
     }
 }

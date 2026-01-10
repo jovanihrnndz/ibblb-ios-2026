@@ -62,6 +62,8 @@ final class CertificatePinningDelegate: NSObject, URLSessionDelegate {
         guard !trustedFingerprints.isEmpty else {
             #if DEBUG
             print("❌ CertificatePinning: No fingerprints configured for \(host) - failing closed")
+            print("   This means the certificate pinning key exists in Info.plist but has no value")
+            print("   Check that CERT_PIN_* keys are properly set in Secrets.xcconfig")
             #endif
             completionHandler(.cancelAuthenticationChallenge, nil)
             return
@@ -142,10 +144,20 @@ final class CertificatePinningDelegate: NSObject, URLSessionDelegate {
             let credential = URLCredential(trust: serverTrust)
             completionHandler(.useCredential, credential)
         } else {
+            // PRODUCTION: Log mismatch but still reject for security
+            // In production, this will cause API failures until app update
             #if DEBUG
             print("❌ CertificatePinning: Certificate mismatch for \(host) - REJECTING")
             print("   Expected one of: \(trustedFingerprints)")
             print("   Received: \(fingerprint)")
+            print("   ⚠️ This will cause all API requests to fail!")
+            print("   Update the certificate fingerprint in Secrets.xcconfig or disable pinning for this host")
+            #else
+            // In production, log to crash reporting service (if available)
+            // This helps identify certificate rotation issues affecting users
+            print("❌ CertificatePinning: Certificate mismatch for \(host)")
+            // TODO: Send to crash reporting service (e.g., Sentry, Firebase Crashlytics)
+            // Example: Crashlytics.recordError(error, userInfo: ["host": host, "fingerprint": fingerprint])
             #endif
             completionHandler(.cancelAuthenticationChallenge, nil)
         }

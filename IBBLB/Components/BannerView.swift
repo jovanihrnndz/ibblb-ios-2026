@@ -23,6 +23,8 @@ struct BannerView: View {
                 .scaledToFill()
                 .frame(width: geometry.size.width, height: bannerHeight)
                 .clipped()
+                .accessibilityLabel("Church banner")
+                .accessibilityHidden(false)
         }
         .frame(height: bannerHeight)
     }

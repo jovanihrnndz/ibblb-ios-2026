@@ -36,10 +36,13 @@ struct OutlinePointDetailSheetView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 24))
+                            .font(.title3)
                             .symbolRenderingMode(.hierarchical)
                             .foregroundColor(.secondary)
                     }
+                    .accessibilityLabel("Close")
+                    .accessibilityHint("Double tap to close this detail sheet")
+                    .accessibilityAddTraits(.isButton)
                 }
             }
         }
@@ -105,7 +108,7 @@ struct OutlinePointDetailSheetView: View {
             // No body content placeholder
             VStack(spacing: 12) {
                 Image(systemName: "text.page")
-                    .font(.system(size: 32))
+                    .font(.title) // Decorative placeholder icon
                     .foregroundColor(.secondary.opacity(0.5))
                 Text("Sin notas")
                     .font(.subheadline)

@@ -29,17 +29,22 @@ struct EventsView: View {
                         ProgressView()
                     } else if let error = viewModel.errorMessage {
                         VStack(spacing: 16) {
-                            Image(systemName: "exclamationmark.bubble")
-                                .font(.system(size: 50))
-                                .foregroundColor(.orange)
+                        Image(systemName: "exclamationmark.bubble")
+                            .font(.system(size: 50)) // Large decorative error icon - size appropriate for error state
+                            .foregroundColor(.orange)
+                            .accessibilityHidden(true)
                             Text(error)
                                 .multilineTextAlignment(.center)
+                                .accessibilityLabel("Error message: \(error)")
                             Button("Reintentar") {
                                 Task {
                                     await viewModel.refresh()
                                 }
                             }
                             .buttonStyle(.borderedProminent)
+                            .accessibilityLabel("Retry loading events")
+                            .accessibilityHint("Double tap to attempt loading events again")
+                            .accessibilityAddTraits(.isButton)
                         }
                         .padding()
                     } else if viewModel.events.isEmpty {
@@ -78,6 +83,9 @@ struct EventsView: View {
                         eventCard(event: event)
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .accessibilityLabel("Event: \(event.title)")
+                    .accessibilityHint("Double tap to view event details")
+                    .accessibilityAddTraits(.isButton)
                 }
             }
         } else {
@@ -88,6 +96,9 @@ struct EventsView: View {
                         eventCard(event: event)
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .accessibilityLabel("Event: \(event.title)")
+                    .accessibilityHint("Double tap to view event details")
+                    .accessibilityAddTraits(.isButton)
                 }
             }
         }
@@ -96,11 +107,13 @@ struct EventsView: View {
     private var emptyState: some View {
         VStack(spacing: 20) {
             Image(systemName: "calendar.badge.exclamationmark")
-                .font(.system(size: 60))
+                .font(.system(size: 60)) // Large decorative empty state icon - size appropriate for empty state
                 .foregroundColor(.secondary)
+                .accessibilityHidden(true)
             
             Text("No hay eventos próximos")
                 .font(.headline)
+                .accessibilityAddTraits(.isHeader)
             
             Text("Vuelve pronto para ver nuestras próximas actividades.")
                 .foregroundColor(.secondary)
@@ -112,6 +125,9 @@ struct EventsView: View {
                 }
             }
             .buttonStyle(.bordered)
+            .accessibilityLabel("Refresh events")
+            .accessibilityHint("Double tap to refresh the events list")
+            .accessibilityAddTraits(.isButton)
         }
         .padding()
     }
@@ -196,6 +212,9 @@ struct EventsView: View {
                             .cornerRadius(8)
                     }
                     .padding(.top, 12)
+                    .accessibilityLabel("Register for event")
+                    .accessibilityHint("Double tap to register for this event")
+                    .accessibilityAddTraits(.isButton)
                 }
             }
             .padding()

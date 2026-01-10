@@ -69,9 +69,10 @@ struct iPadRootView: View {
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.footnote.weight(.medium))
+                    .accessibilityHidden(true)
                 Text(title)
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.callout.weight(.medium))
             }
             .foregroundColor(selectedTab == tab ? .accentColor : .secondary)
             .padding(.horizontal, 16)
@@ -82,6 +83,9 @@ struct iPadRootView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(selectedTab == tab ? "Currently selected tab" : "Double tap to switch to \(title) tab")
+        .accessibilityAddTraits(selectedTab == tab ? [.isButton, .isSelected] : .isButton)
     }
 
     // MARK: - Content Area

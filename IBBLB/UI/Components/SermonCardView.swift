@@ -15,13 +15,15 @@ struct SermonCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             thumbnailView
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: isTV ? 8 : 4) {
                 Text(sermon.title)
-                    .font(isTV ? .system(size: 28, weight: .semibold) : .headline)
+                    .font(isTV ? .title2.weight(.semibold) : .headline)
                     .lineLimit(isTV ? 3 : 2)
                     .foregroundColor(.primary)
                     .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityAddTraits(.isHeader)
 
                 HStack(spacing: isTV ? 8 : 4) {
                     if let speaker = sermon.speaker, !speaker.isEmpty {
@@ -30,14 +32,17 @@ struct SermonCardView: View {
 
                     if let speaker = sermon.speaker, !speaker.isEmpty, sermon.date != nil {
                         Text("•")
+                            .accessibilityHidden(true)
                     }
 
                     if let date = sermon.date {
                         Text(date.formattedSermonDate)
                     }
                 }
-                .font(isTV ? .system(size: 22) : .subheadline)
+                .font(isTV ? .title3 : .subheadline)
                 .foregroundColor(.secondary)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(accessibilityMetadata)
             }
             .padding(isTV ? 24 : 16)
             .frame(maxWidth: .infinity, minHeight: isTV ? 140 : 100, alignment: .top)
@@ -46,6 +51,17 @@ struct SermonCardView: View {
         .background(Color(.secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: isTV ? 20 : 12, style: .continuous))
         .shadow(color: Color.black.opacity(0.1), radius: isTV ? 8 : 4, x: 0, y: 2)
+    }
+    
+    private var accessibilityMetadata: String {
+        var components: [String] = []
+        if let speaker = sermon.speaker, !speaker.isEmpty {
+            components.append("Speaker: \(speaker)")
+        }
+        if let date = sermon.date {
+            components.append("Date: \(date.formattedSermonDate)")
+        }
+        return components.isEmpty ? "" : components.joined(separator: ", ")
     }
 
     private var thumbnailView: some View {
@@ -116,7 +132,7 @@ struct SermonCardView: View {
         ZStack {
             Color(.systemGray6)
             Image(systemName: "play.rectangle.fill")
-                .font(.system(size: isTV ? 80 : 40))
+                .font(isTV ? .system(size: 80) : .largeTitle) // Large decorative icon - size appropriate for placeholder
                 .foregroundColor(Color(.systemGray3))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
