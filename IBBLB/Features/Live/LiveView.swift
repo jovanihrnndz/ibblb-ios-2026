@@ -100,7 +100,7 @@ struct LiveView: View {
         ScrollView {
             VStack(spacing: 24) {
                 // Header
-                Text("Únete a nosotros para servicios de adoración en vivo")
+                Text(String(localized: "Join us for live worship services"))
                     .font(.title3.weight(.bold))
                     .multilineTextAlignment(.center)
                     .foregroundColor(.black)
@@ -111,7 +111,7 @@ struct LiveView: View {
                 HStack(alignment: .top, spacing: 24) {
                     // Left: Countdown or Live status
                     VStack(alignment: .center, spacing: 12) {
-                        Text(status.state == .live ? "En Vivo" : "Próximo Servicio")
+                        Text(status.state == .live ? String(localized: "Live") : String(localized: "Upcoming Service"))
                             .font(.headline)
                             .fontWeight(.bold)
                             .foregroundColor(.black)
@@ -133,7 +133,7 @@ struct LiveView: View {
                     // Right: Previous service video
                     if let lastEvent = status.lastEvent {
                         VStack(alignment: .center, spacing: 12) {
-                            Text("Servicio Anterior")
+                            Text(String(localized: "Previous Service"))
                                 .font(.headline)
                                 .fontWeight(.bold)
                                 .foregroundColor(.black)
@@ -165,7 +165,7 @@ struct LiveView: View {
             VStack(spacing: 32) {
                 // 1. Header & Main Hero (Countdown or Live Stream)
                 VStack(spacing: 24) {
-                    Text("Únete a nosotros para\nservicios en vivo")
+                    Text(String(localized: "Join us for\nlive services"))
                         .font(.title2.weight(.bold))
                         .multilineTextAlignment(.center)
                         .foregroundColor(.black)
@@ -191,7 +191,7 @@ struct LiveView: View {
                 // 2. Previous Service Section
                 if let lastEvent = status.lastEvent {
                     VStack(spacing: 16) {
-                        Text("Servicio Anterior")
+                        Text(String(localized: "Previous Service"))
                             .font(.title3)
                             .fontWeight(.bold)
                             .foregroundColor(.black)
@@ -233,7 +233,7 @@ struct WebStyleCountdownCard: View {
 
             // Card content centered in the container
             VStack(spacing: 24) {
-                Text("COMIENZA EN")
+                Text(String(localized: "STARTS IN"))
                     .font(.caption)
                     .fontWeight(.bold)
                     .foregroundColor(.gray)
@@ -243,14 +243,14 @@ struct WebStyleCountdownCard: View {
                 HStack(spacing: 12) {
                     if timeComponents.d > 0 {
                         // >= 1 day: Show Days / Hours / Minutes
-                        timeBlock(value: days, label: "DÍAS")
-                        timeBlock(value: hours, label: "HORAS")
-                        timeBlock(value: minutes, label: "MINUTOS")
+                        timeBlock(value: days, label: String(localized: "DAYS"))
+                        timeBlock(value: hours, label: String(localized: "HOURS"))
+                        timeBlock(value: minutes, label: String(localized: "MINUTES"))
                     } else {
                         // < 1 day: Show Hours / Minutes / Seconds
-                        timeBlock(value: hours, label: "HORAS")
-                        timeBlock(value: minutes, label: "MINUTOS")
-                        timeBlock(value: seconds, label: "SEGUNDOS")
+                        timeBlock(value: hours, label: String(localized: "HOURS"))
+                        timeBlock(value: minutes, label: String(localized: "MINUTES"))
+                        timeBlock(value: seconds, label: String(localized: "SECONDS"))
                     }
                 }
 
@@ -353,12 +353,12 @@ struct NoUpcomingServiceCard: View {
                     .foregroundColor(.secondary)
                     .accessibilityHidden(true)
 
-                Text("No hay servicio programado")
+                Text(String(localized: "No service scheduled"))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .accessibilityAddTraits(.isHeader)
 
-                Text("Consulta los horarios de servicio abajo")
+                Text(String(localized: "Check service times below"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
@@ -386,14 +386,14 @@ struct ServiceTimesCard: View {
                 Spacer()
             }
 
-            Text("Horarios de Servicio")
+            Text(String(localized: "Service Times"))
                 .font(.headline)
                 .foregroundColor(.black)
 
             VStack(alignment: .leading, spacing: 12) {
-                serviceLine(day: "Jueves", time: "7:30 PM", label: "Estudio Bíblico")
-                serviceLine(day: "Domingo", time: "11:00 AM", label: "Escuela Dominical")
-                serviceLine(day: "Domingo", time: "12:00 PM", label: "Servicio de Predicación")
+                serviceLine(day: String(localized: "Thursday"), time: "7:30 PM", label: String(localized: "Bible Study"))
+                serviceLine(day: String(localized: "Sunday"), time: "11:00 AM", label: String(localized: "Sunday School"))
+                serviceLine(day: String(localized: "Sunday"), time: "12:00 PM", label: String(localized: "Preaching Service"))
             }
         }
         .padding(20)

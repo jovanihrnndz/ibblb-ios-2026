@@ -65,9 +65,9 @@
 	<key>SANITY_DATASET</key>
 	<string>$(SANITY_DATASET)</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Necesitamos acceso a tu calendario para agregar eventos de la iglesia.</string>
+	<string>We need access to your calendar to add church events.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Necesitamos acceso a tu calendario para agregar eventos de la iglesia.</string>
+	<string>We need access to your calendar to add church events.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

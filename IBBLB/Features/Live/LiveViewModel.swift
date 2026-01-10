@@ -18,6 +18,13 @@ class LiveViewModel: ObservableObject {
     init(apiService: MobileAPIService = MobileAPIService()) {
         self.apiService = apiService
     }
+    
+    deinit {
+        // Ensure timer is properly cleaned up when ViewModel is deallocated
+        timer?.cancel()
+        timer = nil
+        print("🧹 LiveViewModel deinitialized - timer cleaned up")
+    }
 
     /// Load initial data only once
     func loadInitial() async {
@@ -57,6 +64,10 @@ class LiveViewModel: ObservableObject {
 
         isLoading = true
         errorMessage = nil
+        
+        // Cancel existing timer before fetching new data
+        timer?.cancel()
+        timer = nil
 
         do {
             let fetchedStatus = try await apiService.fetchLivestream()
@@ -70,7 +81,7 @@ class LiveViewModel: ObservableObject {
             }
 
             print("⚠️ API error fetching livestream: \(error)")
-            self.errorMessage = "No se pudo cargar la información del servicio."
+            self.errorMessage = String(localized: "Unable to load service information.")
         }
 
         isLoading = false

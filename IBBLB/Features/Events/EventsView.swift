@@ -36,7 +36,7 @@ struct EventsView: View {
                             Text(error)
                                 .multilineTextAlignment(.center)
                                 .accessibilityLabel("Error message: \(error)")
-                            Button("Reintentar") {
+                            Button(String(localized: "Retry")) {
                                 Task {
                                     await viewModel.refresh()
                                 }
@@ -111,15 +111,15 @@ struct EventsView: View {
                 .foregroundColor(.secondary)
                 .accessibilityHidden(true)
             
-            Text("No hay eventos próximos")
+            Text(String(localized: "No upcoming events"))
                 .font(.headline)
                 .accessibilityAddTraits(.isHeader)
             
-            Text("Vuelve pronto para ver nuestras próximas actividades.")
+            Text(String(localized: "Come back soon to see our upcoming activities."))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
             
-            Button("Actualizar") {
+            Button(String(localized: "Refresh")) {
                 Task {
                     await viewModel.refresh()
                 }

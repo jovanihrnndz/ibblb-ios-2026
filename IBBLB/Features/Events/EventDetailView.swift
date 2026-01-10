@@ -59,7 +59,7 @@ struct EventDetailView: View {
                     // Description
                     if let description = event.description {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("Detalles")
+                            Text(String(localized: "Details"))
                                 .font(.headline)
 
                             Text(description)
@@ -76,7 +76,7 @@ struct EventDetailView: View {
                         Button(action: {
                             // Registration action
                         }) {
-                            Text("Registrarse para este evento")
+                            Text(String(localized: "Register for this event"))
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -92,10 +92,10 @@ struct EventDetailView: View {
                 .padding(24)
             }
         }
-        .navigationTitle("Evento")
+        .navigationTitle(String(localized: "Event"))
         .navigationBarTitleDisplayMode(.inline)
-        .alert(isSuccess ? "Éxito" : "Error", isPresented: $showingCalendarAlert) {
-            Button("OK", role: .cancel) { }
+        .alert(isSuccess ? String(localized: "Success") : String(localized: "Error"), isPresented: $showingCalendarAlert) {
+            Button(String(localized: "OK"), role: .cancel) { }
         } message: {
             Text(alertMessage)
         }
@@ -112,7 +112,7 @@ struct EventDetailView: View {
                     notes: event.description
                 )
                 isSuccess = true
-                alertMessage = "El evento se ha agregado a tu calendario."
+                alertMessage = String(localized: "The event has been added to your calendar.")
                 showingCalendarAlert = true
             } catch {
                 isSuccess = false

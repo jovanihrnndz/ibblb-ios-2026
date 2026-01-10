@@ -75,7 +75,7 @@ struct ContinueListeningCardView: View {
 
     private var contentView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Continue Listening")
+            Text(String(localized: "Continue Listening"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .textCase(.uppercase)

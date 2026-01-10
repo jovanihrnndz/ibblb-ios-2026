@@ -97,7 +97,7 @@ class SermonsViewModel: ObservableObject {
 
                 // Only log and show errors for actual failures
                 print("❌ API Error (Sermons): \(error)")
-                self.errorMessage = "No se pudieron cargar los sermones. Inténtalo de nuevo."
+                self.errorMessage = String(localized: "Unable to load sermons. Please try again.")
             }
 
             // Only update loading state if task wasn't cancelled

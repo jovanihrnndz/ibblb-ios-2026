@@ -41,7 +41,7 @@ class EventsViewModel: ObservableObject {
                 
                 // Only show errors for actual failures
                 print("⚠️ API error fetching events: \(error)")
-                self.errorMessage = "No se pudieron cargar los eventos."
+                self.errorMessage = String(localized: "Unable to load events.")
             }
             
             // Only update loading state if task wasn't cancelled

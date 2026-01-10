@@ -88,7 +88,7 @@ struct AudioPlayerView: View {
                     }
                     .shadow(color: Color.accentColor.opacity(0.3), radius: 8, x: 0, y: 4)
                 }
-                .accessibilityLabel(audioManager.isPlaying ? "Pause" : "Play")
+                .accessibilityLabel(audioManager.isPlaying ? String(localized: "Pause") : String(localized: "Play"))
                 .accessibilityHint("Double tap to \(audioManager.isPlaying ? "pause" : "play") audio")
                 .accessibilityAddTraits(.isButton)
                 

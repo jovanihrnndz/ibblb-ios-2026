@@ -11,7 +11,6 @@ import Combine
 struct SermonsView: View {
     @StateObject private var viewModel = SermonsViewModel()
     @State private var selectedSermon: Sermon?
-    @Binding var hideTabBar: Bool
     @Namespace private var animationNamespace
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
@@ -67,7 +66,7 @@ struct SermonsView: View {
                 }
                 
                 // Search bar overlaying content - content bleeds underneath
-                UIKitSearchBar(text: $viewModel.searchText, placeholder: "Search sermons")
+                UIKitSearchBar(text: $viewModel.searchText, placeholder: String(localized: "Search sermons"))
                     .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 16))
                     .padding(.vertical, isTV ? 16 : (useGridLayout ? 22 : 12))
                     .frame(maxWidth: .infinity)
@@ -82,7 +81,6 @@ struct SermonsView: View {
             }
             .navigationDestination(item: $selectedSermon) { sermon in
                 SermonDetailView(sermon: sermon)
-                    .onDisappear { hideTabBar = false }
             }
         }
     }
@@ -115,11 +113,11 @@ struct SermonsView: View {
     
     private var loadingView: some View {
         VStack(spacing: 20) {
-            ProgressView("Loading sermons...")
+            ProgressView(String(localized: "Loading sermons..."))
                 .padding(.top, 40)
         }
         .frame(maxWidth: .infinity, minHeight: 200)
-        .accessibilityLabel("Loading sermons")
+        .accessibilityLabel(String(localized: "Loading sermons..."))
         .accessibilityHint("Please wait while sermons are being loaded")
     }
     
@@ -188,7 +186,7 @@ struct SermonsView: View {
                 .foregroundColor(.amber)
                 .accessibilityHidden(true)
             
-            Text("Something went wrong")
+            Text(String(localized: "Something went wrong"))
                 .font(.headline)
             
             Text(message)
@@ -203,7 +201,7 @@ struct SermonsView: View {
                     await viewModel.refresh()
                 }
             }) {
-                Text("Retry")
+                Text(String(localized: "Retry"))
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                     .padding()
@@ -227,12 +225,12 @@ struct SermonsView: View {
                 .foregroundColor(.secondary)
                 .accessibilityHidden(true)
             
-            Text("No sermons found")
+            Text(String(localized: "No sermons found"))
                 .font(.headline)
                 .fontWeight(.bold)
                 .accessibilityAddTraits(.isHeader)
             
-            Text("Try searching for something else.")
+            Text(String(localized: "Try searching for something else."))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
@@ -241,7 +239,7 @@ struct SermonsView: View {
                 Button(action: {
                     viewModel.clearSearch()
                 }) {
-                    Text("Clear Search")
+                    Text(String(localized: "Clear Search"))
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                         .padding(.horizontal, 24)
@@ -276,5 +274,5 @@ struct SermonCardButtonStyle: ButtonStyle {
 }
 
 #Preview {
-    SermonsView(hideTabBar: .constant(false))
+    SermonsView()
 }

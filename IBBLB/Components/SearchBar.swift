@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SearchBar: View {
     @Binding var text: String
-    var placeholder: String = "Search..."
+    var placeholder: String = String(localized: "Search...")
     
     @FocusState private var isFocused: Bool
     @State private var isEditing: Bool = false

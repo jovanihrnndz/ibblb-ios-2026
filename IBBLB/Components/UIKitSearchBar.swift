@@ -10,7 +10,7 @@ import UIKit
 
 struct UIKitSearchBar: UIViewRepresentable {
     @Binding var text: String
-    var placeholder: String = "Search..."
+    var placeholder: String = String(localized: "Search...")
     
     func makeUIView(context: Context) -> UISearchBar {
         let searchBar = UISearchBar()

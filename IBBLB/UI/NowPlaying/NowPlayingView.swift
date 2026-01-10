@@ -300,7 +300,7 @@ struct NowPlayingView: View {
             }
             .buttonStyle(.plain)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: audioManager.isPlaying)
-            .accessibilityLabel(audioManager.isPlaying ? "Pause" : "Play")
+            .accessibilityLabel(audioManager.isPlaying ? String(localized: "Pause") : String(localized: "Play"))
             .accessibilityHint("Double tap to \(audioManager.isPlaying ? "pause" : "play") audio")
             .accessibilityAddTraits(.isButton)
 
@@ -343,7 +343,7 @@ struct NowPlayingView: View {
                 Image(systemName: "stop.fill")
                     .font(.caption.weight(.semibold))
                     .accessibilityHidden(true)
-                Text("Stop")
+                Text(String(localized: "Stop"))
                     .font(.body.weight(.semibold))
             }
             .foregroundColor(.secondary)

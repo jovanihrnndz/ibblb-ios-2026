@@ -45,7 +45,7 @@ class GivingViewModel: ObservableObject {
                     return
                 }
                 
-                errorMessage = "Failed to load giving information. Please try again."
+                errorMessage = String(localized: "Failed to load giving information. Please try again.")
                 print("Error loading giving page: \(error)")
             }
             
@@ -60,7 +60,7 @@ class GivingViewModel: ObservableObject {
     
     func openGivingURL() {
         guard let urlString = givingPage?.onlineGivingUrl else {
-            errorMessage = "Giving URL not available"
+            errorMessage = String(localized: "Giving URL not available")
             return
         }
 
@@ -73,11 +73,11 @@ class GivingViewModel: ObservableObject {
             #if DEBUG
             print("⚠️ Giving URL is untrusted: \(untrustedURL)")
             #endif
-            self.errorMessage = "The giving link appears to be external. Please contact support."
+            self.errorMessage = String(localized: "The giving link appears to be external. Please contact support.")
         }
 
         if !success {
-            errorMessage = "Unable to open giving link. Please check the URL."
+            errorMessage = String(localized: "Unable to open giving link. Please check the URL.")
         }
     }
 
@@ -85,7 +85,7 @@ class GivingViewModel: ObservableObject {
         // This would open the manage account URL or screen
         // For now, we'll use the same giving URL with a parameter
         guard let urlString = givingPage?.onlineGivingUrl else {
-            errorMessage = "Account management URL not available"
+            errorMessage = String(localized: "Account management URL not available")
             return
         }
 
@@ -97,11 +97,11 @@ class GivingViewModel: ObservableObject {
             #if DEBUG
             print("⚠️ Account management URL is untrusted: \(untrustedURL)")
             #endif
-            self.errorMessage = "The account link appears to be external. Please contact support."
+            self.errorMessage = String(localized: "The account link appears to be external. Please contact support.")
         }
 
         if !success {
-            errorMessage = "Unable to open account management link."
+            errorMessage = String(localized: "Unable to open account management link.")
         }
     }
 }

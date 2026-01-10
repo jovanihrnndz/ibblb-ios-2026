@@ -15,7 +15,7 @@ struct SermonOutlineSectionView: View {
                     .font(.headline.weight(.semibold))
                     .foregroundColor(.accentColor)
                     .accessibilityHidden(true)
-                Text("Bosquejo")
+                Text(String(localized: "Outline"))
                     .font(.title2)
                     .fontWeight(.bold)
                     .accessibilityAddTraits(.isHeader)
@@ -55,7 +55,7 @@ struct SermonOutlineSectionView: View {
         // Introduction (compact, non-tappable)
         if let introduction = outline.outlineIntroduction, !introduction.isEmpty {
             OutlineSectionContent(
-                title: "Introduccion",
+                title: String(localized: "Introduction"),
                 blocks: introduction
             )
         }
@@ -63,7 +63,7 @@ struct SermonOutlineSectionView: View {
         // Main Points (compact list)
         if let points = outline.outlinePoints, !points.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Puntos principales")
+                Text(String(localized: "Main Points"))
                     .font(.headline)
                     .foregroundColor(.primary)
                     .padding(.bottom, 4)
@@ -85,7 +85,7 @@ struct SermonOutlineSectionView: View {
         // Conclusion (compact, non-tappable)
         if let conclusion = outline.outlineConclusion, !conclusion.isEmpty {
             OutlineSectionContent(
-                title: "Conclusion",
+                title: String(localized: "Conclusion"),
                 blocks: conclusion
             )
         }

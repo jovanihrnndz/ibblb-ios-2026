@@ -88,7 +88,7 @@ struct SermonDetailView: View {
                                         Image(systemName: isCurrentlyPlaying(url: audioURL) ? "pause.fill" : "play.fill")
                                             .font(.caption2.weight(.semibold))
                                             .accessibilityHidden(true)
-                                        Text(isCurrentlyPlaying(url: audioURL) ? "Playing" : "Play Audio")
+                                        Text(isCurrentlyPlaying(url: audioURL) ? String(localized: "Playing") : String(localized: "Play Audio"))
                                             .font(.footnote.weight(.semibold))
                                     }
                                     .foregroundColor(.accentColor)
@@ -100,7 +100,7 @@ struct SermonDetailView: View {
                                     )
                                 }
                                 .buttonStyle(.plain)
-                                .accessibilityLabel(isCurrentlyPlaying(url: audioURL) ? "Pause audio" : "Play audio")
+                                .accessibilityLabel(isCurrentlyPlaying(url: audioURL) ? String(localized: "Pause") : String(localized: "Play"))
                                 .accessibilityHint("Double tap to \(isCurrentlyPlaying(url: audioURL) ? "pause" : "play") the audio version of this sermon")
                                 .accessibilityAddTraits(.isButton)
                             }

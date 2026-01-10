@@ -43,10 +43,10 @@ struct iPadRootView: View {
             Spacer()
 
             HStack(spacing: 8) {
-                tabButton(tab: .sermons, title: "Sermons", icon: "book")
-                tabButton(tab: .live, title: "Live", icon: "tv")
-                tabButton(tab: .events, title: "Events", icon: "calendar")
-                tabButton(tab: .giving, title: "Giving", icon: "heart")
+                tabButton(tab: .sermons, title: String(localized: "Sermons"), icon: "book")
+                tabButton(tab: .live, title: String(localized: "Live"), icon: "tv")
+                tabButton(tab: .events, title: String(localized: "Events"), icon: "calendar")
+                tabButton(tab: .giving, title: String(localized: "Giving"), icon: "heart")
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
@@ -94,7 +94,7 @@ struct iPadRootView: View {
     private var contentArea: some View {
         switch selectedTab {
         case .sermons:
-            SermonsView(hideTabBar: .constant(false))
+            SermonsView()
         case .live:
             LiveView()
         case .events:

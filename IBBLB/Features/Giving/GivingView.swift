@@ -23,7 +23,7 @@ struct GivingView: View {
                     ScrollView {
                         VStack(spacing: 24) {
                             // Subtitle
-                            Text("Trust God with your finances by giving your first 10% back to Him.")
+                            Text(String(localized: "Trust God with your finances by giving your first 10% back to Him."))
                                 .font(.body)
                                 .foregroundColor(.gray)
                                 .multilineTextAlignment(.center)
@@ -52,7 +52,7 @@ struct GivingView: View {
                                         .font(.body.weight(.semibold))
                                         .accessibilityHidden(true)
                                     
-                                    Text("Give with Sharefaith Giving")
+                                    Text(String(localized: "Give with Sharefaith Giving"))
                                         .font(.body.weight(.bold))
                                 }
                                 .foregroundColor(.white)
@@ -64,7 +64,7 @@ struct GivingView: View {
                                 )
                             }
                             .padding(.horizontal, 32)
-                            .accessibilityLabel("Give with Sharefaith Giving")
+                            .accessibilityLabel(String(localized: "Give with Sharefaith Giving"))
                             .accessibilityHint("Double tap to open the giving page")
                             .accessibilityAddTraits(.isButton)
                             
@@ -72,11 +72,11 @@ struct GivingView: View {
                             Button(action: {
                                 viewModel.openManageAccount()
                             }) {
-                                Text("Manage Your Account & Scheduled Gifts.")
+                                Text(String(localized: "Manage Your Account & Scheduled Gifts."))
                                     .font(.footnote)
                                     .foregroundColor(.gray)
                             }
-                            .accessibilityLabel("Manage your account and scheduled gifts")
+                            .accessibilityLabel(String(localized: "Manage Your Account & Scheduled Gifts."))
                             .accessibilityHint("Double tap to manage your giving account")
                             .accessibilityAddTraits(.isButton)
                             

@@ -16,17 +16,28 @@ struct iPadSermonsListView: View {
         audioManager.getContinueListeningInfo(from: viewModel.sermons)
     }
 
-    private var searchSuggestions: [String] {
+    // Cached search suggestions - recalculated only when search text or sermons change
+    @State private var searchSuggestions: [String] = []
+    
+    /// Recalculates search suggestions based on current search text and sermons
+    private func updateSearchSuggestions() {
         let query = viewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return [] }
+        
+        guard !query.isEmpty else {
+            searchSuggestions = []
+            return
+        }
+        
         let lowercasedQuery = query.lowercased()
         let titles = listSermons.map { $0.title }
         let uniqueTitles = Array(Set(titles))
-        return uniqueTitles
+        let suggestions = uniqueTitles
             .filter { $0.lowercased().contains(lowercasedQuery) }
             .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
             .prefix(5)
             .map { $0 }
+        
+        searchSuggestions = suggestions
     }
 
     var body: some View {
@@ -52,6 +63,18 @@ struct iPadSermonsListView: View {
         }
         .task {
             await viewModel.loadInitial()
+        }
+        .onChange(of: viewModel.searchText) { _, _ in
+            // Recalculate suggestions when search text changes
+            updateSearchSuggestions()
+        }
+        .onChange(of: listSermons.count) { _, _ in
+            // Recalculate suggestions when sermons change (e.g., after loading)
+            updateSearchSuggestions()
+        }
+        .onAppear {
+            // Calculate initial suggestions if there's a search query
+            updateSearchSuggestions()
         }
     }
 
@@ -111,7 +134,7 @@ struct iPadSermonsListView: View {
 
     private func searchBarOverlay(metrics: LayoutMetrics) -> some View {
         VStack(spacing: 0) {
-            UIKitSearchBar(text: $viewModel.searchText, placeholder: "Search sermons")
+            UIKitSearchBar(text: $viewModel.searchText, placeholder: String(localized: "Search sermons"))
                 .padding(.horizontal, metrics.searchBarPadding)
                 .padding(.vertical, metrics.searchBarVerticalPadding)
 
@@ -220,7 +243,7 @@ struct iPadSermonsListView: View {
 
     private var loadingView: some View {
         VStack(spacing: 20) {
-            ProgressView("Loading sermons...")
+            ProgressView(String(localized: "Loading sermons..."))
                 .padding(.top, 40)
         }
         .frame(maxWidth: .infinity, minHeight: 200)
@@ -232,7 +255,7 @@ struct iPadSermonsListView: View {
                 .font(.system(size: 50)) // Large decorative error icon - size appropriate for error state
                 .foregroundColor(.amber)
 
-            Text("Something went wrong")
+            Text(String(localized: "Something went wrong"))
                 .font(.headline)
 
             Text(message)
@@ -246,7 +269,7 @@ struct iPadSermonsListView: View {
                     await viewModel.refresh()
                 }
             } label: {
-                Text("Retry")
+                Text(String(localized: "Retry"))
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                     .padding()
@@ -266,11 +289,11 @@ struct iPadSermonsListView: View {
                 .font(.system(size: 50)) // Large decorative empty state icon - size appropriate for empty state
                 .foregroundColor(.secondary)
 
-            Text("No sermons found")
+            Text(String(localized: "No sermons found"))
                 .font(.headline)
                 .fontWeight(.bold)
 
-            Text("Try searching for something else.")
+            Text(String(localized: "Try searching for something else."))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
@@ -278,7 +301,7 @@ struct iPadSermonsListView: View {
                 Button {
                     viewModel.clearSearch()
                 } label: {
-                    Text("Clear Search")
+                    Text(String(localized: "Clear Search"))
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                         .padding(.horizontal, 24)

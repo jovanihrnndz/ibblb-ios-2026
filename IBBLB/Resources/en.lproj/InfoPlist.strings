@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  IBBLB
+  
+  Localized privacy usage descriptions for English
+*/
+
+"NSCalendarsUsageDescription" = "We need access to your calendar to add church events.";
+"NSCalendarsFullAccessUsageDescription" = "We need access to your calendar to add church events.";

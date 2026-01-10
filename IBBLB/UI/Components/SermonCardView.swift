@@ -13,57 +13,13 @@ struct SermonCardView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            thumbnailView
-                .accessibilityHidden(true)
-
-            VStack(alignment: .leading, spacing: isTV ? 8 : 4) {
-                Text(sermon.title)
-                    .font(isTV ? .title2.weight(.semibold) : .headline)
-                    .lineLimit(isTV ? 3 : 2)
-                    .foregroundColor(.primary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .accessibilityAddTraits(.isHeader)
-
-                HStack(spacing: isTV ? 8 : 4) {
-                    if let speaker = sermon.speaker, !speaker.isEmpty {
-                        Text(speaker)
-                    }
-
-                    if let speaker = sermon.speaker, !speaker.isEmpty, sermon.date != nil {
-                        Text("•")
-                            .accessibilityHidden(true)
-                    }
-
-                    if let date = sermon.date {
-                        Text(date.formattedSermonDate)
-                    }
-                }
-                .font(isTV ? .title3 : .subheadline)
-                .foregroundColor(.secondary)
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel(accessibilityMetadata)
-            }
-            .padding(isTV ? 24 : 16)
-            .frame(maxWidth: .infinity, minHeight: isTV ? 140 : 100, alignment: .top)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: isTV ? 20 : 12, style: .continuous))
-        .shadow(color: Color.black.opacity(0.1), radius: isTV ? 8 : 4, x: 0, y: 2)
+        thumbnailView
+            .background(Color(.secondarySystemGroupedBackground))
+            .clipShape(RoundedRectangle(cornerRadius: isTV ? 20 : 12, style: .continuous))
+            .shadow(color: Color.black.opacity(0.1), radius: isTV ? 8 : 4, x: 0, y: 2)
+            .accessibilityLabel("\(sermon.title)\(sermon.speaker.map { " by \($0)" } ?? "")")
     }
     
-    private var accessibilityMetadata: String {
-        var components: [String] = []
-        if let speaker = sermon.speaker, !speaker.isEmpty {
-            components.append("Speaker: \(speaker)")
-        }
-        if let date = sermon.date {
-            components.append("Date: \(date.formattedSermonDate)")
-        }
-        return components.isEmpty ? "" : components.joined(separator: ", ")
-    }
-
     private var thumbnailView: some View {
         Rectangle()
             .fill(Color(.systemGray6))
@@ -80,12 +36,6 @@ struct SermonCardView: View {
                     }
                 } else {
                     placeholderContent
-                }
-            }
-            .overlay {
-                // Play overlay icon
-                if let id = sermon.youtubeVideoId, !id.trimmingCharacters(in: .whitespaces).isEmpty {
-                    VideoThumbnailOverlay()
                 }
             }
             .frame(maxWidth: .infinity)

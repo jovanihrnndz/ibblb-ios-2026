@@ -17,13 +17,13 @@ final class CalendarManager {
         var errorDescription: String? {
             switch self {
             case .accessDenied:
-                return "Acceso al calendario denegado. Por favor, habilita el acceso en Configuración."
+                return String(localized: "Calendar access denied. Please enable access in Settings.")
             case .accessRestricted:
-                return "El acceso al calendario está restringido en este dispositivo."
+                return String(localized: "Calendar access is restricted on this device.")
             case .saveFailed(let error):
-                return "No se pudo guardar el evento: \(error.localizedDescription)"
+                return String(localized: "Could not save event: \(error.localizedDescription)")
             case .unknown:
-                return "Ocurrió un error desconocido."
+                return String(localized: "An unknown error occurred.")
             }
         }
     }

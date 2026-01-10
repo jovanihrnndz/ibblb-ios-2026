@@ -33,7 +33,7 @@ struct ServiceInfoCardView: View {
                     .foregroundColor(.accentColor)
                     .accessibilityHidden(true)
 
-                Text("Información de la Iglesia")
+                Text(String(localized: "Church Information"))
                     .font(.headline)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
@@ -48,7 +48,7 @@ struct ServiceInfoCardView: View {
             Button(action: openDirections) {
                 infoRow(
                     icon: "mappin.and.ellipse",
-                    title: "Dirección",
+                    title: String(localized: "Address"),
                     value: address,
                     tappable: true
                 )
@@ -67,7 +67,7 @@ struct ServiceInfoCardView: View {
                         .frame(width: 24)
                         .accessibilityHidden(true)
 
-                    Text("Horarios de Servicio")
+                    Text(String(localized: "Service Times"))
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary)
@@ -75,9 +75,9 @@ struct ServiceInfoCardView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    timeRow(day: "Domingo", time: "12:00 PM", label: "Servicio de Predicación")
-                    timeRow(day: "Domingo", time: "11:00 AM", label: "Escuela Dominical")
-                    timeRow(day: "Jueves", time: "7:30 PM", label: "Estudio Bíblico")
+                    timeRow(day: String(localized: "Sunday"), time: "12:00 PM", label: String(localized: "Preaching Service"))
+                    timeRow(day: String(localized: "Sunday"), time: "11:00 AM", label: String(localized: "Sunday School"))
+                    timeRow(day: String(localized: "Thursday"), time: "7:30 PM", label: String(localized: "Bible Study"))
                 }
                 .padding(.leading, 34)
             }
@@ -94,7 +94,7 @@ struct ServiceInfoCardView: View {
                             .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Teléfono")
+                            Text(String(localized: "Phone"))
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)
@@ -126,7 +126,7 @@ struct ServiceInfoCardView: View {
                             .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Correo Electrónico")
+                            Text(String(localized: "Email"))
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.primary)

@@ -55,7 +55,7 @@ struct OutlinePointDetailSheetView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Number Badge
-            Text("Punto \(selectedPoint.number)")
+            Text("\(String(localized: "Point "))\(selectedPoint.number)")
                 .font(.caption)
                 .fontWeight(.semibold)
                 .foregroundColor(.accentColor)
@@ -110,7 +110,7 @@ struct OutlinePointDetailSheetView: View {
                 Image(systemName: "text.page")
                     .font(.title) // Decorative placeholder icon
                     .foregroundColor(.secondary.opacity(0.5))
-                Text("Sin notas")
+                Text(String(localized: "No notes"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }

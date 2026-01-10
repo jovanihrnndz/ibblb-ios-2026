@@ -9,7 +9,6 @@ enum AppTab: String, Hashable, CaseIterable {
 
 struct AppRootView: View {
     @AppStorage("selectedTab") private var selectedTab: AppTab = .sermons
-    @State private var hideTabBar: Bool = false
     @State private var showSplash = true
     @State private var showNowPlaying = false
 
@@ -33,31 +32,31 @@ struct AppRootView: View {
     private var mainContent: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                SermonsView(hideTabBar: $hideTabBar)
+                SermonsView()
                     .tabItem {
-                        Label("Sermons", systemImage: "book")
+                        Label(String(localized: "Sermons"), systemImage: "book")
                     }
                     .tag(AppTab.sermons)
 
                 LiveView()
                     .tabItem {
-                        Label("Live", systemImage: "tv")
+                        Label(String(localized: "Live"), systemImage: "tv")
                     }
                     .tag(AppTab.live)
 
                 EventsView()
                     .tabItem {
-                        Label("Events", systemImage: "calendar")
+                        Label(String(localized: "Events"), systemImage: "calendar")
                     }
                     .tag(AppTab.events)
 
                 GivingView()
                     .tabItem {
-                        Label("Giving", systemImage: "heart")
+                        Label(String(localized: "Giving"), systemImage: "heart")
                     }
                     .tag(AppTab.giving)
             }
-            .toolbar(hideTabBar ? .hidden : .visible, for: .tabBar)
+            .toolbar(.visible, for: .tabBar)
 
             // Mini player overlay - isolated in its own observing view
             // to prevent AudioPlayerManager updates from re-rendering the entire app
