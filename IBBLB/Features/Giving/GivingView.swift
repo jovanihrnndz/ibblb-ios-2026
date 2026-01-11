@@ -60,7 +60,7 @@ struct GivingView: View {
                                 .padding(.vertical, 16)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color(red: 0.0, green: 0.48, blue: 1.0)) // iOS blue
+                                        .fill(Color.accentColor)
                                 )
                             }
                             .padding(.horizontal, 32)

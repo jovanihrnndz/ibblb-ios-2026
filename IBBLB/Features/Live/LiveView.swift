@@ -6,8 +6,8 @@ struct LiveView: View {
     @State private var activeVideoId: String? = nil
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    // Website-aligned dark blue/black color
-    private let webDarkColor = Color(red: 22/255, green: 26/255, blue: 35/255)
+    // Brand color matching website countdown timer background
+    private let webDarkColor = Color("CountdownBackground", bundle: nil)
 
     private var isRegularWidth: Bool {
         horizontalSizeClass == .regular
@@ -302,7 +302,7 @@ struct WebStyleCountdownCard: View {
 
                 Text(value)
                     .font(.system(size: 36, weight: .bold, design: .rounded)) // Large display numbers - kept specific size for countdown timer
-                    .foregroundColor(Color(red: 140/255, green: 130/255, blue: 255/255))
+                    .foregroundColor(Color("CountdownDigits", bundle: nil))
             }
 
             Text(label)

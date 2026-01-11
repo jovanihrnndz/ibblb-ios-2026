@@ -23,7 +23,9 @@ class LiveViewModel: ObservableObject {
         // Ensure timer is properly cleaned up when ViewModel is deallocated
         timer?.cancel()
         timer = nil
+        #if DEBUG
         print("🧹 LiveViewModel deinitialized - timer cleaned up")
+        #endif
     }
 
     /// Load initial data only once

@@ -83,7 +83,12 @@ struct YouTubePlayerView: UIViewRepresentable {
         
         // Use base URL matching the embed domain (youtube-nocookie.com)
         // This helps with referrer handling
-        let baseURL = URL(string: "https://www.youtube-nocookie.com")!
+        guard let baseURL = URL(string: "https://www.youtube-nocookie.com") else {
+            #if DEBUG
+            print("❌ YouTubePlayerView: Failed to create base URL")
+            #endif
+            return
+        }
         webView.loadHTMLString(html, baseURL: baseURL)
     }
     

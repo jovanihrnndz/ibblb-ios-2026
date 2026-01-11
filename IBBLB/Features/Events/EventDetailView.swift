@@ -35,7 +35,7 @@ struct EventDetailView: View {
 
                         HStack(spacing: 16) {
                             Button(action: addToCalendar) {
-                                labelValue(icon: "calendar", value: event.startDate.formatted(date: .long, time: .shortened))
+                                labelValue(icon: "calendar", value: event.startDate.formattedEventDate())
                             }
                             .buttonStyle(PlainButtonStyle())
                             .accessibilityLabel("Add event to calendar")
@@ -151,7 +151,7 @@ struct EventDetailView: View {
 
     private func openMapsWithQuery(_ query: String) {
         let encodedAddress = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        if let url = URL(string: "http://maps.apple.com/?q=\(encodedAddress)") {
+        if let url = URL(string: "https://maps.apple.com/?q=\(encodedAddress)") {
             UIApplication.shared.open(url)
         }
     }

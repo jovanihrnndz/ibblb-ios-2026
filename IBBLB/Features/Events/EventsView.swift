@@ -157,7 +157,7 @@ struct EventsView: View {
                         
                         HStack(spacing: 4) {
                             Image(systemName: "calendar")
-                            Text(event.startDate.formatted(date: .long, time: .shortened))
+                            Text(event.startDate.formattedEventDate())
                         }
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -202,7 +202,7 @@ struct EventsView: View {
                     Button(action: {
                         // Registration action
                     }) {
-                        Text("Registrarse")
+                        Text(String(localized: "Register"))
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .frame(maxWidth: .infinity)

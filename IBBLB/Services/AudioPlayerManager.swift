@@ -70,6 +70,7 @@ final class AudioPlayerManager: ObservableObject {
     private var cachedArtwork: MPMediaItemArtwork?
     private var lastSaveTime: TimeInterval = 0
     private var hasClearedOnFinish = false
+    private var backgroundObserver: NSObjectProtocol?
     
     // MARK: - UserDefaults Keys
 
@@ -257,6 +258,10 @@ final class AudioPlayerManager: ObservableObject {
         if let observer = timeObserver, let currentPlayer = player {
             currentPlayer.removeTimeObserver(observer)
         }
+        // Clean up NotificationCenter observer
+        if let observer = backgroundObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
         cancellables.removeAll()
     }
     
@@ -300,7 +305,7 @@ final class AudioPlayerManager: ObservableObject {
     }
     
     private func setupBackgroundNotifications() {
-        NotificationCenter.default.addObserver(
+        backgroundObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.willResignActiveNotification,
             object: nil,
             queue: .main
