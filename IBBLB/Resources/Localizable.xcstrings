@@ -1,1621 +1,2008 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "Bosquejo": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Outline"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    " — " : {
+
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@, %3$@"
+          }
+        }
+      }
+    },
+    "%@ of %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@"
+          }
+        }
+      }
+    },
+    "%@%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@%2$@"
+          }
+        }
+      }
+    },
+    "%@%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@%2$lld"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld percent" : {
+
+    },
+    "$%lld" : {
+
+    },
+    "15" : {
+
+    },
+    "30" : {
+
+    },
+    "Account management URL not available" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Account management URL not available"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bosquejo"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL de administración de cuenta no disponible"
           }
         }
       }
     },
-    "Continue Listening": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continue Listening"
+    "Actualizar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continuar Escuchando"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizar"
           }
         }
       }
+    },
+    "Add event to calendar" : {
+
     },
-    "Dirección": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Address"
+    "Address" : {
+
+    },
+    "Address: %@" : {
+
+    },
+    "An unknown error occurred." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An unknown error occurred."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dirección"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocurrió un error desconocido."
           }
         }
       }
     },
-    "En Vivo": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Live"
+    "Audio progress" : {
+
+    },
+    "Bible Study" : {
+
+    },
+    "Bosquejo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Outline"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "En Vivo"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bosquejo"
           }
         }
       }
     },
-    "Horarios de Servicio": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Service Times"
+    "Calendar access denied. Please enable access in Settings." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar access denied. Please enable access in Settings."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Horarios de Servicio"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acceso al calendario denegado. Por favor, habilita el acceso en Configuración."
           }
         }
       }
     },
-    "Información de la Iglesia": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Church Information"
+    "Calendar access is restricted on this device." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar access is restricted on this device."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Información de la Iglesia"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El acceso al calendario está restringido en este dispositivo."
           }
         }
       }
     },
-    "No hay eventos próximos": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No upcoming events"
+    "Check service times below" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check service times below"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No hay eventos próximos"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulta los horarios de servicio abajo"
           }
         }
       }
+    },
+    "Church banner" : {
+
     },
-    "No hay servicio programado": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No service scheduled"
+    "Church Information" : {
+
+    },
+    "Clear search" : {
+
+    },
+    "Clear Search" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear Search"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No hay servicio programado"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpiar búsqueda"
           }
         }
       }
+    },
+    "Close" : {
+
+    },
+    "Close video player" : {
+
     },
-    "No sermons found": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No sermons found"
+    "Come back soon to see our upcoming activities." : {
+
+    },
+    "COMIENZA EN" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "STARTS IN"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se encontraron sermones"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "COMIENZA EN"
           }
         }
       }
     },
-    "Puntos principales": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Main Points"
+    "Conclusion" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conclusion"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Puntos principales"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conclusión"
           }
         }
       }
+    },
+    "Connection Error" : {
+
     },
-    "Próximo Servicio": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Upcoming Service"
+    "Consulta los horarios de servicio abajo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check service times below"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Próximo Servicio"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulta los horarios de servicio abajo"
           }
         }
       }
     },
-    "Servicio Anterior": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Previous Service"
+    "Continue Listening" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue Listening"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Servicio Anterior"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar Escuchando"
           }
         }
       }
     },
-    "Sin notas": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No notes"
+    "Continue listening: %@" : {
+
+    },
+    "Correo Electrónico" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Email"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sin notas"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correo Electrónico"
           }
         }
       }
     },
-    "Something went wrong": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Something went wrong"
+    "Could not save event: %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not save event: %@"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Algo salió mal"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo guardar el evento: %@"
           }
         }
       }
+    },
+    "Currently selected tab" : {
+
     },
-    "Try searching for something else.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Try searching for something else."
+    "Date: %@" : {
+
+    },
+    "DAYS" : {
+
+    },
+    "Details" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Intenta buscar algo más."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detalles"
           }
         }
       }
     },
-    "Únete a nosotros para servicios de adoración en vivo": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Join us for live worship services"
+    "Detalles" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Únete a nosotros para servicios de adoración en vivo"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detalles"
           }
         }
       }
     },
-    "Únete a nosotros para\nservicios en vivo": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Join us for\nlive services"
+    "DÍAS" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DAYS"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Únete a nosotros para\nservicios en vivo"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DÍAS"
           }
         }
       }
     },
-    "Vuelve pronto para ver nuestras próximas actividades.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Come back soon to see our upcoming activities."
+    "Dirección" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Address"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vuelve pronto para ver nuestras próximas actividades."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dirección"
           }
         }
       }
     },
-    "Sermons": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sermons"
+    "Direct ID Test" : {
+
+    },
+    "Domingo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sunday"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sermones"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Domingo"
           }
         }
       }
+    },
+    "Double tap to %@ audio" : {
+
+    },
+    "Double tap to %@ the audio version of this sermon" : {
+
+    },
+    "Double tap to add this event to your calendar" : {
+
+    },
+    "Double tap to attempt loading events again" : {
+
+    },
+    "Double tap to attempt loading live stream information again" : {
+
+    },
+    "Double tap to attempt loading sermons again" : {
+
+    },
+    "Double tap to call" : {
+
+    },
+    "Double tap to clear the search field and show all sermons" : {
+
+    },
+    "Double tap to clear the search text" : {
+
+    },
+    "Double tap to close the video overlay" : {
+
+    },
+    "Double tap to close this detail sheet" : {
+
+    },
+    "Double tap to manage your giving account" : {
+
+    },
+    "Double tap to open directions in Maps" : {
+
+    },
+    "Double tap to open full player" : {
+
+    },
+    "Double tap to open the event location in Maps" : {
+
+    },
+    "Double tap to open the giving page" : {
+
+    },
+    "Double tap to play or pause the video" : {
+
+    },
+    "Double tap to refresh the events list" : {
+
+    },
+    "Double tap to register for this event" : {
+
+    },
+    "Double tap to resume playing from where you left off" : {
+
+    },
+    "Double tap to send email" : {
+
+    },
+    "Double tap to skip backward 15 seconds" : {
+
     },
-    "Live": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Live"
+    "Double tap to skip forward 15 seconds" : {
+
+    },
+    "Double tap to skip forward 30 seconds" : {
+
+    },
+    "Double tap to stop playback and close this view" : {
+
+    },
+    "Double tap to switch to %@ tab" : {
+
+    },
+    "Double tap to view detailed notes for this point" : {
+
+    },
+    "Double tap to view event details" : {
+
+    },
+    "Double tap to view sermon details" : {
+
+    },
+    "El evento se ha agregado a tu calendario." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The event has been added to your calendar."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "En Vivo"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El evento se ha agregado a tu calendario."
           }
         }
       }
+    },
+    "Email" : {
+
     },
-    "Events": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Events"
+    "Email: %@" : {
+
+    },
+    "En Vivo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Eventos"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En Vivo"
           }
         }
       }
+    },
+    "Enter text to search" : {
+
     },
-    "Giving": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Giving"
+    "Enter text to search for sermons by title, speaker, or topic" : {
+
+    },
+    "Error" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ofrendas"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error"
           }
         }
       }
+    },
+    "Error message: %@" : {
+
     },
-    "Domingo": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sunday"
+    "Escuela Dominical" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sunday School"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Domingo"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuela Dominical"
           }
         }
       }
     },
-    "Jueves": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Thursday"
+    "Estudio Bíblico" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bible Study"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jueves"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudio Bíblico"
           }
         }
       }
     },
-    "Servicio de Predicación": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Preaching Service"
+    "Event" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Event"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Servicio de Predicación"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evento"
           }
         }
       }
     },
-    "Escuela Dominical": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sunday School"
+    "Event: %@" : {
+
+    },
+    "Evento" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Event"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Escuela Dominical"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evento"
           }
         }
       }
     },
-    "Estudio Bíblico": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bible Study"
+    "Events" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Events"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Estudio Bíblico"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eventos"
           }
         }
       }
     },
-    "Teléfono": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Phone"
+    "Éxito" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Success"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Teléfono"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Éxito"
           }
         }
       }
     },
-    "Correo Electrónico": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Email"
+    "Failed to decode response: %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to decode response: %@"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Correo Electrónico"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error al decodificar la respuesta: %@"
           }
         }
       }
     },
-    "Retry": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Retry"
+    "Failed to load giving information. Please try again." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to load giving information. Please try again."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reintentar"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cargar la información de ofrendas. Por favor intenta de nuevo."
           }
         }
       }
     },
-    "Clear Search": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear Search"
+    "Give with Sharefaith Giving" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Give with Sharefaith Giving"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Limpiar búsqueda"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dar con Sharefaith Giving"
           }
         }
       }
     },
-    "Actualizar": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Refresh"
+    "Giving" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giving"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Actualizar"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ofrendas"
           }
         }
       }
     },
-    "Reintentar": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Retry"
+    "Giving URL not available" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giving URL not available"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reintentar"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL de ofrendas no disponible"
           }
         }
       }
     },
-    "Loading sermons...": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loading sermons..."
+    "Horarios de Servicio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Service Times"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cargando sermones..."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horarios de Servicio"
           }
         }
       }
     },
-    "Registrarse para este evento": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Register for this event"
+    "HORAS" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HOURS"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Registrarse para este evento"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HORAS"
           }
         }
       }
+    },
+    "HOURS" : {
+
     },
-    "Detalles": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Details"
+    "If this video loads, your embed setup is working.\nIf it fails, the issue is your code or headers." : {
+
+    },
+    "Información de la Iglesia" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Church Information"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Detalles"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Información de la Iglesia"
           }
         }
       }
     },
-    "Evento": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Event"
+    "Introduccion" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduction"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Evento"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introducción"
           }
         }
       }
+    },
+    "Introduction" : {
+
     },
-    "Éxito": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Success"
+    "Join us for\nlive services" : {
+
+    },
+    "Join us for live worship services" : {
+
+    },
+    "Jueves" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thursday"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Éxito"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jueves"
           }
         }
       }
     },
-    "Error": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Error"
+    "Live" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Error"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En Vivo"
           }
         }
       }
     },
-    "OK": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OK"
+    "Loading sermons..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading sermons..."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OK"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando sermones..."
           }
         }
       }
     },
-    "El evento se ha agregado a tu calendario.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The event has been added to your calendar."
+    "Main Points" : {
+
+    },
+    "Manage Your Account & Scheduled Gifts." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage Your Account & Scheduled Gifts."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El evento se ha agregado a tu calendario."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Administra tu cuenta y ofrendas programadas."
           }
         }
       }
+    },
+    "MINUTES" : {
+
     },
-    "Play Audio": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Play Audio"
+    "MINUTOS" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MINUTES"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reproducir audio"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MINUTOS"
           }
         }
       }
     },
-    "Playing": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Playing"
+    "More Sermons" : {
+
+    },
+    "Necesitamos acceso a tu calendario para agregar eventos de la iglesia." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We need access to your calendar to add church events."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reproduciendo"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesitamos acceso a tu calendario para agregar eventos de la iglesia."
           }
         }
       }
     },
-    "Stop": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stop"
+    "No hay eventos próximos" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No upcoming events"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Detener"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay eventos próximos"
           }
         }
       }
     },
-    "Pause": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pause"
+    "No hay servicio programado" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No service scheduled"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pausar"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay servicio programado"
           }
         }
       }
+    },
+    "No notes" : {
+
     },
-    "Play": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Play"
+    "No se pudieron cargar los eventos." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to load events."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reproducir"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron cargar los eventos."
           }
         }
       }
     },
-    "Resume": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Resume"
+    "No se pudieron cargar los sermones. Inténtalo de nuevo." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to load sermons. Please try again."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continuar"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron cargar los sermones. Inténtalo de nuevo."
           }
         }
       }
     },
-    "Manage Your Account & Scheduled Gifts.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Manage Your Account & Scheduled Gifts."
+    "No se pudo cargar la información del servicio." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to load service information."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Administra tu cuenta y ofrendas programadas."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cargar la información del servicio."
           }
         }
       }
     },
-    "Give with Sharefaith Giving": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Give with Sharefaith Giving"
+    "No sermons found" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No sermons found"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dar con Sharefaith Giving"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontraron sermones"
           }
         }
       }
+    },
+    "No service scheduled" : {
+
+    },
+    "No upcoming events" : {
+
     },
-    "Trust God with your finances by giving your first 10% back to Him.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trust God with your finances by giving your first 10% back to Him."
+    "Now playing: %@" : {
+
+    },
+    "OK" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Confía en Dios con tus finanzas dando el primer 10% de vuelta a Él."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "Open location in Maps: %@" : {
+
+    },
+    "Outline" : {
+
+    },
+    "Outline point %lld: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Outline point %1$lld: %2$@"
           }
         }
       }
     },
-    "Introduccion": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Introduction"
+    "Pause" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Introducción"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausar"
           }
         }
       }
+    },
+    "Phone" : {
+
+    },
+    "Phone: %@" : {
+
     },
-    "Conclusion": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Conclusion"
+    "Play" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Conclusión"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproducir"
           }
         }
       }
     },
-    "Punto ": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Point "
+    "Play Audio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play Audio"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Punto "
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproducir audio"
           }
         }
       }
     },
-    "COMIENZA EN": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "STARTS IN"
+    "Playback position" : {
+
+    },
+    "Playback progress" : {
+
+    },
+    "Playing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playing"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "COMIENZA EN"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproduciendo"
           }
         }
       }
     },
-    "DÍAS": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DAYS"
+    "Please wait while sermons are being loaded" : {
+
+    },
+    "Point " : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Point "
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DÍAS"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punto "
           }
         }
       }
+    },
+    "Preaching Service" : {
+
     },
-    "HORAS": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HOURS"
+    "Previous Service" : {
+
+    },
+    "Próximo Servicio" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upcoming Service"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HORAS"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próximo Servicio"
           }
         }
       }
     },
-    "MINUTOS": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MINUTES"
+    "Punto " : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Point "
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "MINUTOS"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Punto "
           }
         }
       }
     },
-    "SEGUNDOS": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SECONDS"
+    "Puntos principales" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Main Points"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SEGUNDOS"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puntos principales"
           }
         }
       }
+    },
+    "Refresh" : {
+
+    },
+    "Refresh events" : {
+
+    },
+    "Register" : {
+
     },
-    "Consulta los horarios de servicio abajo": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Check service times below"
+    "Register for event" : {
+
+    },
+    "Register for this event" : {
+
+    },
+    "Registrarse para este evento" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Register for this event"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Consulta los horarios de servicio abajo"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registrarse para este evento"
           }
         }
       }
     },
-    "The URL is invalid.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The URL is invalid."
+    "Reintentar" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La URL no es válida."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reintentar"
           }
         }
       }
     },
-    "Request failed: %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Request failed: %@"
+    "Request failed: %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request failed: %@"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La solicitud falló: %@"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La solicitud falló: %@"
           }
         }
       }
     },
-    "The server returned an invalid response.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The server returned an invalid response."
+    "Resume" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resume"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El servidor devolvió una respuesta no válida."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
           }
         }
       }
     },
-    "Failed to decode response: %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Failed to decode response: %@"
+    "Resume listening" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resume listening"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Error al decodificar la respuesta: %@"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar escuchando"
           }
         }
       }
     },
-    "Server responded with status code: %d": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Server responded with status code: %d"
+    "Resume playback" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resume playback"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El servidor respondió con código de estado: %d"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reanudar reproducción"
           }
         }
       }
     },
-    "Unauthorized access. Please check your token.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unauthorized access. Please check your token."
+    "Retry" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Acceso no autorizado. Por favor verifica tu token."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reintentar"
           }
         }
       }
+    },
+    "Retry loading events" : {
+
+    },
+    "Retry loading live stream" : {
+
     },
-    "Necesitamos acceso a tu calendario para agregar eventos de la iglesia.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "We need access to your calendar to add church events."
+    "Retry loading sermons" : {
+
+    },
+    "Scripture: %@" : {
+
+    },
+    "Search field" : {
+
+    },
+    "Search sermons" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search sermons"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Necesitamos acceso a tu calendario para agregar eventos de la iglesia."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar sermones"
           }
         }
       }
     },
-    "Search...": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search..."
+    "Search..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search..."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Buscar..."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar..."
           }
         }
       }
     },
-    "Search sermons": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search sermons"
+    "SECONDS" : {
+
+    },
+    "SEGUNDOS" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SECONDS"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Buscar sermones"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SEGUNDOS"
           }
         }
       }
+    },
+    "Sermon outline" : {
+
     },
-    "Check service times below": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Check service times below"
+    "Sermon: %@" : {
+
+    },
+    "Sermons" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sermons"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Consulta los horarios de servicio abajo"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sermones"
           }
         }
       }
     },
-    "Point ": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Point "
+    "Server responded with status code: %d" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server responded with status code: %d"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Punto "
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El servidor respondió con código de estado: %d"
           }
         }
       }
+    },
+    "Server responded with status code: %lld" : {
+
     },
-    "Details": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Details"
+    "Service Times" : {
+
+    },
+    "Servicio Anterior" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous Service"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Detalles"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servicio Anterior"
           }
         }
       }
     },
-    "Event": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Event"
+    "Servicio de Predicación" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preaching Service"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Evento"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servicio de Predicación"
           }
         }
       }
+    },
+    "Share" : {
+
     },
-    "Success": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Success"
+    "Sin notas" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No notes"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Éxito"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin notas"
           }
         }
       }
     },
-    "The event has been added to your calendar.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The event has been added to your calendar."
+    "Skip backward 15 seconds" : {
+
+    },
+    "Skip forward 15 seconds" : {
+
+    },
+    "Skip forward 30 seconds" : {
+
+    },
+    "Something went wrong" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El evento se ha agregado a tu calendario."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algo salió mal"
           }
         }
       }
+    },
+    "Speaker: %@" : {
+
     },
-    "Resume playback": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Resume playback"
+    "STARTS IN" : {
+
+    },
+    "Stop" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reanudar reproducción"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detener"
           }
         }
       }
     },
-    "Resume listening": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Resume listening"
+    "Stop playback" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop playback"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continuar escuchando"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detener reproducción"
           }
         }
       }
     },
-    "Stop playback": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stop playback"
+    "Success" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Success"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Detener reproducción"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Éxito"
           }
         }
       }
+    },
+    "Sunday" : {
+
+    },
+    "Sunday School" : {
+
+    },
+    "Swipe up or down to adjust playback position" : {
+
     },
-    "We need access to your calendar to add church events.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "We need access to your calendar to add church events."
+    "Teléfono" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phone"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Necesitamos acceso a tu calendario para agregar eventos de la iglesia."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teléfono"
           }
         }
       }
     },
-    "Calendar access denied. Please enable access in Settings.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Calendar access denied. Please enable access in Settings."
+    "The account link appears to be external. Please contact support." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The account link appears to be external. Please contact support."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Acceso al calendario denegado. Por favor, habilita el acceso en Configuración."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El enlace de cuenta parece ser externo. Por favor contacta al soporte."
           }
         }
       }
     },
-    "Calendar access is restricted on this device.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Calendar access is restricted on this device."
+    "The event has been added to your calendar." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The event has been added to your calendar."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El acceso al calendario está restringido en este dispositivo."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El evento se ha agregado a tu calendario."
           }
         }
       }
     },
-    "Could not save event: %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Could not save event: %@"
+    "The giving link appears to be external. Please contact support." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The giving link appears to be external. Please contact support."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudo guardar el evento: %@"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El enlace de ofrendas parece ser externo. Por favor contacta al soporte."
           }
         }
       }
     },
-    "An unknown error occurred.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "An unknown error occurred."
+    "The server returned an invalid response." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server returned an invalid response."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ocurrió un error desconocido."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El servidor devolvió una respuesta no válida."
           }
         }
       }
     },
-    "No se pudieron cargar los sermones. Inténtalo de nuevo.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unable to load sermons. Please try again."
+    "The URL is invalid." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The URL is invalid."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudieron cargar los sermones. Inténtalo de nuevo."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La URL no es válida."
           }
         }
       }
     },
-    "No se pudieron cargar los eventos.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unable to load events."
+    "Thursday" : {
+
+    },
+    "Trust God with your finances by giving your first 10% back to Him." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trust God with your finances by giving your first 10% back to Him."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudieron cargar los eventos."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confía en Dios con tus finanzas dando el primer 10% de vuelta a Él."
           }
         }
       }
     },
-    "No se pudo cargar la información del servicio.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unable to load service information."
+    "Try searching for something else." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try searching for something else."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudo cargar la información del servicio."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intenta buscar algo más."
           }
         }
       }
     },
-    "Failed to load giving information. Please try again.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Failed to load giving information. Please try again."
+    "Unable to load events." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to load events."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudo cargar la información de ofrendas. Por favor intenta de nuevo."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron cargar los eventos."
           }
         }
       }
     },
-    "Giving URL not available": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Giving URL not available"
+    "Unable to load sermons. Please try again." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to load sermons. Please try again."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "URL de ofrendas no disponible"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron cargar los sermones. Inténtalo de nuevo."
           }
         }
       }
     },
-    "The giving link appears to be external. Please contact support.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The giving link appears to be external. Please contact support."
+    "Unable to load service information." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to load service information."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El enlace de ofrendas parece ser externo. Por favor contacta al soporte."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cargar la información del servicio."
           }
         }
       }
     },
-    "Unable to open giving link. Please check the URL.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unable to open giving link. Please check the URL."
+    "Unable to open account management link." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to open account management link."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudo abrir el enlace de ofrendas. Por favor verifica la URL."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo abrir el enlace de administración de cuenta."
           }
         }
       }
     },
-    "Account management URL not available": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Account management URL not available"
+    "Unable to open giving link. Please check the URL." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to open giving link. Please check the URL."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "URL de administración de cuenta no disponible"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo abrir el enlace de ofrendas. Por favor verifica la URL."
           }
         }
       }
     },
-    "The account link appears to be external. Please contact support.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The account link appears to be external. Please contact support."
+    "Unauthorized access. Please check your token." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unauthorized access. Please check your token."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El enlace de cuenta parece ser externo. Por favor contacta al soporte."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acceso no autorizado. Por favor verifica tu token."
           }
         }
       }
     },
-    "Unable to open account management link.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unable to open account management link."
+    "Únete a nosotros para\nservicios en vivo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join us for\nlive services"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudo abrir el enlace de administración de cuenta."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Únete a nosotros para\nservicios en vivo"
           }
         }
       }
     },
-    "Unable to load sermons. Please try again.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unable to load sermons. Please try again."
+    "Únete a nosotros para servicios de adoración en vivo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join us for live worship services"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudieron cargar los sermones. Inténtalo de nuevo."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Únete a nosotros para servicios de adoración en vivo"
           }
         }
       }
+    },
+    "Upcoming Service" : {
+
     },
-    "Unable to load events.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unable to load events."
+    "URL Extraction Test (extracted: %@)" : {
+
+    },
+    "Video player: %@" : {
+
+    },
+    "Vuelve pronto para ver nuestras próximas actividades." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come back soon to see our upcoming activities."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudieron cargar los eventos."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve pronto para ver nuestras próximas actividades."
           }
         }
       }
     },
-    "Unable to load service information.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unable to load service information."
+    "We need access to your calendar to add church events." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We need access to your calendar to add church events."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se pudo cargar la información del servicio."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesitamos acceso a tu calendario para agregar eventos de la iglesia."
           }
         }
       }
+    },
+    "YouTube Embed Test" : {
+
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

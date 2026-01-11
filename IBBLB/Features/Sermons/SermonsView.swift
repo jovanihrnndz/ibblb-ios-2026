@@ -80,7 +80,7 @@ struct SermonsView: View {
                 await viewModel.loadInitial()
             }
             .navigationDestination(item: $selectedSermon) { sermon in
-                SermonDetailView(sermon: sermon)
+                SermonDetailView(sermon: sermon, allSermons: viewModel.sermons)
             }
         }
     }
