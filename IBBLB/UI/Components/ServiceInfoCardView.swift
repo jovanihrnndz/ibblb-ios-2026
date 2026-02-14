@@ -244,7 +244,7 @@ struct ServiceInfoCardView: View {
 
     private func openMapsWithQuery(_ query: String) {
         let encodedAddress = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        if let url = URL(string: "http://maps.apple.com/?q=\(encodedAddress)") {
+        if let url = URL(string: "https://maps.apple.com/?q=\(encodedAddress)") {
             UIApplication.shared.open(url)
         }
     }
