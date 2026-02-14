@@ -71,7 +71,7 @@ final class AudioPlayerManager: ObservableObject {
     private var lastSaveTime: TimeInterval = 0
     private var hasClearedOnFinish = false
     private var backgroundObserver: NSObjectProtocol?
-    
+
     // MARK: - UserDefaults Keys
 
     private enum UserDefaultsKeys {
@@ -81,7 +81,7 @@ final class AudioPlayerManager: ObservableObject {
         static let lastPlayedTitle = "AudioPlayerManager.lastPlayedTitle"
         static let lastPlayedThumbnailURL = "AudioPlayerManager.lastPlayedThumbnailURL"
     }
-    
+
     // MARK: - Resume Listening Access
 
     /// Returns the saved playback info if available

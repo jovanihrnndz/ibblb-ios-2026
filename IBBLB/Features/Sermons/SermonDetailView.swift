@@ -51,7 +51,7 @@ struct SermonDetailView: View {
 
     private let outlineService = SanityOutlineService()
     @ObservedObject private var audioManager = AudioPlayerManager.shared
-    
+
     /// More sermons for sidebar (excludes current sermon, sorted by date desc, limited to 6)
     private var moreSermons: [Sermon] {
         Array(allSermons
@@ -64,17 +64,17 @@ struct SermonDetailView: View {
     private var iPhoneVideoHeight: CGFloat {
         220
     }
-    
+
     /// Video horizontal padding - minimal on iPad to use more space
     private var videoHorizontalPadding: CGFloat {
         horizontalSizeClass == .regular ? LayoutConstants.iPadVideoPadding : 16
     }
-    
+
     /// Text content max width - readability constraint only for text
     private var textMaxWidth: CGFloat {
         horizontalSizeClass == .regular ? LayoutConstants.iPadTextMaxWidth : .infinity
     }
-    
+
     /// Text horizontal padding (single source of truth)
     private var textHorizontalPadding: CGFloat {
         horizontalSizeClass == .regular ? LayoutConstants.iPadTextPadding : 16
@@ -472,7 +472,7 @@ struct SermonDetailView: View {
                 .id(videoId)
                 .accessibilityLabel("Video player: \(sermon.title)")
                 .accessibilityHint("Double tap to play or pause the video")
-            
+
             if usePolishedContainer {
                 // iPad: polished container with shadow and rounded corners
                 videoContent
