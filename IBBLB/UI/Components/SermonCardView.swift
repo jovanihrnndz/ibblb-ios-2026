@@ -66,12 +66,6 @@ struct SermonCardView: View {
                     placeholderContent
                 }
             }
-            .overlay {
-                // Play overlay icon
-                if let id = sermon.youtubeVideoId, !id.trimmingCharacters(in: .whitespaces).isEmpty {
-                    VideoThumbnailOverlay()
-                }
-            }
             .frame(maxWidth: .infinity)
             .clipped()
     }
@@ -115,9 +109,6 @@ struct SermonCardView: View {
     private var placeholderContent: some View {
         ZStack {
             Color(.systemGray6)
-            Image(systemName: "play.rectangle.fill")
-                .font(.system(size: isTV ? 80 : 40))
-                .foregroundColor(Color(.systemGray3))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
