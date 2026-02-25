@@ -106,7 +106,7 @@ async function sendApnsNotification(
   body: string,
   sermonId: string
 ): Promise<ApnsResult> {
-  const url = `https://api.sandbox.push.apple.com/3/device/${token}`;
+  const url = `https://api.push.apple.com/3/device/${token}`;
 
   const notificationPayload = {
     aps: {
