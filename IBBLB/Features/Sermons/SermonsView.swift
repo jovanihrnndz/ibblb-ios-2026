@@ -12,6 +12,7 @@ struct SermonsView: View {
     @StateObject private var viewModel = SermonsViewModel()
     @State private var selectedSermon: Sermon?
     @Binding var hideTabBar: Bool
+    @Binding var notificationSermonId: String?
     @Namespace private var animationNamespace
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
@@ -123,6 +124,12 @@ struct SermonsView: View {
             .task {
                 // Load initial data only once
                 await viewModel.loadInitial()
+            }
+            .onChange(of: notificationSermonId) { _, newId in
+                guard let id = newId,
+                      let sermon = viewModel.sermons.first(where: { $0.id == id }) else { return }
+                selectedSermon = sermon
+                notificationSermonId = nil
             }
             .navigationDestination(item: $selectedSermon) { sermon in
                 SermonDetailView(sermon: sermon)
@@ -302,5 +309,5 @@ struct SermonCardButtonStyle: ButtonStyle {
 }
 
 #Preview {
-    SermonsView(hideTabBar: .constant(false))
+    SermonsView(hideTabBar: .constant(false), notificationSermonId: .constant(nil))
 }

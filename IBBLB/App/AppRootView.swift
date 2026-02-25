@@ -12,6 +12,7 @@ struct AppRootView: View {
     @State private var hideTabBar: Bool = false
     @State private var showSplash = true
     @State private var showNowPlaying = false
+    @State private var notificationSermonId: String?
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -28,12 +29,17 @@ struct AppRootView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.hidden)
         }
+        .onReceive(NotificationCenter.default.publisher(for: .openSermonFromNotification)) { notification in
+            guard let id = notification.userInfo?["sermon_id"] as? String else { return }
+            selectedTab = .sermons
+            notificationSermonId = id
+        }
     }
 
     private var mainContent: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                SermonsView(hideTabBar: $hideTabBar)
+                SermonsView(hideTabBar: $hideTabBar, notificationSermonId: $notificationSermonId)
                     .tabItem {
                         Label("Sermons", systemImage: "book")
                     }

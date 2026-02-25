@@ -5,6 +5,7 @@ struct iPadRootView: View {
     @SceneStorage("selectedTab") private var selectedTab: AppTab = .sermons
     @State private var showSplash = true
     @State private var showNowPlaying = false
+    @State private var notificationSermonId: String?
 
     var body: some View {
         ZStack {
@@ -18,6 +19,11 @@ struct iPadRootView: View {
             NowPlayingView(audioManager: AudioPlayerManager.shared)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.hidden)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .openSermonFromNotification)) { notification in
+            guard let id = notification.userInfo?["sermon_id"] as? String else { return }
+            selectedTab = .sermons
+            notificationSermonId = id
         }
     }
 
@@ -90,7 +96,7 @@ struct iPadRootView: View {
     private var contentArea: some View {
         switch selectedTab {
         case .sermons:
-            SermonsView(hideTabBar: .constant(false))
+            SermonsView(hideTabBar: .constant(false), notificationSermonId: $notificationSermonId)
         case .live:
             LiveView()
         case .events:
