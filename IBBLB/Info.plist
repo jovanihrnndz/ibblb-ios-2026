@@ -71,6 +71,9 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
+		<string>remote-notification</string>
 	</array>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>We'll notify you when a new sermon is available.</string>
 </dict>
 </plist>
