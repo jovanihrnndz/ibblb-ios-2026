@@ -11,7 +11,7 @@ extension Notification.Name {
 // MARK: - NotificationManager
 
 @MainActor
-final class NotificationManager: ObservableObject {
+final class NotificationManager {
 
     static let shared = NotificationManager()
 
@@ -67,7 +67,7 @@ final class NotificationManager: ObservableObject {
         request.setValue(APIConfig.supabaseAnonKey, forHTTPHeaderField: "apikey")
         request.setValue("Bearer \(APIConfig.supabaseAnonKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("resolution=merge-duplicates,return=minimal", forHTTPHeaderField: "Prefer")
+        request.setValue("resolution=ignore-duplicates,return=minimal", forHTTPHeaderField: "Prefer")
 
         let body: [String: String] = ["token": token, "platform": "ios"]
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)

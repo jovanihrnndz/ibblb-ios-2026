@@ -106,7 +106,7 @@ async function sendApnsNotification(
   body: string,
   sermonId: string
 ): Promise<ApnsResult> {
-  const url = `https://api.push.apple.com/3/device/${token}`;
+  const url = `https://api.sandbox.push.apple.com/3/device/${token}`;
 
   const notificationPayload = {
     aps: {
@@ -136,6 +136,7 @@ async function sendApnsNotification(
     } catch {
       // ignore parse errors
     }
+    console.error(`APNs error for token ${token.slice(0, 10)}...: status=${response.status} reason=${reason}`);
   }
 
   return { token, status: response.status, reason };
@@ -163,7 +164,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
     }
 
     const { id: sermonId, title, speaker } = payload.record;
-    const notificationBody = `${title} — ${speaker}`;
+    const notificationBody = speaker ? `${title} — ${speaker}` : title;
 
     // Load secrets from environment
     const apnsKey = Deno.env.get("APNS_KEY");
