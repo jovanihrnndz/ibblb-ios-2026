@@ -5,16 +5,19 @@ import Combine
 class SermonsViewModel: ObservableObject {
     @Published var sermons: [Sermon] = []
     @Published var isLoading: Bool = false
+    @Published var isLoadingMore: Bool = false
     @Published var errorMessage: String? = nil
     @Published var searchText: String = ""
     @Published var selectedYear: Int? = nil
-    
+
     private let apiService: MobileAPIService
-    private let limit = 20
+    private let limit = 10
+    private var currentOffset: Int = 0
+    private var hasMore: Bool = true
     private var cancellables = Set<AnyCancellable>()
     private var hasLoadedInitial = false
     private var lastSearchText: String = ""
-    
+
     init(apiService: MobileAPIService = MobileAPIService()) {
         self.apiService = apiService
 
@@ -29,7 +32,7 @@ class SermonsViewModel: ObservableObject {
                       newSearchText != self.lastSearchText else { return }
                 self.lastSearchText = newSearchText
                 Task {
-                    await self.fetchSermons()
+                    await self.fetchSermons(isLoadMore: false)
                 }
             }
             .store(in: &cancellables)
@@ -40,75 +43,100 @@ class SermonsViewModel: ObservableObject {
         hasLoadedInitial = true
         await fetchSermons()
     }
-    
+
     func refresh() async {
-        await fetchSermons()
+        await fetchSermons(isLoadMore: false)
     }
-    
+
     func setYearFilter(_ year: Int?) {
         selectedYear = year
         Task {
-            await fetchSermons()
+            await fetchSermons(isLoadMore: false)
         }
     }
-    
+
     func clearSearch() {
         searchText = ""
         lastSearchText = ""
     }
-    
+
+    func loadMoreIfNeeded(currentItem: Sermon) {
+        guard hasMore, !isLoading, !isLoadingMore else { return }
+        let thresholdIndex = sermons.index(sermons.endIndex, offsetBy: -3, limitedBy: sermons.startIndex) ?? sermons.startIndex
+        guard let currentIndex = sermons.firstIndex(where: { $0.id == currentItem.id }),
+              currentIndex >= thresholdIndex else { return }
+        Task { await fetchSermons(isLoadMore: true) }
+    }
+
     private var fetchTask: Task<Void, Never>?
 
-    private func fetchSermons() async {
-        // Prevent concurrent fetches
-        guard !isLoading else { return }
+    private func fetchSermons(isLoadMore: Bool = false) async {
+        if isLoadMore {
+            guard !isLoading, !isLoadingMore, hasMore else { return }
+            isLoadingMore = true
+        } else {
+            // Cancel any in-flight operation and reset all state
+            fetchTask?.cancel()
+            isLoading = false
+            isLoadingMore = false
+            currentOffset = 0
+            hasMore = true
+            isLoading = true
+            errorMessage = nil
+        }
 
-        isLoading = true
-        errorMessage = nil
+        let taskOffset = currentOffset
 
-        // Cancel any previous pending task
-        fetchTask?.cancel()
-        
         fetchTask = Task { @MainActor in
             do {
                 let fetchedSermons = try await apiService.fetchSermons(
                     limit: limit,
-                    offset: 0,
+                    offset: taskOffset,
                     search: searchText.isEmpty ? nil : searchText,
                     tag: nil,
                     year: selectedYear
                 )
-                
+
                 // Check if task was cancelled
                 guard !Task.isCancelled else { return }
-                
-                self.sermons = fetchedSermons
+
+                if isLoadMore {
+                    self.sermons.append(contentsOf: fetchedSermons)
+                } else {
+                    self.sermons = fetchedSermons
+                }
+                self.currentOffset += fetchedSermons.count
+                self.hasMore = fetchedSermons.count >= self.limit
+
                 #if DEBUG
-                print("✅ Sermons loaded: \(fetchedSermons.count) items")
+                print("✅ Sermons loaded: \(fetchedSermons.count) items (offset: \(taskOffset), loadMore: \(isLoadMore))")
                 #endif
             } catch {
                 // Check for cancellation errors first - these are expected and should be silent
                 let nsError = error as NSError
                 if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
-                    // Silently handle cancellation - this is expected when cancelling previous requests
                     return
                 }
                 if error is CancellationError {
-                    // Silently handle Swift cancellation
                     return
                 }
-                
-                // Only log and show errors for actual failures
+
                 print("❌ API Error (Sermons): \(error)")
-                self.errorMessage = "No se pudieron cargar los sermones. Inténtalo de nuevo."
+                if !isLoadMore {
+                    self.errorMessage = "No se pudieron cargar los sermones. Inténtalo de nuevo."
+                }
             }
-            
+
             // Only update loading state if task wasn't cancelled
             if !Task.isCancelled {
-                self.isLoading = false
+                if isLoadMore {
+                    self.isLoadingMore = false
+                } else {
+                    self.isLoading = false
+                }
             }
         }
-        
+
         await fetchTask?.value
     }
 }
