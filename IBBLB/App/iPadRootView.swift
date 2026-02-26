@@ -6,6 +6,7 @@ struct iPadRootView: View {
     @State private var showSplash = true
     @State private var showNowPlaying = false
     @State private var notificationSermonId: String?
+    @StateObject private var sermonsViewModel = SermonsViewModel()
 
     var body: some View {
         ZStack {
@@ -96,7 +97,11 @@ struct iPadRootView: View {
     private var contentArea: some View {
         switch selectedTab {
         case .sermons:
-            SermonsView(hideTabBar: .constant(false), notificationSermonId: $notificationSermonId)
+            SermonsView(
+                viewModel: sermonsViewModel,
+                hideTabBar: .constant(false),
+                notificationSermonId: $notificationSermonId
+            )
         case .live:
             LiveView()
         case .events:
