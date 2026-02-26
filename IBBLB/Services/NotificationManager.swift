@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import UserNotifications
 import UIKit
@@ -11,15 +12,41 @@ extension Notification.Name {
 // MARK: - NotificationManager
 
 @MainActor
-final class NotificationManager {
+final class NotificationManager: ObservableObject {
 
     static let shared = NotificationManager()
 
     private let tokenCacheKey = "registeredDeviceToken"
+    private let optInKey = "sermonsNotificationsEnabled"
 
-    private init() {}
+    @Published var isOptedIn: Bool {
+        didSet {
+            UserDefaults.standard.set(isOptedIn, forKey: optInKey)
+        }
+    }
+
+    @Published var authorizationStatus: UNAuthorizationStatus = .notDetermined
+
+    private init() {
+        self.isOptedIn = UserDefaults.standard.bool(forKey: "sermonsNotificationsEnabled")
+    }
 
     // MARK: - Permission
+
+    func refreshAuthorizationStatus() async {
+        let settings = await UNUserNotificationCenter.current().notificationSettings()
+        authorizationStatus = settings.authorizationStatus
+    }
+
+    func optIn() async {
+        isOptedIn = true
+        await requestPermission()
+        await refreshAuthorizationStatus()
+    }
+
+    func optOut() {
+        isOptedIn = false
+    }
 
     /// Requests notification authorization if not yet determined, then registers with APNs.
     func requestPermission() async {
@@ -50,6 +77,13 @@ final class NotificationManager {
     /// Hex-encodes the APNs device token and upserts it to Supabase `device_tokens`.
     /// Caches the token in UserDefaults to skip duplicate network calls on the same token.
     func registerDeviceToken(_ tokenData: Data) async {
+        guard isOptedIn else {
+            #if DEBUG
+            print("ℹ️ Notifications opted out — skipping token registration")
+            #endif
+            return
+        }
+
         let token = tokenData.map { String(format: "%02.2hhx", $0) }.joined()
 
         let cached = UserDefaults.standard.string(forKey: tokenCacheKey)
