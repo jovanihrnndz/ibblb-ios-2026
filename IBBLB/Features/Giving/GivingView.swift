@@ -9,6 +9,7 @@ import SwiftUI
 
 struct GivingView: View {
     @StateObject private var viewModel = GivingViewModel()
+    @ObservedObject private var notificationManager = NotificationManager.shared
     
     var body: some View {
         NavigationStack {
@@ -74,6 +75,11 @@ struct GivingView: View {
                             }
                             
                             Spacer().frame(height: 20)
+                            notificationsSection
+                                .task {
+                                    await notificationManager.refreshAuthorizationStatus()
+                                }
+                            Spacer().frame(height: 20)
                         }
                         .padding(.top, 8)
                     }
@@ -84,6 +90,57 @@ struct GivingView: View {
                 }
             }
         }
+    }
+
+    private var notificationsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Notifications")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.primary)
+
+            VStack(spacing: 0) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("New Sermons")
+                            .font(.system(size: 16))
+                            .foregroundColor(.primary)
+                        Text("Get notified when a new sermon is posted.")
+                            .font(.system(size: 13))
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    if notificationManager.authorizationStatus == .denied {
+                        Button("Open Settings") {
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                UIApplication.shared.open(url)
+                            }
+                        }
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.blue)
+                    } else {
+                        Toggle("", isOn: Binding(
+                            get: { notificationManager.isOptedIn },
+                            set: { newValue in
+                                Task {
+                                    if newValue {
+                                        await notificationManager.optIn()
+                                    } else {
+                                        notificationManager.optOut()
+                                    }
+                                }
+                            }
+                        ))
+                        .labelsHidden()
+                    }
+                }
+                .padding(16)
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(.systemGray6))
+            )
+        }
+        .padding(.horizontal, 32)
     }
 }
 
