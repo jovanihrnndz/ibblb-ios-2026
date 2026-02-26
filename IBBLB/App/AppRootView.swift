@@ -18,6 +18,11 @@ struct AppRootView: View {
         ZStack(alignment: .top) {
             mainContent
                 .zIndex(0)
+                .task {
+                    if NotificationManager.shared.isOptedIn {
+                        await NotificationManager.shared.requestPermission()
+                    }
+                }
 
             if showSplash {
                 ModernPowerOffSplash(isPresented: $showSplash)
