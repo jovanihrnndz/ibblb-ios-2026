@@ -9,12 +9,22 @@ import SwiftUI
 import Combine
 
 struct SermonsView: View {
-    @StateObject private var viewModel = SermonsViewModel()
+    @StateObject private var viewModel: SermonsViewModel
     @State private var selectedSermon: Sermon?
     @Binding var hideTabBar: Bool
     @Binding var notificationSermonId: String?
     @Namespace private var animationNamespace
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    init(
+        viewModel: SermonsViewModel = SermonsViewModel(),
+        hideTabBar: Binding<Bool>,
+        notificationSermonId: Binding<String?>
+    ) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+        _hideTabBar = hideTabBar
+        _notificationSermonId = notificationSermonId
+    }
 
     // Platform detection
     private var isTV: Bool {
