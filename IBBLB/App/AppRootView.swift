@@ -13,6 +13,7 @@ struct AppRootView: View {
     @State private var showSplash = true
     @State private var showNowPlaying = false
     @State private var notificationSermonId: String?
+    @StateObject private var sermonsViewModel = SermonsViewModel()
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -44,7 +45,7 @@ struct AppRootView: View {
     private var mainContent: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
-                SermonsView(hideTabBar: $hideTabBar, notificationSermonId: $notificationSermonId)
+                SermonsView(viewModel: sermonsViewModel, hideTabBar: $hideTabBar, notificationSermonId: $notificationSermonId)
                     .tabItem {
                         Label("Sermons", systemImage: "book")
                     }

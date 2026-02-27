@@ -17,7 +17,7 @@ struct SermonsView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     init(
-        viewModel: SermonsViewModel = SermonsViewModel(),
+        viewModel: SermonsViewModel,
         hideTabBar: Binding<Bool>,
         notificationSermonId: Binding<String?>
     ) {
@@ -25,7 +25,7 @@ struct SermonsView: View {
         _hideTabBar = hideTabBar
         _notificationSermonId = notificationSermonId
     }
-
+    
     // Platform detection
     private var isTV: Bool {
         #if os(tvOS)
