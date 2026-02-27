@@ -1,7 +1,5 @@
 import Combine
 import Foundation
-import UserNotifications
-import UIKit
 
 // MARK: - Notification Names
 
@@ -9,7 +7,11 @@ extension Notification.Name {
     static let openSermonFromNotification = Notification.Name("openSermonFromNotification")
 }
 
-// MARK: - NotificationManager
+// MARK: - iOS Implementation
+
+#if !os(Android)
+import UserNotifications
+import UIKit
 
 @MainActor
 final class NotificationManager: ObservableObject {
@@ -147,3 +149,29 @@ final class NotificationManager: ObservableObject {
         }
     }
 }
+
+// MARK: - Android Stub
+
+#else
+
+/// Android stub — Firebase Cloud Messaging replaces this in a future phase.
+/// Satisfies all callers at compile time; push notifications are a no-op until implemented.
+@MainActor
+final class NotificationManager: ObservableObject {
+
+    static let shared = NotificationManager()
+
+    @Published var isOptedIn: Bool = false
+    @Published var authorizationStatus: Int = 0  // Replaces UNAuthorizationStatus
+
+    private init() {}
+
+    func refreshAuthorizationStatus() async {}
+    func optIn() async { isOptedIn = true }
+    func optOut() { isOptedIn = false }
+    func requestPermission() async {}
+    func registerDeviceToken(_ tokenData: Data) async {}
+    func handleNotificationTap(userInfo: [AnyHashable: Any]) {}
+}
+
+#endif

@@ -1,16 +1,7 @@
 import Foundation
-import AVFoundation
 import Combine
-import MediaPlayer
-import UIKit
 
-/// Simple reference wrapper for mutable values in closures
-private final class Box<T> {
-    var value: T
-    init(_ value: T) {
-        self.value = value
-    }
-}
+// MARK: - Shared Types (no platform dependencies)
 
 /// Metadata for the currently playing audio track
 struct AudioTrackInfo: Equatable {
@@ -30,6 +21,21 @@ struct SavedPlaybackInfo: Equatable {
     /// Whether this is a legacy payload (pre-title/thumbnail)
     var isLegacy: Bool {
         title == nil && thumbnailURL == nil
+    }
+}
+
+// MARK: - iOS Implementation
+
+#if !os(Android)
+import AVFoundation
+import MediaPlayer
+import UIKit
+
+/// Simple reference wrapper for mutable values in closures
+private final class Box<T> {
+    var value: T
+    init(_ value: T) {
+        self.value = value
     }
 }
 
@@ -70,7 +76,7 @@ final class AudioPlayerManager: ObservableObject {
     private var cachedArtwork: MPMediaItemArtwork?
     private var lastSaveTime: TimeInterval = 0
     private var hasClearedOnFinish = false
-    
+
     // MARK: - UserDefaults Keys
 
     private enum UserDefaultsKeys {
@@ -80,7 +86,7 @@ final class AudioPlayerManager: ObservableObject {
         static let lastPlayedTitle = "AudioPlayerManager.lastPlayedTitle"
         static let lastPlayedThumbnailURL = "AudioPlayerManager.lastPlayedThumbnailURL"
     }
-    
+
     // MARK: - Resume Listening Access
 
     /// Returns the saved playback info if available
@@ -251,7 +257,7 @@ final class AudioPlayerManager: ObservableObject {
         setupRemoteCommandCenter()
         setupBackgroundNotifications()
     }
-    
+
     // MARK: - Resume Listening Persistence
 
     private func savePlaybackPosition() {
@@ -290,7 +296,7 @@ final class AudioPlayerManager: ObservableObject {
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.lastPlayedTitle)
         UserDefaults.standard.removeObject(forKey: UserDefaultsKeys.lastPlayedThumbnailURL)
     }
-    
+
     private func setupBackgroundNotifications() {
         NotificationCenter.default.addObserver(
             forName: UIApplication.willResignActiveNotification,
@@ -459,13 +465,13 @@ final class AudioPlayerManager: ObservableObject {
                 let seconds = cmDuration.seconds
                 if seconds.isFinite && seconds > 0 {
                     self.duration = seconds
-                    
+
                     // Restore saved position if available (only once, as fallback)
                     if !hasRestoredPosition.value, let savedPos = savedPosition, savedPos >= 0 {
                         self.seekToSavedPosition(savedPos)
                         hasRestoredPosition.value = true
                     }
-                    
+
                     self.updateNowPlayingInfo()
                 }
             }
@@ -494,7 +500,7 @@ final class AudioPlayerManager: ObservableObject {
         let interval = CMTime(seconds: 0.5, preferredTimescale: 600)
         let saveInterval: TimeInterval = 5.0 // Save every 5 seconds
         lastSaveTime = 0
-        
+
         timeObserver = newPlayer.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
             guard let self else { return }
             let seconds = time.seconds
@@ -503,13 +509,13 @@ final class AudioPlayerManager: ObservableObject {
                 if !self.isScrubbing {
                     self.currentTime = seconds
                     self.updateNowPlayingInfo()
-                    
+
                     // Clear position when playback is effectively finished (within 2s of end)
                     if !self.hasClearedOnFinish, self.duration > 0, seconds >= self.duration - 2.0 {
                         self.clearPlaybackPosition()
                         self.hasClearedOnFinish = true
                     }
-                    
+
                     // Save position periodically (every 5 seconds)
                     if seconds - self.lastSaveTime >= saveInterval {
                         self.savePlaybackPosition()
@@ -600,16 +606,16 @@ final class AudioPlayerManager: ObservableObject {
         player.seek(to: cmTime, toleranceBefore: .zero, toleranceAfter: .zero)
         updateNowPlayingInfo()
     }
-    
+
     /// Internal seek that works even when duration is unknown
     private func seekToSavedPosition(_ time: TimeInterval) {
         guard let player else { return }
         guard time >= 0 && time.isFinite else { return }
-        
+
         // Only clamp to duration if duration is known (> 0)
         let targetTime = duration > 0 ? max(0, min(time, duration)) : time
         self.currentTime = targetTime
-        
+
         let cmTime = CMTime(seconds: targetTime, preferredTimescale: 600)
         player.seek(to: cmTime, toleranceBefore: .zero, toleranceAfter: .zero)
         updateNowPlayingInfo()
@@ -651,3 +657,69 @@ final class AudioPlayerManager: ObservableObject {
         }
     }
 }
+
+// MARK: - Android Stub
+
+#else
+
+/// Android stub — ExoPlayer integration replaces this in a future phase.
+/// Satisfies all callers at compile time; playback is a no-op until implemented.
+@MainActor
+final class AudioPlayerManager: ObservableObject {
+
+    static let shared = AudioPlayerManager()
+
+    @Published private(set) var isPlaying = false
+    @Published private(set) var currentTime: TimeInterval = 0
+    @Published private(set) var duration: TimeInterval = 0
+    @Published private(set) var currentTrack: AudioTrackInfo?
+    @Published var isScrubbing = false
+
+    var showMiniPlayer: Bool { currentTrack != nil }
+    var progress: Double {
+        guard duration > 0 else { return 0 }
+        return currentTime / duration
+    }
+
+    struct ContinueListeningResult: Equatable {
+        let sermon: Sermon?
+        let savedTime: TimeInterval
+        let savedInfo: SavedPlaybackInfo
+
+        var displayTitle: String { sermon?.title ?? savedInfo.title ?? "Unknown" }
+        var displayThumbnailURL: String? { sermon?.thumbnailUrl ?? savedInfo.thumbnailURL }
+        var hasMatchingSermon: Bool { sermon != nil }
+    }
+
+    private init() {}
+
+    func getSavedPlaybackInfo() -> SavedPlaybackInfo? { nil }
+    func findContinueListeningSermon(from sermons: [Sermon]) -> Sermon? { nil }
+    func getContinueListeningInfo(from sermons: [Sermon]) -> ContinueListeningResult? { nil }
+    func resumeListening(sermon: Sermon) {}
+    func resumeListening(from result: ContinueListeningResult) {}
+    func play(url: URL, title: String, artworkURL: URL?) {}
+    func resume() {}
+    func pause() {}
+    func togglePlayPause() {}
+    func stop() {}
+    func seek(to time: TimeInterval) {}
+    func skipBackward() {}
+    func skipForward() {}
+    func skip(by seconds: TimeInterval) {}
+
+    static func formatTime(_ seconds: TimeInterval) -> String {
+        guard seconds.isFinite && seconds >= 0 else { return "0:00" }
+        let totalSeconds = Int(seconds)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let secs = totalSeconds % 60
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, secs)
+        } else {
+            return String(format: "%d:%02d", minutes, secs)
+        }
+    }
+}
+
+#endif

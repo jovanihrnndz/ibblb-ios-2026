@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+
+#if !os(Android)
 import UIKit
 
 struct UIKitSearchBar: UIViewRepresentable {
@@ -65,9 +67,22 @@ struct UIKitSearchBar: UIViewRepresentable {
     }
 }
 
+#else
+
+/// Android stub: native SwiftUI field until a platform-specific search control is added.
+struct UIKitSearchBar: View {
+    @Binding var text: String
+    var placeholder: String = "Search..."
+
+    var body: some View {
+        TextField(placeholder, text: $text)
+            .textFieldStyle(.roundedBorder)
+    }
+}
+
+#endif
+
 #Preview {
     UIKitSearchBar(text: .constant(""))
         .padding()
-        .background(Color(.systemGroupedBackground))
 }
-

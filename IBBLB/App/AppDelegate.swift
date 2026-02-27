@@ -1,3 +1,4 @@
+#if !os(Android)
 import UIKit
 import UserNotifications
 
@@ -52,3 +53,5 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         completionHandler()
     }
 }
+
+#endif

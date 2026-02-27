@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+
+#if !os(Android)
 import WebKit
 
 struct YouTubePlayerView: UIViewRepresentable {
@@ -240,3 +242,24 @@ struct YouTubePlayerView: UIViewRepresentable {
         }
     }
 }
+
+#else
+
+/// Android stub: replace with native Android WebView integration later.
+struct YouTubePlayerView: View {
+    let videoID: String
+    var autoplay: Bool = false
+    var startSeconds: Int = 0
+    var mute: Bool = false
+    var loop: Bool = false
+    var controls: Bool = true
+    var playsInline: Bool = true
+
+    var body: some View {
+        Text("YouTube player placeholder (Android): \(videoID)")
+            .multilineTextAlignment(.center)
+            .padding()
+    }
+}
+
+#endif

@@ -1,5 +1,9 @@
-import EventKit
 import Foundation
+
+// MARK: - iOS Implementation
+
+#if !os(Android)
+import EventKit
 
 final class CalendarManager {
     static let shared = CalendarManager()
@@ -71,3 +75,43 @@ final class CalendarManager {
         }
     }
 }
+
+// MARK: - Android Stub
+
+#else
+
+/// Android stub — Android Calendar Provider replaces this in a future phase.
+/// Satisfies all callers at compile time; calendar access is a no-op until implemented.
+final class CalendarManager {
+    static let shared = CalendarManager()
+
+    private init() {}
+
+    enum CalendarError: LocalizedError {
+        case accessDenied
+        case accessRestricted
+        case saveFailed(Error)
+        case unknown
+
+        var errorDescription: String? {
+            switch self {
+            case .accessDenied: return "Calendar access denied."
+            case .accessRestricted: return "Calendar access is restricted."
+            case .saveFailed(let error): return "Could not save event: \(error.localizedDescription)"
+            case .unknown: return "An unknown error occurred."
+            }
+        }
+    }
+
+    func addEvent(
+        title: String,
+        startDate: Date,
+        endDate: Date?,
+        location: String?,
+        notes: String?
+    ) async throws {
+        throw CalendarError.accessDenied
+    }
+}
+
+#endif

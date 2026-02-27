@@ -1,5 +1,8 @@
 import Foundation
+
+#if !os(Android)
 import CryptoKit
+import Security
 
 /// Implements SSL certificate pinning for enhanced network security
 /// Prevents man-in-the-middle attacks by validating server certificates against known fingerprints
@@ -151,3 +154,11 @@ final class CertificatePinningDelegate: NSObject, URLSessionDelegate {
         }
     }
 }
+
+#else
+
+/// Android stub: no certificate pinning yet.
+/// Skip transpilation compiles this delegate as a no-op on Android.
+final class CertificatePinningDelegate: NSObject, URLSessionDelegate {}
+
+#endif
