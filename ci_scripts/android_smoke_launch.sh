@@ -10,8 +10,9 @@ if [[ "${1:-}" == "--skip-install" ]]; then
 fi
 
 PKG="com.jovanihrnndz.ibblb"
-ACTIVITY="com.jovanihrnndz.ibblb.MainActivity"
-COMPONENT="${PKG}/${PKG}.MainActivity"
+ACTIVITY_FULL="com.jovanihrnndz.ibblb.MainActivity"
+ACTIVITY_SHORT=".MainActivity"
+COMPONENT="${PKG}/${ACTIVITY_SHORT}"
 
 if ! command -v gradle >/dev/null 2>&1; then
   echo "error: gradle is not installed or not on PATH"
@@ -43,20 +44,25 @@ if [[ "$do_install" -eq 1 ]]; then
   gradle -p Android :app:installDebug >/dev/null
 fi
 
+resolved_component="$(adb shell cmd package resolve-activity --brief "${PKG}" 2>/dev/null | tail -n1 | tr -d '\r')"
+if [[ "$resolved_component" == */* ]]; then
+  COMPONENT="$resolved_component"
+fi
+
 echo "==> adb shell am start -n ${COMPONENT}"
 adb shell am start -n "${COMPONENT}" >/dev/null
 
-echo "==> waiting for foreground focus on ${ACTIVITY}"
+echo "==> waiting for foreground focus on ${COMPONENT}"
 focused_ok=0
 resumed_ok=0
 for _ in {1..10}; do
   focus_line="$(adb shell dumpsys window | awk '/mCurrentFocus=/{print; exit}')"
   resumed_line="$(adb shell dumpsys activity activities | awk '/topResumedActivity=/{print; exit}')"
 
-  if [[ "$focus_line" == *"${PKG}/${ACTIVITY}"* ]]; then
+  if [[ "$focus_line" == *"${PKG}/${ACTIVITY_FULL}"* || "$focus_line" == *"${PKG}/${ACTIVITY_SHORT}"* ]]; then
     focused_ok=1
   fi
-  if [[ "$resumed_line" == *"${PKG}/.MainActivity"* || "$resumed_line" == *"${PKG}/${ACTIVITY}"* ]]; then
+  if [[ "$resumed_line" == *"${PKG}/${ACTIVITY_SHORT}"* || "$resumed_line" == *"${PKG}/${ACTIVITY_FULL}"* ]]; then
     resumed_ok=1
   fi
 

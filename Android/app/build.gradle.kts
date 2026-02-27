@@ -5,10 +5,6 @@ plugins {
     id("skip-build-plugin")
 }
 
-val androidAppTranspiledKotlinDir = rootDir.parentFile.resolve(
-    ".build/index-build/plugins/outputs/ibblb/IBBLBAndroidApp/destination/skipstone/IBBLBAndroidApp/src/main/kotlin"
-)
-
 // Keep wrapper builds pure-transpiled for now; Skip bridge native Swift tasks are not required for phase-1 UI flow.
 gradle.extra["bridgeModules"] = null
 
@@ -47,14 +43,12 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.sdk.min.get().toInt()
         targetSdk = libs.versions.android.sdk.compile.get().toInt()
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["disableAnalytics"] = "true"
     }
 
     buildFeatures {
         buildConfig = true
-    }
-
-    sourceSets {
-        getByName("main").java.srcDir(androidAppTranspiledKotlinDir)
     }
 
     lint {
@@ -75,4 +69,14 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
+}
+
+dependencies {
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    debugImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(testLibs.androidx.test.ext.junit)
+    androidTestImplementation(testLibs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.compose.ui.test)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
