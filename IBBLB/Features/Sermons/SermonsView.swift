@@ -282,5 +282,9 @@ struct SermonCardButtonStyle: ButtonStyle {
 }
 
 #Preview {
-    SermonsView(hideTabBar: .constant(false), notificationSermonId: .constant(nil))
+    SermonsView(
+        viewModel: SermonsViewModel(),
+        hideTabBar: .constant(false),
+        notificationSermonId: .constant(nil)
+    )
 }
