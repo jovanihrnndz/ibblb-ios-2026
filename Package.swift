@@ -34,6 +34,11 @@ let package = Package(
             plugins: [
                 .plugin(name: "skipstone", package: "skip")
             ]
+        ),
+        .testTarget(
+            name: "IBBLBAndroidTests",
+            dependencies: ["IBBLBAndroid"],
+            path: "IBBLBTests"
         )
     ]
 )

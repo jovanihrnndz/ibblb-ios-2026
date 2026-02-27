@@ -7,7 +7,11 @@
 //
 
 import XCTest
+#if canImport(IBBLBAndroid)
+@testable import IBBLBAndroid
+#else
 @testable import IBBLB
+#endif
 
 final class AudioPlayerManagerTests: XCTestCase {
 
@@ -35,63 +39,84 @@ final class AudioPlayerManagerTests: XCTestCase {
     }
 
     private func clearSavedPlaybackInfo() {
+        #if TARGET_OS_ANDROID
+        return
+        #else
         UserDefaults.standard.removeObject(forKey: TestKeys.lastPlayedAudioURL)
         UserDefaults.standard.removeObject(forKey: TestKeys.lastPlaybackTime)
         UserDefaults.standard.removeObject(forKey: TestKeys.lastPlayedTitle)
         UserDefaults.standard.removeObject(forKey: TestKeys.lastPlayedThumbnailURL)
+        #endif
+    }
+
+    private func formatTimeOnMain(_ seconds: TimeInterval) async -> String {
+        await MainActor.run {
+            AudioPlayerManager.formatTime(seconds)
+        }
+    }
+
+    private func assertFormat(
+        _ seconds: TimeInterval,
+        equals expected: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async {
+        let actual = await formatTimeOnMain(seconds)
+        XCTAssertEqual(actual, expected, file: file, line: line)
     }
 
     // MARK: - formatTime Tests
 
-    func testFormatTime_zero() {
-        XCTAssertEqual(AudioPlayerManager.formatTime(0), "0:00")
+    func testFormatTime_zero() async {
+        await assertFormat(0, equals: "0:00")
     }
 
-    func testFormatTime_seconds() {
-        XCTAssertEqual(AudioPlayerManager.formatTime(5), "0:05")
-        XCTAssertEqual(AudioPlayerManager.formatTime(59), "0:59")
+    func testFormatTime_seconds() async {
+        await assertFormat(5, equals: "0:05")
+        await assertFormat(59, equals: "0:59")
     }
 
-    func testFormatTime_minutes() {
-        XCTAssertEqual(AudioPlayerManager.formatTime(60), "1:00")
-        XCTAssertEqual(AudioPlayerManager.formatTime(61), "1:01")
-        XCTAssertEqual(AudioPlayerManager.formatTime(125), "2:05")
-        XCTAssertEqual(AudioPlayerManager.formatTime(599), "9:59")
-        XCTAssertEqual(AudioPlayerManager.formatTime(600), "10:00")
-        XCTAssertEqual(AudioPlayerManager.formatTime(3599), "59:59")
+    func testFormatTime_minutes() async {
+        await assertFormat(60, equals: "1:00")
+        await assertFormat(61, equals: "1:01")
+        await assertFormat(125, equals: "2:05")
+        await assertFormat(599, equals: "9:59")
+        await assertFormat(600, equals: "10:00")
+        await assertFormat(3599, equals: "59:59")
     }
 
-    func testFormatTime_hours() {
-        XCTAssertEqual(AudioPlayerManager.formatTime(3600), "1:00:00")
-        XCTAssertEqual(AudioPlayerManager.formatTime(3661), "1:01:01")
-        XCTAssertEqual(AudioPlayerManager.formatTime(7325), "2:02:05")
-        XCTAssertEqual(AudioPlayerManager.formatTime(36000), "10:00:00")
+    func testFormatTime_hours() async {
+        await assertFormat(3600, equals: "1:00:00")
+        await assertFormat(3661, equals: "1:01:01")
+        await assertFormat(7325, equals: "2:02:05")
+        await assertFormat(36000, equals: "10:00:00")
     }
 
-    func testFormatTime_negative() {
+    func testFormatTime_negative() async {
         // Negative values should return "0:00"
-        XCTAssertEqual(AudioPlayerManager.formatTime(-1), "0:00")
-        XCTAssertEqual(AudioPlayerManager.formatTime(-100), "0:00")
+        await assertFormat(-1, equals: "0:00")
+        await assertFormat(-100, equals: "0:00")
     }
 
-    func testFormatTime_infinity() {
-        XCTAssertEqual(AudioPlayerManager.formatTime(.infinity), "0:00")
-        XCTAssertEqual(AudioPlayerManager.formatTime(-.infinity), "0:00")
+    func testFormatTime_infinity() async {
+        await assertFormat(.infinity, equals: "0:00")
+        await assertFormat(-.infinity, equals: "0:00")
     }
 
-    func testFormatTime_nan() {
-        XCTAssertEqual(AudioPlayerManager.formatTime(.nan), "0:00")
+    func testFormatTime_nan() async {
+        await assertFormat(.nan, equals: "0:00")
     }
 
-    func testFormatTime_fractionalSeconds() {
+    func testFormatTime_fractionalSeconds() async {
         // Fractional seconds should be truncated
-        XCTAssertEqual(AudioPlayerManager.formatTime(1.5), "0:01")
-        XCTAssertEqual(AudioPlayerManager.formatTime(59.9), "0:59")
-        XCTAssertEqual(AudioPlayerManager.formatTime(60.1), "1:00")
+        await assertFormat(1.5, equals: "0:01")
+        await assertFormat(59.9, equals: "0:59")
+        await assertFormat(60.1, equals: "1:00")
     }
 
     // MARK: - Save/Restore Roundtrip Tests
 
+    #if !TARGET_OS_ANDROID
     func testSaveRestore_newFormat_fullPayload() async {
         // Given: New format with all fields
         let audioURL = "https://example.com/sermon.mp3"
@@ -185,6 +210,7 @@ final class AudioPlayerManagerTests: XCTestCase {
         let savedInfo = await AudioPlayerManager.shared.getSavedPlaybackInfo()
         XCTAssertNil(savedInfo)
     }
+    #endif
 
     // MARK: - SavedPlaybackInfo Tests
 
