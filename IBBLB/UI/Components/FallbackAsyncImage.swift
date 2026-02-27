@@ -85,6 +85,7 @@ struct FallbackAsyncImage<Content: View, Placeholder: View>: View {
 
 // MARK: - Convenience Initializers
 
+#if canImport(UIKit)
 extension FallbackAsyncImage where Content == Image, Placeholder == Color {
     /// Simplified initializer that returns the image directly with a clear placeholder
     init(urls: [URL], contentMode: ContentMode = .fill) {
@@ -93,28 +94,31 @@ extension FallbackAsyncImage where Content == Image, Placeholder == Color {
         self.placeholder = { Color.clear }
     }
 }
+#endif
 
 // MARK: - Preview
 
-#Preview {
-    VStack(spacing: 20) {
-        // Example with multiple URLs
-        FallbackAsyncImage(
-            urls: [
-                URL(string: "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg")!,
-                URL(string: "https://i.ytimg.com/vi/dQw4w9WgXcQ/sddefault.jpg")!,
-                URL(string: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg")!
-            ]
-        ) { image in
-            image
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 200, height: 200)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-        } placeholder: {
-            ProgressView()
-                .frame(width: 200, height: 200)
+#if canImport(UIKit)
+    #Preview {
+        VStack(spacing: 20) {
+            // Example with multiple URLs
+            FallbackAsyncImage(
+                urls: [
+                    URL(string: "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg")!,
+                    URL(string: "https://i.ytimg.com/vi/dQw4w9WgXcQ/sddefault.jpg")!,
+                    URL(string: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg")!
+                ]
+            ) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 200, height: 200)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            } placeholder: {
+                ProgressView()
+                    .frame(width: 200, height: 200)
+            }
         }
+        .padding()
     }
-    .padding()
-}
+#endif

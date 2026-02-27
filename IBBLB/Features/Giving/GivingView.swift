@@ -109,15 +109,31 @@ struct GivingView: View {
                             .foregroundColor(.secondary)
                     }
                     Spacer()
-                    if notificationManager.authorizationStatus == .denied {
-                        Button("Open Settings") {
-                            if let url = URL(string: UIApplication.openSettingsURLString) {
-                                UIApplication.shared.open(url)
+                    #if canImport(UIKit)
+                        if notificationManager.authorizationStatus == .denied {
+                            Button("Open Settings") {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url)
+                                }
                             }
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.blue)
+                        } else {
+                            Toggle("", isOn: Binding(
+                                get: { notificationManager.isOptedIn },
+                                set: { newValue in
+                                    Task {
+                                        if newValue {
+                                            await notificationManager.optIn()
+                                        } else {
+                                            notificationManager.optOut()
+                                        }
+                                    }
+                                }
+                            ))
+                            .labelsHidden()
                         }
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.blue)
-                    } else {
+                    #else
                         Toggle("", isOn: Binding(
                             get: { notificationManager.isOptedIn },
                             set: { newValue in
@@ -131,7 +147,7 @@ struct GivingView: View {
                             }
                         ))
                         .labelsHidden()
-                    }
+                    #endif
                 }
                 .padding(16)
             }
@@ -144,6 +160,8 @@ struct GivingView: View {
     }
 }
 
+#if canImport(UIKit)
 #Preview {
     GivingView()
 }
+#endif

@@ -1,6 +1,6 @@
 import Foundation
 
-#if !os(Android)
+#if canImport(CryptoKit)
 import CryptoKit
 import Security
 
@@ -159,6 +159,6 @@ final class CertificatePinningDelegate: NSObject, URLSessionDelegate {
 
 /// Android stub: no certificate pinning yet.
 /// Skip transpilation compiles this delegate as a no-op on Android.
-final class CertificatePinningDelegate: NSObject, URLSessionDelegate {}
+final class CertificatePinningDelegate {}
 
 #endif

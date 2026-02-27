@@ -1,5 +1,7 @@
 import SwiftUI
+#if canImport(Combine)
 import Combine
+#endif
 
 struct EventsView: View {
     @StateObject private var viewModel = EventsViewModel()
@@ -160,11 +162,11 @@ struct EventsView: View {
                     
                     // Date Badge
                     VStack(spacing: 0) {
-                        Text(event.startDate.formatted(.dateTime.day()))
+                        Text(EventsView.dayString(from: event.startDate))
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.accentColor)
-                        Text(event.startDate.formatted(.dateTime.month(.abbreviated)).uppercased())
+                        Text(EventsView.monthString(from: event.startDate))
                             .font(.caption2)
                             .fontWeight(.bold)
                             .foregroundColor(.secondary)
@@ -204,12 +206,34 @@ struct EventsView: View {
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
     }
-}
 
-#if DEBUG
-struct EventsView_Previews: PreviewProvider {
-    static var previews: some View {
-        EventsView()
+    // MARK: - Date Formatting Helpers
+
+    private static let dayFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "d"
+        return f
+    }()
+
+    private static let monthFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "MMM"
+        return f
+    }()
+
+    static func dayString(from date: Date) -> String {
+        return dayFormatter.string(from: date)
+    }
+
+    static func monthString(from date: Date) -> String {
+        return monthFormatter.string(from: date).uppercased()
     }
 }
+
+#if DEBUG && canImport(UIKit)
+    struct EventsView_Previews: PreviewProvider {
+        static var previews: some View {
+            EventsView()
+        }
+    }
 #endif

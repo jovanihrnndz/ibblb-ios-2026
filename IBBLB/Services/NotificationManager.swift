@@ -1,4 +1,6 @@
+#if canImport(Combine)
 import Combine
+#endif
 import Foundation
 
 // MARK: - Notification Names
@@ -9,9 +11,11 @@ extension Notification.Name {
 
 // MARK: - iOS Implementation
 
-#if !os(Android)
+#if canImport(UserNotifications)
 import UserNotifications
+#if canImport(UIKit)
 import UIKit
+#endif
 
 @MainActor
 final class NotificationManager: ObservableObject {

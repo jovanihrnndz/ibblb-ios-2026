@@ -28,6 +28,8 @@ struct SplashView: View {
     }
 }
 
+#if canImport(UIKit)
 #Preview {
     SplashView()
 }
+#endif

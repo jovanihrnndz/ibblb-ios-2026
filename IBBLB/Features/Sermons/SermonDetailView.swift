@@ -218,18 +218,20 @@ struct SermonDetailView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        SermonDetailView(sermon: Sermon(
-            id: "1",
-            title: "The Prodigal Son Returns: A Story of Grace and Redemption",
-            speaker: "Pastor John Doe",
-            date: Date(),
-            thumbnailUrl: nil,
-            youtubeVideoId: "dQw4w9WgXcQ",
-            audioUrl: "https://example.com/audio.mp3",
-            tags: ["Parables", "Grace"],
-            slug: "prodigal-son-grace-redemption"
-        ))
+#if canImport(UIKit)
+    #Preview {
+        NavigationStack {
+            SermonDetailView(sermon: Sermon(
+                id: "1",
+                title: "The Prodigal Son Returns: A Story of Grace and Redemption",
+                speaker: "Pastor John Doe",
+                date: Date(),
+                thumbnailUrl: nil,
+                youtubeVideoId: "dQw4w9WgXcQ",
+                audioUrl: "https://example.com/audio.mp3",
+                tags: ["Parables", "Grace"],
+                slug: "prodigal-son-grace-redemption"
+            ))
+        }
     }
-}
+#endif

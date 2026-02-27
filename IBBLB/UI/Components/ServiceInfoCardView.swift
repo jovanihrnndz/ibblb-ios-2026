@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
+#if canImport(MapKit)
 import MapKit
+#endif
 
 struct ServiceInfoCardView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -197,6 +199,7 @@ struct ServiceInfoCardView: View {
     // MARK: - Actions
 
     private func openDirections() {
+        #if canImport(MapKit)
         Task {
             do {
                 let request = MKLocalSearch.Request()
@@ -217,31 +220,40 @@ struct ServiceInfoCardView: View {
                 openMapsWithQuery(address)
             }
         }
+        #endif
     }
 
     private func openMapsWithQuery(_ query: String) {
+        #if canImport(UIKit)
         let encodedAddress = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         if let url = URL(string: "http://maps.apple.com/?q=\(encodedAddress)") {
             UIApplication.shared.open(url)
         }
+        #endif
     }
 
     private func callPhone() {
-        let cleanedPhone = phone.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+        #if canImport(UIKit)
+        let cleanedPhone = phone.replacingOccurrences(of: "[^0-9]", with: "", options: NSString.CompareOptions.regularExpression)
         if let url = URL(string: "tel://\(cleanedPhone)") {
             UIApplication.shared.open(url)
         }
+        #endif
     }
 
     private func sendEmail() {
+        #if canImport(UIKit)
         if let url = URL(string: "mailto:\(email)") {
             UIApplication.shared.open(url)
         }
+        #endif
     }
 }
 
-#Preview {
-    ServiceInfoCardView()
-        .padding()
-        .background(Color(.systemGroupedBackground))
-}
+#if canImport(UIKit)
+    #Preview {
+        ServiceInfoCardView()
+            .padding()
+            .background(Color(.systemGroupedBackground))
+    }
+#endif

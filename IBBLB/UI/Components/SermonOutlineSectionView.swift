@@ -253,98 +253,104 @@ private struct PortableTextBlockView: View {
             return Text("")
         }
 
+        #if canImport(UIKit)
         var result = AttributedString()
         for span in children {
             var attributed = AttributedString(span.text)
             if span.isBold {
-                attributed.font = .body.bold()
+                attributed.font = Font.body.bold()
             }
             if span.isItalic {
-                attributed.font = (attributed.font ?? .body).italic()
+                attributed.font = (attributed.font ?? Font.body).italic()
             }
             if span.isUnderlined {
-                attributed.underlineStyle = .single
+                attributed.underlineStyle = Text.LineStyle(pattern: .solid)
             }
             result.append(attributed)
         }
         return Text(result)
+        #else
+        return Text(children.map { $0.text }.joined())
+        #endif
     }
 }
 
 // MARK: - Preview
 
-#Preview("Structured Outline - Compact List") {
-    ScrollView {
-        SermonOutlineSectionView(outline: SermonOutline(
-            id: "preview-1",
-            title: "Sample Sermon",
-            youtubeId: "abc123",
-            slug: "sample-sermon",
-            notesUrl: nil,
-            scriptureReferences: nil,
-            outline: nil,
-            outlineTitle: "El Amor de Dios",
-            outlinePassage: "Juan 3:16",
-            outlineIntroduction: [
-                PortableTextBlock(
-                    type: "block",
-                    style: "normal",
-                    children: [
-                        PortableTextSpan(type: "span", text: "El amor de Dios es ", marks: nil),
-                        PortableTextSpan(type: "span", text: "incondicional", marks: ["strong"]),
-                        PortableTextSpan(type: "span", text: " y eterno.", marks: nil)
-                    ],
-                    markDefs: nil
-                )
-            ],
-            outlinePoints: [
-                SermonOutlinePoint(
-                    title: "El amor de Dios es sacrificial",
-                    scripture: "Juan 3:16",
-                    body: [
-                        PortableTextBlock(
-                            type: "block",
-                            style: "normal",
-                            children: [
-                                PortableTextSpan(type: "span", text: "Dios dio a su unico Hijo por nosotros. Este es el mayor acto de amor.", marks: nil)
-                            ],
-                            markDefs: nil
-                        )
-                    ]
-                ),
-                SermonOutlinePoint(
-                    title: "El amor de Dios es redentor y transformador",
-                    scripture: "Romanos 5:8",
-                    body: [
-                        PortableTextBlock(
-                            type: "block",
-                            style: "normal",
-                            children: [
-                                PortableTextSpan(type: "span", text: "Cristo murio por nosotros siendo ", marks: nil),
-                                PortableTextSpan(type: "span", text: "pecadores", marks: ["em"]),
-                                PortableTextSpan(type: "span", text: ".", marks: nil)
-                            ],
-                            markDefs: nil
-                        )
-                    ]
-                ),
-                SermonOutlinePoint(
-                    title: "El amor de Dios es eterno",
-                    scripture: "Jeremias 31:3",
-                    body: nil
-                )
-            ],
-            outlineConclusion: [
-                PortableTextBlock(
-                    type: "block",
-                    style: "normal",
-                    children: [
-                        PortableTextSpan(type: "span", text: "Aceptemos el amor de Dios hoy.", marks: ["strong"])
-                    ],
-                    markDefs: nil
-                )
-            ]
-        ))
-        .padding()
+#if canImport(UIKit)
+    #Preview("Structured Outline - Compact List") {
+        ScrollView {
+            SermonOutlineSectionView(outline: SermonOutline(
+                id: "preview-1",
+                title: "Sample Sermon",
+                youtubeId: "abc123",
+                slug: "sample-sermon",
+                notesUrl: nil,
+                scriptureReferences: nil,
+                outline: nil,
+                outlineTitle: "El Amor de Dios",
+                outlinePassage: "Juan 3:16",
+                outlineIntroduction: [
+                    PortableTextBlock(
+                        type: "block",
+                        style: "normal",
+                        children: [
+                            PortableTextSpan(type: "span", text: "El amor de Dios es ", marks: nil),
+                            PortableTextSpan(type: "span", text: "incondicional", marks: ["strong"]),
+                            PortableTextSpan(type: "span", text: " y eterno.", marks: nil)
+                        ],
+                        markDefs: nil
+                    )
+                ],
+                outlinePoints: [
+                    SermonOutlinePoint(
+                        title: "El amor de Dios es sacrificial",
+                        scripture: "Juan 3:16",
+                        body: [
+                            PortableTextBlock(
+                                type: "block",
+                                style: "normal",
+                                children: [
+                                    PortableTextSpan(type: "span", text: "Dios dio a su unico Hijo por nosotros. Este es el mayor acto de amor.", marks: nil)
+                                ],
+                                markDefs: nil
+                            )
+                        ]
+                    ),
+                    SermonOutlinePoint(
+                        title: "El amor de Dios es redentor y transformador",
+                        scripture: "Romanos 5:8",
+                        body: [
+                            PortableTextBlock(
+                                type: "block",
+                                style: "normal",
+                                children: [
+                                    PortableTextSpan(type: "span", text: "Cristo murio por nosotros siendo ", marks: nil),
+                                    PortableTextSpan(type: "span", text: "pecadores", marks: ["em"]),
+                                    PortableTextSpan(type: "span", text: ".", marks: nil)
+                                ],
+                                markDefs: nil
+                            )
+                        ]
+                    ),
+                    SermonOutlinePoint(
+                        title: "El amor de Dios es eterno",
+                        scripture: "Jeremias 31:3",
+                        body: nil
+                    )
+                ],
+                outlineConclusion: [
+                    PortableTextBlock(
+                        type: "block",
+                        style: "normal",
+                        children: [
+                            PortableTextSpan(type: "span", text: "Aceptemos el amor de Dios hoy.", marks: ["strong"])
+                        ],
+                        markDefs: nil
+                    )
+                ]
+            ))
+            .padding()
+        }
     }
-}
+#endif

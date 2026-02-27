@@ -28,6 +28,8 @@ struct BannerView: View {
     }
 }
 
+#if canImport(UIKit)
 #Preview {
     BannerView()
 }
+#endif

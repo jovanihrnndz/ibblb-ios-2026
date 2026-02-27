@@ -15,10 +15,12 @@ struct SanityOutlineService {
     private func sanitizeInput(_ input: String) -> String? {
         // YouTube IDs are typically 11 characters: alphanumeric, hyphens, underscores
         // Slugs can be longer but follow similar pattern
-        let allowedCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-_"))
 
-        // Check if all characters are allowed
-        guard input.unicodeScalars.allSatisfy({ allowedCharacters.contains($0) }) else {
+        // Check if all characters are allowed (alphanumeric, hyphen, underscore)
+        guard input.unicodeScalars.allSatisfy({ s in
+            let v = s.value
+            return (v >= 48 && v <= 57) || (v >= 65 && v <= 90) || (v >= 97 && v <= 122) || v == 45 || v == 95
+        }) else {
             #if DEBUG
             print("⚠️ SanityOutlineService: Invalid characters detected in input: '\(input)'")
             #endif

@@ -6,14 +6,18 @@
 //
 
 import SwiftUI
+#if canImport(Combine)
 import Combine
+#endif
 
 struct SermonsView: View {
     @StateObject private var viewModel: SermonsViewModel
     @State private var selectedSermon: Sermon?
     @Binding var hideTabBar: Bool
     @Binding var notificationSermonId: String?
+    #if canImport(UIKit)
     @Namespace private var animationNamespace
+    #endif
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     init(
@@ -69,8 +73,10 @@ struct SermonsView: View {
                         Color(.systemGroupedBackground)
                             .ignoresSafeArea()
                             .onTapGesture {
+                                #if canImport(UIKit)
                                 // Dismiss keyboard when tapping on background
                                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                                #endif
                             }
                         
                         contentView
@@ -171,7 +177,7 @@ struct SermonsView: View {
                         } label: {
                             SermonCardView(sermon: sermon)
                         }
-                        .buttonStyle(SermonCardButtonStyle())
+                        .buttonStyle(.plain)
                         .onAppear { viewModel.loadMoreIfNeeded(currentItem: sermon) }
                     }
                 }
@@ -184,7 +190,7 @@ struct SermonsView: View {
                         } label: {
                             SermonCardView(sermon: sermon)
                         }
-                        .buttonStyle(SermonCardButtonStyle())
+                        .buttonStyle(.plain)
                         .onAppear { viewModel.loadMoreIfNeeded(currentItem: sermon) }
                     }
                 }
@@ -277,10 +283,11 @@ struct SermonCardButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
-            .animation(.spring(response: 0.35, dampingFraction: 0.6, blendDuration: 0), value: configuration.isPressed)
+            .animation(Animation.spring(response: 0.35, dampingFraction: 0.6, blendDuration: 0), value: configuration.isPressed)
     }
 }
 
+#if canImport(UIKit)
 #Preview {
     SermonsView(
         viewModel: SermonsViewModel(),
@@ -288,3 +295,4 @@ struct SermonCardButtonStyle: ButtonStyle {
         notificationSermonId: .constant(nil)
     )
 }
+#endif

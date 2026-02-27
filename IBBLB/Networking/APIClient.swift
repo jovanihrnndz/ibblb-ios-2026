@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 struct APIClient {
     private let session: URLSession
@@ -18,11 +21,19 @@ struct APIClient {
             configuration.timeoutIntervalForRequest = 30
             configuration.timeoutIntervalForResource = 60
 
-            self.session = URLSession(
-                configuration: configuration,
-                delegate: Self.pinningDelegate,
-                delegateQueue: nil
-            )
+            #if canImport(CryptoKit)
+                self.session = URLSession(
+                    configuration: configuration,
+                    delegate: Self.pinningDelegate,
+                    delegateQueue: nil
+                )
+            #else
+                self.session = URLSession(
+                    configuration: configuration,
+                    delegate: nil,
+                    delegateQueue: nil
+                )
+            #endif
         }
 
         self.decoder = JSONDecoder()
@@ -76,4 +87,3 @@ struct APIClient {
         }
     }
 }
-

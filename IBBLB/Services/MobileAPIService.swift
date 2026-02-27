@@ -20,12 +20,12 @@ struct MobileAPIService {
 
     /// Validates tag input - only allows alphanumeric, spaces, hyphens, and underscores
     private func validateTag(_ tag: String) -> String? {
-        let allowedCharacters = CharacterSet.alphanumerics
-            .union(.whitespaces)
-            .union(CharacterSet(charactersIn: "-_"))
-
         guard tag.count <= 100,
-              tag.unicodeScalars.allSatisfy({ allowedCharacters.contains($0) }) else {
+              tag.unicodeScalars.allSatisfy({ s in
+                  let v = s.value
+                  return (v >= 48 && v <= 57) || (v >= 65 && v <= 90) || (v >= 97 && v <= 122) ||
+                         v == 32 || v == 9 || v == 45 || v == 95  // space, tab, hyphen, underscore
+              }) else {
             return nil
         }
 

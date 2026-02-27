@@ -44,7 +44,11 @@ struct ModernPowerOffSplash: View {
     @State private var electronLineScale: CGFloat = 1.0
     @State private var canTriggerPowerOff: Bool = false
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    #if canImport(UIKit)
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion: Bool
+    #else
+    private var reduceMotion: Bool = false
+    #endif
 
     private enum AnimationPhase {
         case loading
@@ -217,6 +221,7 @@ struct ModernPowerOffSplash: View {
 
 // MARK: - Preview
 
+#if canImport(UIKit)
 #Preview("Power Off Effect") {
     struct PreviewWrapper: View {
         @State private var showSplash = true
@@ -272,3 +277,4 @@ struct ModernPowerOffSplash: View {
 
     return ReducedMotionWrapper()
 }
+#endif

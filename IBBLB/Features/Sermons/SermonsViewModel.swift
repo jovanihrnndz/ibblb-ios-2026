@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(Combine)
 import Combine
+#endif
 
 @MainActor
 class SermonsViewModel: ObservableObject {
@@ -14,13 +16,16 @@ class SermonsViewModel: ObservableObject {
     private let limit = 10
     private var currentOffset: Int = 0
     private var hasMore: Bool = true
+    #if canImport(Combine)
     private var cancellables = Set<AnyCancellable>()
+    #endif
     private var hasLoadedInitial = false
     private var lastSearchText: String = ""
 
     init(apiService: MobileAPIService = MobileAPIService()) {
         self.apiService = apiService
 
+        #if canImport(Combine)
         // Listen for search changes - only trigger after initial load and if text changed
         $searchText
             .dropFirst()
@@ -36,6 +41,7 @@ class SermonsViewModel: ObservableObject {
                 }
             }
             .store(in: &cancellables)
+        #endif
     }
 
     func loadInitial() async {
@@ -62,9 +68,9 @@ class SermonsViewModel: ObservableObject {
 
     func loadMoreIfNeeded(currentItem: Sermon) {
         guard hasMore, !isLoading, !isLoadingMore else { return }
-        let thresholdIndex = sermons.index(sermons.endIndex, offsetBy: -3, limitedBy: sermons.startIndex) ?? sermons.startIndex
+        let threshold = max(0, sermons.count - 3)
         guard let currentIndex = sermons.firstIndex(where: { $0.id == currentItem.id }),
-              currentIndex >= thresholdIndex else { return }
+              currentIndex >= threshold else { return }
         Task { await fetchSermons(isLoadMore: true) }
     }
 

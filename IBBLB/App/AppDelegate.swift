@@ -1,4 +1,4 @@
-#if !os(Android)
+#if canImport(UIKit)
 import UIKit
 import UserNotifications
 

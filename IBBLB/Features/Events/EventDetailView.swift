@@ -1,5 +1,7 @@
 import SwiftUI
+#if canImport(MapKit)
 import MapKit
+#endif
 
 struct EventDetailView: View {
     let event: Event
@@ -116,35 +118,45 @@ struct EventDetailView: View {
     private func openInMaps() {
         guard let location = event.location else { return }
 
-        Task {
-            do {
-                let request = MKLocalSearch.Request()
-                request.naturalLanguageQuery = location
+        #if canImport(MapKit)
+            Task {
+                do {
+                    let request = MKLocalSearch.Request()
+                    request.naturalLanguageQuery = location
 
-                let search = MKLocalSearch(request: request)
-                let response = try await search.start()
+                    let search = MKLocalSearch(request: request)
+                    let response = try await search.start()
 
-                if let mapItem = response.mapItems.first {
-                    mapItem.name = event.title
-                    mapItem.openInMaps(launchOptions: [
-                        MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
-                    ])
-                } else {
-                    // Fallback: Open Maps with the address string
+                    if let mapItem = response.mapItems.first {
+                        mapItem.name = event.title
+                        mapItem.openInMaps(launchOptions: [
+                            MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
+                        ])
+                    } else {
+                        openMapsWithQuery(location)
+                    }
+                } catch {
                     openMapsWithQuery(location)
                 }
-            } catch {
-                // Fallback: Open Maps with the address string
-                openMapsWithQuery(location)
             }
-        }
+        #else
+            openMapsWithQuery(location)
+        #endif
     }
 
     private func openMapsWithQuery(_ query: String) {
         let encodedAddress = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        if let url = URL(string: "http://maps.apple.com/?q=\(encodedAddress)") {
-            UIApplication.shared.open(url)
-        }
+        #if canImport(UIKit)
+            if let url = URL(string: "http://maps.apple.com/?q=\(encodedAddress)") {
+                Task { @MainActor in
+                    await UIApplication.shared.open(url)
+                }
+            }
+        #else
+            if let url = URL(string: "https://maps.google.com/?q=\(encodedAddress)") {
+                _ = url
+            }
+        #endif
     }
 
     private func labelValue(icon: String, value: String) -> some View {

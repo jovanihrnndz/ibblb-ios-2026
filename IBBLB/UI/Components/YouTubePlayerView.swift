@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-#if !os(Android)
+#if canImport(WebKit)
 import WebKit
 
 struct YouTubePlayerView: UIViewRepresentable {

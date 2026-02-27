@@ -1,6 +1,8 @@
 import Foundation
 import SwiftUI
+#if canImport(Combine)
 import Combine
+#endif
 
 @MainActor
 class EventsViewModel: ObservableObject {

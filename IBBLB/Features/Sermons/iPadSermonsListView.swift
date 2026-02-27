@@ -1,5 +1,7 @@
 import SwiftUI
 
+#if canImport(UIKit)
+
 /// iPad-only sermon list for the content column of NavigationSplitView.
 /// Uses selection binding instead of NavigationStack push.
 struct iPadSermonsListView: View {
@@ -210,7 +212,7 @@ struct iPadSermonsListView: View {
                                     .stroke(selectedSermon?.id == sermon.id ? Color.accentColor : Color.clear, lineWidth: 3)
                             )
                     }
-                    .buttonStyle(SermonCardButtonStyle())
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -295,13 +297,29 @@ struct iPadSermonsListView: View {
     }
 
     private func dismissKeyboard() {
+        #if canImport(UIKit)
         UIApplication.shared.sendAction(
             #selector(UIResponder.resignFirstResponder),
             to: nil, from: nil, for: nil
         )
+        #endif
     }
 }
 
+#if canImport(UIKit)
 #Preview {
     iPadSermonsListView(selectedSermon: .constant(nil))
 }
+#endif
+
+#else
+
+struct iPadSermonsListView: View {
+    @Binding var selectedSermon: Sermon?
+
+    var body: some View {
+        EmptyView()
+    }
+}
+
+#endif

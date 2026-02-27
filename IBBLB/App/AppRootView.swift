@@ -16,30 +16,34 @@ struct AppRootView: View {
     @StateObject private var sermonsViewModel = SermonsViewModel()
 
     var body: some View {
-        ZStack(alignment: .top) {
-            mainContent
-                .zIndex(0)
-                .task {
-                    if NotificationManager.shared.isOptedIn {
-                        await NotificationManager.shared.requestPermission()
+        #if canImport(UIKit)
+            ZStack(alignment: .top) {
+                mainContent
+                    .zIndex(0)
+                    .task {
+                        if NotificationManager.shared.isOptedIn {
+                            await NotificationManager.shared.requestPermission()
+                        }
                     }
-                }
 
-            if showSplash {
-                ModernPowerOffSplash(isPresented: $showSplash)
-                    .zIndex(100)
+                if showSplash {
+                    ModernPowerOffSplash(isPresented: $showSplash)
+                        .zIndex(100)
+                }
             }
-        }
-        .sheet(isPresented: $showNowPlaying) {
-            NowPlayingView(audioManager: AudioPlayerManager.shared)
-                .presentationDetents([.large])
-                .presentationDragIndicator(.hidden)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .openSermonFromNotification)) { notification in
-            guard let id = notification.userInfo?["sermon_id"] as? String else { return }
-            selectedTab = .sermons
-            notificationSermonId = id
-        }
+            .sheet(isPresented: $showNowPlaying) {
+                NowPlayingView(audioManager: AudioPlayerManager.shared)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.hidden)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .openSermonFromNotification)) { notification in
+                guard let id = notification.userInfo?["sermon_id"] as? String else { return }
+                selectedTab = .sermons
+                notificationSermonId = id
+            }
+        #else
+            mainContent
+        #endif
     }
 
     private var mainContent: some View {
@@ -93,7 +97,7 @@ private struct MiniPlayerContainer: View {
                     .asymmetric(
                         insertion: .move(edge: .bottom)
                             .combined(with: .opacity)
-                            .combined(with: .scale(scale: 0.95, anchor: .bottom)),
+                            .combined(with: .scale(scale: 0.95, anchor: UnitPoint.bottom)),
                         removal: .move(edge: .bottom)
                             .combined(with: .opacity)
                     )
@@ -102,10 +106,12 @@ private struct MiniPlayerContainer: View {
                 .allowsHitTesting(true)
             }
         }
-        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: audioManager.showMiniPlayer)
+        .animation(Animation.spring(response: 0.35, dampingFraction: 0.8), value: audioManager.showMiniPlayer)
     }
 }
 
+#if canImport(UIKit)
 #Preview {
     AppRootView()
 }
+#endif

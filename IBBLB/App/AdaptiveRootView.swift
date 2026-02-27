@@ -19,6 +19,7 @@ struct AdaptiveRootView: View {
     }
 }
 
+#if canImport(UIKit)
 #Preview("iPhone") {
     AdaptiveRootView()
         .environment(\.horizontalSizeClass, .compact)
@@ -28,3 +29,4 @@ struct AdaptiveRootView: View {
     AdaptiveRootView()
         .environment(\.horizontalSizeClass, .regular)
 }
+#endif

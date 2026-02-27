@@ -144,56 +144,57 @@ struct ContinueListeningCardView: View {
     }
 }
 
-#Preview("With Sermon") {
-    let sermon = Sermon(
-        id: "1",
-        title: "The Prodigal Son Returns",
-        speaker: "Pastor John Doe",
-        date: Date(),
-        thumbnailUrl: nil,
-        youtubeVideoId: "dQw4w9WgXcQ",
-        audioUrl: "https://example.com/audio.mp3",
-        tags: nil,
-        slug: nil
-    )
-    let savedInfo = SavedPlaybackInfo(
-        audioURL: "https://example.com/audio.mp3",
-        time: 1250,
-        title: sermon.title,
-        thumbnailURL: nil
-    )
-    let result = AudioPlayerManager.ContinueListeningResult(
-        sermon: sermon,
-        savedTime: 1250,
-        savedInfo: savedInfo
-    )
-    return ContinueListeningCardView(
-        result: result,
-        duration: 3600,
-        onCardTap: {},
-        onResume: {}
-    )
-    .padding()
-}
+#if canImport(UIKit)
+    #Preview("With Sermon") {
+        let sermon = Sermon(
+            id: "1",
+            title: "The Prodigal Son Returns",
+            speaker: "Pastor John Doe",
+            date: Date(),
+            thumbnailUrl: nil,
+            youtubeVideoId: "dQw4w9WgXcQ",
+            audioUrl: "https://example.com/audio.mp3",
+            tags: nil,
+            slug: nil
+        )
+        let savedInfo = SavedPlaybackInfo(
+            audioURL: "https://example.com/audio.mp3",
+            time: 1250,
+            title: sermon.title,
+            thumbnailURL: nil
+        )
+        let result = AudioPlayerManager.ContinueListeningResult(
+            sermon: sermon,
+            savedTime: 1250,
+            savedInfo: savedInfo
+        )
+        return ContinueListeningCardView(
+            result: result,
+            duration: 3600,
+            onCardTap: {},
+            onResume: {}
+        )
+        .padding()
+    }
 
-#Preview("Offline Fallback") {
-    let savedInfo = SavedPlaybackInfo(
-        audioURL: "https://example.com/audio.mp3",
-        time: 1250,
-        title: "Saved Sermon Title",
-        thumbnailURL: "https://example.com/thumbnail.jpg"
-    )
-    let result = AudioPlayerManager.ContinueListeningResult(
-        sermon: nil,
-        savedTime: 1250,
-        savedInfo: savedInfo
-    )
-    return ContinueListeningCardView(
-        result: result,
-        duration: nil,
-        onCardTap: nil,
-        onResume: {}
-    )
-    .padding()
-}
-
+    #Preview("Offline Fallback") {
+        let savedInfo = SavedPlaybackInfo(
+            audioURL: "https://example.com/audio.mp3",
+            time: 1250,
+            title: "Saved Sermon Title",
+            thumbnailURL: "https://example.com/thumbnail.jpg"
+        )
+        let result = AudioPlayerManager.ContinueListeningResult(
+            sermon: nil,
+            savedTime: 1250,
+            savedInfo: savedInfo
+        )
+        return ContinueListeningCardView(
+            result: result,
+            duration: nil,
+            onCardTap: nil,
+            onResume: {}
+        )
+        .padding()
+    }
+#endif

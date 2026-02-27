@@ -68,8 +68,8 @@ struct SearchBar: View {
             // Clear button with animation
             if !text.isEmpty {
                 Button(action: {
-                    #if !os(tvOS)
-                    // Haptic feedback (not available on tvOS)
+                    #if canImport(UIKit) && !os(tvOS)
+                    // Haptic feedback (not available on tvOS or Android)
                     let impactFeedback = UIImpactFeedbackGenerator(style: .light)
                     impactFeedback.impactOccurred()
                     #endif
@@ -100,10 +100,11 @@ struct SearchBar: View {
             x: 0,
             y: isFocused ? 4 : 2
         )
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isFocused)
+        .animation(Animation.spring(response: 0.3, dampingFraction: 0.7), value: isFocused)
     }
 }
 
+#if canImport(UIKit)
 #Preview("Empty State") {
     SearchBar(text: .constant(""))
         .padding()
@@ -115,3 +116,4 @@ struct SearchBar: View {
         .padding()
         .background(Color(.systemGroupedBackground))
 }
+#endif

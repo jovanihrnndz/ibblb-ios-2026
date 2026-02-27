@@ -230,14 +230,20 @@ struct NowPlayingView: View {
 
             HStack {
                 Text(AudioPlayerManager.formatTime(isDragging ? sliderValue : audioManager.currentTime))
-                    .font(.caption.monospacedDigit())
+                    .font(.caption)
+                    #if canImport(UIKit)
+                    .monospacedDigit()
+                    #endif
                     .foregroundColor(.secondary)
                     .fontWeight(.medium)
 
                 Spacer()
 
                 Text(AudioPlayerManager.formatTime(audioManager.duration))
-                    .font(.caption.monospacedDigit())
+                    .font(.caption)
+                    #if canImport(UIKit)
+                    .monospacedDigit()
+                    #endif
                     .foregroundColor(.secondary)
                     .fontWeight(.medium)
             }
@@ -282,13 +288,15 @@ struct NowPlayingView: View {
                         .font(.system(size: 34, weight: .semibold))
                         .foregroundColor(.white)
                         .offset(x: audioManager.isPlaying ? 0 : 3)
+                        #if canImport(UIKit)
                         .contentTransition(.symbolEffect(.replace.downUp))
+                        #endif
                 }
                 .shadow(color: Color.accentColor.opacity(0.4), radius: 12, x: 0, y: 6)
                 .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
             }
             .buttonStyle(.plain)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: audioManager.isPlaying)
+            .animation(Animation.spring(response: 0.3, dampingFraction: 0.7), value: audioManager.isPlaying)
 
             // Skip forward 30s
             Button {
@@ -338,6 +346,8 @@ struct NowPlayingView: View {
     }
 }
 
-#Preview {
-    NowPlayingView(audioManager: .shared)
-}
+#if canImport(UIKit)
+    #Preview {
+        NowPlayingView(audioManager: .shared)
+    }
+#endif

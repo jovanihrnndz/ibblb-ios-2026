@@ -2,30 +2,38 @@ import SwiftUI
 
 /// iPad-specific root view using a top tab bar instead of sidebar.
 struct iPadRootView: View {
+    #if canImport(UIKit)
     @SceneStorage("selectedTab") private var selectedTab: AppTab = .sermons
+    #else
+    @State private var selectedTab: AppTab = .sermons
+    #endif
     @State private var showSplash = true
     @State private var showNowPlaying = false
     @State private var notificationSermonId: String?
     @StateObject private var sermonsViewModel = SermonsViewModel()
 
     var body: some View {
-        ZStack {
-            mainContent
+        #if canImport(UIKit)
+            ZStack {
+                mainContent
 
-            if showSplash {
-                ModernPowerOffSplash(isPresented: $showSplash)
+                if showSplash {
+                    ModernPowerOffSplash(isPresented: $showSplash)
+                }
             }
-        }
-        .sheet(isPresented: $showNowPlaying) {
-            NowPlayingView(audioManager: AudioPlayerManager.shared)
-                .presentationDetents([.large])
-                .presentationDragIndicator(.hidden)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .openSermonFromNotification)) { notification in
-            guard let id = notification.userInfo?["sermon_id"] as? String else { return }
-            selectedTab = .sermons
-            notificationSermonId = id
-        }
+            .sheet(isPresented: $showNowPlaying) {
+                NowPlayingView(audioManager: AudioPlayerManager.shared)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.hidden)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .openSermonFromNotification)) { notification in
+                guard let id = notification.userInfo?["sermon_id"] as? String else { return }
+                selectedTab = .sermons
+                notificationSermonId = id
+            }
+        #else
+            mainContent
+        #endif
     }
 
     // MARK: - Main Content with Top Tab Bar
@@ -38,9 +46,11 @@ struct iPadRootView: View {
             // Content area
             contentArea
         }
+        #if canImport(UIKit)
         .safeAreaInset(edge: .bottom) {
             iPadMiniPlayerContainer(showNowPlaying: $showNowPlaying)
         }
+        #endif
     }
 
     // MARK: - Top Tab Bar
@@ -130,17 +140,19 @@ private struct iPadMiniPlayerContainer: View {
                     .asymmetric(
                         insertion: .move(edge: .bottom)
                             .combined(with: .opacity)
-                            .combined(with: .scale(scale: 0.95, anchor: .bottom)),
+                            .combined(with: .scale(scale: 0.95, anchor: UnitPoint.bottom)),
                         removal: .move(edge: .bottom)
                             .combined(with: .opacity)
                     )
                 )
             }
         }
-        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: audioManager.showMiniPlayer)
+        .animation(Animation.spring(response: 0.35, dampingFraction: 0.8), value: audioManager.showMiniPlayer)
     }
 }
 
+#if canImport(UIKit)
 #Preview {
     iPadRootView()
 }
+#endif

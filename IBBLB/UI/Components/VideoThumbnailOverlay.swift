@@ -20,12 +20,14 @@ struct VideoThumbnailOverlay: View {
     }
 }
 
-#Preview {
-    ZStack {
-        Color.gray
-        VideoThumbnailOverlay()
+#if canImport(UIKit)
+    #Preview {
+        ZStack {
+            Color.gray
+            VideoThumbnailOverlay()
+        }
+        .aspectRatio(16/9, contentMode: .fit)
+        .cornerRadius(12)
+        .padding()
     }
-    .aspectRatio(16/9, contentMode: .fit)
-    .cornerRadius(12)
-    .padding()
-}
+#endif

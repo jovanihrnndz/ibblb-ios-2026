@@ -37,14 +37,18 @@ struct OutlinePointDetailSheetView: View {
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 24))
+                            #if canImport(UIKit)
                             .symbolRenderingMode(.hierarchical)
+                            #endif
                             .foregroundColor(.secondary)
                     }
                 }
             }
         }
+        #if canImport(UIKit)
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+        #endif
     }
 
     // MARK: - Header Section
@@ -64,7 +68,9 @@ struct OutlinePointDetailSheetView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
+                #if canImport(UIKit)
                 .fixedSize(horizontal: false, vertical: true)
+                #endif
 
             // Scripture Reference
             if let scripture = selectedPoint.point.scripture, !scripture.isEmpty {
@@ -175,67 +181,74 @@ private struct ReadableBlockView: View {
             return Text("")
         }
 
+        #if canImport(UIKit)
         var result = AttributedString()
         for span in children {
             var attributed = AttributedString(span.text)
             if span.isBold {
-                attributed.font = .body.bold()
+                attributed.font = Font.body.bold()
             }
             if span.isItalic {
-                attributed.font = (attributed.font ?? .body).italic()
+                attributed.font = (attributed.font ?? Font.body).italic()
             }
             if span.isUnderlined {
-                attributed.underlineStyle = .single
+                attributed.underlineStyle = Text.LineStyle(pattern: .solid)
             }
             result.append(attributed)
         }
         return Text(result)
+        #else
+        // Android: render as plain concatenated text
+        return Text(children.map { $0.text }.joined())
+        #endif
     }
 }
 
 // MARK: - Preview
 
-#Preview("Point with Content") {
-    OutlinePointDetailSheetView(
-        selectedPoint: SelectedOutlinePoint(
-            point: SermonOutlinePoint(
-                title: "El amor de Dios es sacrificial y transformador",
-                scripture: "Juan 3:16",
-                body: [
-                    PortableTextBlock(
-                        type: "block",
-                        style: "normal",
-                        children: [
-                            PortableTextSpan(type: "span", text: "Dios dio a su unico Hijo por nosotros. Este es el amor mas grande que existe.", marks: nil)
-                        ],
-                        markDefs: nil
-                    ),
-                    PortableTextBlock(
-                        type: "block",
-                        style: "normal",
-                        children: [
-                            PortableTextSpan(type: "span", text: "El sacrificio de Cristo ", marks: nil),
-                            PortableTextSpan(type: "span", text: "demuestra", marks: ["strong"]),
-                            PortableTextSpan(type: "span", text: " el amor incondicional de Dios hacia la humanidad.", marks: nil)
-                        ],
-                        markDefs: nil
-                    )
-                ]
-            ),
-            number: 1
+#if canImport(UIKit)
+    #Preview("Point with Content") {
+        OutlinePointDetailSheetView(
+            selectedPoint: SelectedOutlinePoint(
+                point: SermonOutlinePoint(
+                    title: "El amor de Dios es sacrificial y transformador",
+                    scripture: "Juan 3:16",
+                    body: [
+                        PortableTextBlock(
+                            type: "block",
+                            style: "normal",
+                            children: [
+                                PortableTextSpan(type: "span", text: "Dios dio a su unico Hijo por nosotros. Este es el amor mas grande que existe.", marks: nil)
+                            ],
+                            markDefs: nil
+                        ),
+                        PortableTextBlock(
+                            type: "block",
+                            style: "normal",
+                            children: [
+                                PortableTextSpan(type: "span", text: "El sacrificio de Cristo ", marks: nil),
+                                PortableTextSpan(type: "span", text: "demuestra", marks: ["strong"]),
+                                PortableTextSpan(type: "span", text: " el amor incondicional de Dios hacia la humanidad.", marks: nil)
+                            ],
+                            markDefs: nil
+                        )
+                    ]
+                ),
+                number: 1
+            )
         )
-    )
-}
+    }
 
-#Preview("Point without Content") {
-    OutlinePointDetailSheetView(
-        selectedPoint: SelectedOutlinePoint(
-            point: SermonOutlinePoint(
-                title: "Punto sin notas detalladas",
-                scripture: "Romanos 8:28",
-                body: nil
-            ),
-            number: 2
+    #Preview("Point without Content") {
+        OutlinePointDetailSheetView(
+            selectedPoint: SelectedOutlinePoint(
+                point: SermonOutlinePoint(
+                    title: "Punto sin notas detalladas",
+                    scripture: "Romanos 8:28",
+                    body: nil
+                ),
+                number: 2
+            )
         )
-    )
-}
+    }
+#endif

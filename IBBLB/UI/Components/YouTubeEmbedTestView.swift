@@ -50,7 +50,8 @@ struct YouTubeEmbedTestView: View {
     }
 }
 
-#Preview {
-    YouTubeEmbedTestView()
-}
-
+#if canImport(UIKit)
+    #Preview {
+        YouTubeEmbedTestView()
+    }
+#endif

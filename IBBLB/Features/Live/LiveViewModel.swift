@@ -1,6 +1,8 @@
 import Foundation
 import SwiftUI
+#if canImport(Combine)
 import Combine
+#endif
 
 @MainActor
 class LiveViewModel: ObservableObject {
@@ -10,7 +12,9 @@ class LiveViewModel: ObservableObject {
     @Published var timeRemaining: TimeInterval?
 
     private let apiService: MobileAPIService
+    #if canImport(Combine)
     private var timer: AnyCancellable?
+    #endif
     private var hasLoadedInitial = false
     private var isVisible = false
     private var cachedStartsAt: Date?
@@ -48,8 +52,10 @@ class LiveViewModel: ObservableObject {
     /// Called when view disappears - pauses timer to save CPU
     func onDisappear() {
         isVisible = false
+        #if canImport(Combine)
         timer?.cancel()
         timer = nil
+        #endif
     }
 
     private func fetchLivestream() async {
@@ -79,7 +85,9 @@ class LiveViewModel: ObservableObject {
     
     func setupTimer() {
         print("🕒 Setting up timer. State: \(status?.state.rawValue ?? "nil"), StartsAt: \(status?.event?.startsAt?.description ?? "nil")")
+        #if canImport(Combine)
         timer?.cancel()
+        #endif
 
         guard let startsAt = status?.event?.startsAt, status?.state == .upcoming else {
             print("🕒 Timer skipped: Condition not met.")
@@ -103,6 +111,7 @@ class LiveViewModel: ObservableObject {
             return
         }
 
+        #if canImport(Combine)
         timer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] now in
@@ -123,6 +132,7 @@ class LiveViewModel: ObservableObject {
                     }
                 }
             }
+        #endif
     }
     
     func formattedTimeRemaining() -> String {

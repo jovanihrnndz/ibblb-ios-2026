@@ -6,8 +6,12 @@
 //
 
 import Foundation
+#if canImport(Combine)
 import Combine
+#endif
+#if canImport(UIKit)
 import UIKit
+#endif
 
 @MainActor
 class GivingViewModel: ObservableObject {

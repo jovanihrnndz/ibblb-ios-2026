@@ -7,7 +7,11 @@ struct AudioMiniPlayerBar: View {
     let onTap: () -> Void
 
     private var barHeight: CGFloat {
+        #if canImport(UIKit)
         UIDevice.current.userInterfaceIdiom == .pad ? 76 : 68
+        #else
+        68
+        #endif
     }
     private let thumbnailSize: CGFloat = 48
     private var cornerRadius: CGFloat {
@@ -39,11 +43,15 @@ struct AudioMiniPlayerBar: View {
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(.primary)
                             .frame(width: 40, height: 40)
+                            #if canImport(UIKit)
                             .contentShape(Circle())
+                            #endif
+                            #if canImport(UIKit)
                             .contentTransition(.symbolEffect(.replace.downUp))
+                            #endif
                     }
                     .buttonStyle(.plain)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.7), value: audioManager.isPlaying)
+                    .animation(Animation.spring(response: 0.3, dampingFraction: 0.7), value: audioManager.isPlaying)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 14)
@@ -141,12 +149,14 @@ struct AudioMiniPlayerBar: View {
     }
 }
 
-#Preview {
-    VStack {
-        Spacer()
-        AudioMiniPlayerBar(
-            audioManager: .shared,
-            onTap: {}
-        )
+#if canImport(UIKit)
+    #Preview {
+        VStack {
+            Spacer()
+            AudioMiniPlayerBar(
+                audioManager: .shared,
+                onTap: {}
+            )
+        }
     }
-}
+#endif

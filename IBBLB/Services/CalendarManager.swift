@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - iOS Implementation
 
-#if !os(Android)
+#if canImport(EventKit)
 import EventKit
 
 final class CalendarManager {

@@ -6,7 +6,9 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#endif
 
 enum URLValidationError: Error {
     case invalidScheme
@@ -99,7 +101,9 @@ class SecureURLHandler {
 
         do {
             let validatedURL = try validateURL(url, trustedDomains: trustedDomains)
+            #if canImport(UIKit)
             UIApplication.shared.open(validatedURL)
+            #endif
             return true
         } catch URLValidationError.untrustedDomain {
             // Allow caller to handle untrusted domains (e.g., show confirmation dialog)

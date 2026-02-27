@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(Combine)
 import Combine
+#endif
 
 // MARK: - Shared Types (no platform dependencies)
 
@@ -26,10 +28,12 @@ struct SavedPlaybackInfo: Equatable {
 
 // MARK: - iOS Implementation
 
-#if !os(Android)
+#if canImport(AVFoundation)
 import AVFoundation
 import MediaPlayer
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// Simple reference wrapper for mutable values in closures
 private final class Box<T> {

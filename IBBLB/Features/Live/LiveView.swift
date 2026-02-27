@@ -1,5 +1,7 @@
 import SwiftUI
+#if canImport(Combine)
 import Combine
+#endif
 
 struct LiveView: View {
     @StateObject private var viewModel = LiveViewModel()
@@ -436,6 +438,8 @@ struct ElevationErrorView: View {
     }
 }
 
+#if canImport(UIKit)
 #Preview {
     LiveView()
 }
+#endif

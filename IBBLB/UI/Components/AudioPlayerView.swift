@@ -1,6 +1,10 @@
 import SwiftUI
+#if canImport(AVKit)
 import AVKit
+#endif
+#if canImport(Combine)
 import Combine
+#endif
 
 struct AudioPlayerView: View {
     let url: URL
@@ -55,7 +59,9 @@ struct AudioPlayerView: View {
                     Text(formatTime(audioManager.duration))
                 }
                 .font(.caption2)
+                #if canImport(UIKit)
                 .monospacedDigit()
+                #endif
                 .foregroundColor(.secondary)
             }
             
@@ -114,12 +120,14 @@ struct AudioPlayerView: View {
     }
 }
 
-#Preview {
-    AudioPlayerView(
-        url: URL(string: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")!,
-        title: "The Prodigal Son Returns",
-        subtitle: "Pastor John Doe"
-    )
-    .padding()
-    .background(Color(.systemGray6))
-}
+#if canImport(UIKit)
+    #Preview {
+        AudioPlayerView(
+            url: URL(string: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")!,
+            title: "The Prodigal Son Returns",
+            subtitle: "Pastor John Doe"
+        )
+        .padding()
+        .background(Color(.systemGray6))
+    }
+#endif

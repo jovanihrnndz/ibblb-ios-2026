@@ -21,7 +21,9 @@ struct SermonCardView: View {
                     .font(isTV ? .system(size: 28, weight: .semibold) : .headline)
                     .lineLimit(isTV ? 3 : 2)
                     .foregroundColor(.primary)
+                    #if canImport(UIKit)
                     .fixedSize(horizontal: false, vertical: true)
+                    #endif
 
                 HStack(spacing: isTV ? 8 : 4) {
                     if let speaker = sermon.speaker, !speaker.isEmpty {
@@ -114,17 +116,19 @@ struct SermonCardView: View {
     }
 }
 
-#Preview {
-    SermonCardView(sermon: Sermon(
-        id: "1",
-        title: "The Prodigal Son Returns",
-        speaker: "Pastor John Doe",
-        date: Date(),
-        thumbnailUrl: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
-        youtubeVideoId: "dQw4w9WgXcQ",
-        audioUrl: nil,
-        tags: ["Parables", "Grace"],
-        slug: "prodigal-son-returns"
-    ))
-    .padding()
-}
+#if canImport(UIKit)
+    #Preview {
+        SermonCardView(sermon: Sermon(
+            id: "1",
+            title: "The Prodigal Son Returns",
+            speaker: "Pastor John Doe",
+            date: Date(),
+            thumbnailUrl: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+            youtubeVideoId: "dQw4w9WgXcQ",
+            audioUrl: nil,
+            tags: ["Parables", "Grace"],
+            slug: "prodigal-son-returns"
+        ))
+        .padding()
+    }
+#endif

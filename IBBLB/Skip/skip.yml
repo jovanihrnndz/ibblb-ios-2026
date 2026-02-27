@@ -1,0 +1,13 @@
+## skip.tools configuration for IBBLB Android app
+
+# the blocks to add to the build.gradle.kts
+build:
+  contents:
+    - block: 'android'
+      contents:
+        - 'namespace = "com.jovanihrnndz.ibblb"'
+
+    - block: 'dependencies'
+      contents:
+        - 'implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))'
+        - 'implementation("com.squareup.okhttp3:okhttp")'

@@ -30,7 +30,7 @@ enum YouTubeThumbnail {
         // Pattern: https://i.ytimg.com/vi/VIDEO_ID/quality.jpg
         let pattern = #"i\.ytimg\.com/vi/([a-zA-Z0-9_-]{11,12})/"#
         
-        if let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) {
+        if let regex = try? NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive) {
             let range = NSRange(urlString.startIndex..., in: urlString)
             if let match = regex.firstMatch(in: urlString, options: [], range: range),
                let videoIDRange = Range(match.range(at: 1), in: urlString) {

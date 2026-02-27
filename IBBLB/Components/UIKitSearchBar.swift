@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-#if !os(Android)
+#if canImport(UIKit)
 import UIKit
 
 struct UIKitSearchBar: UIViewRepresentable {
@@ -82,7 +82,9 @@ struct UIKitSearchBar: View {
 
 #endif
 
+#if canImport(UIKit)
 #Preview {
     UIKitSearchBar(text: .constant(""))
         .padding()
 }
+#endif
