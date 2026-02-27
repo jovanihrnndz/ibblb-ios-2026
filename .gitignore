@@ -1,2 +1,4 @@
 Secrets.xcconfig
 .claude/
+.build/
+Android/.gradle/

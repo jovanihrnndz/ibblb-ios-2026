@@ -7,13 +7,17 @@ import PackageDescription
 let package = Package(
     name: "IBBLBAndroid",
     platforms: [
-        .iOS(.v16),
+        .iOS(.v17),
         .macOS(.v13)
     ],
     products: [
         .library(
             name: "IBBLBAndroid",
             targets: ["IBBLBAndroid"]
+        ),
+        .library(
+            name: "IBBLBAndroidApp",
+            targets: ["IBBLBAndroidApp"]
         )
     ],
     dependencies: [
@@ -31,6 +35,18 @@ let package = Package(
                 .product(name: "SkipWeb", package: "skip-web")
             ],
             path: "IBBLB",
+            plugins: [
+                .plugin(name: "skipstone", package: "skip")
+            ]
+        ),
+        .target(
+            name: "IBBLBAndroidApp",
+            dependencies: [
+                .product(name: "SkipUI", package: "skip-ui"),
+                .product(name: "SkipFoundation", package: "skip-foundation"),
+                .product(name: "SkipWeb", package: "skip-web")
+            ],
+            path: "IBBLBAndroidApp",
             plugins: [
                 .plugin(name: "skipstone", package: "skip")
             ]
