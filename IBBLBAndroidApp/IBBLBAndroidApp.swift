@@ -5,8 +5,15 @@ public struct IBBLBAppRootView: View {
 
     public init() {}
 
+    private var tabSelection: Binding<AndroidAppTab> {
+        Binding(
+            get: { appState.selectedTab },
+            set: { appState.selectTab($0) }
+        )
+    }
+
     public var body: some View {
-        TabView(selection: $appState.selectedTab) {
+        TabView(selection: tabSelection) {
             SermonsRootView()
                 .tabItem { Text(AndroidAppTab.sermons.title) }
                 .tag(AndroidAppTab.sermons)
@@ -45,11 +52,31 @@ public final class IBBLBAndroidAppDelegate: Sendable {
 
     private init() {}
 
-    public func onInit() {}
-    public func onLaunch() {}
-    public func onResume() {}
-    public func onPause() {}
-    public func onStop() {}
-    public func onDestroy() {}
-    public func onLowMemory() {}
+    public func onInit() {
+        AndroidAppSessionStore.saveLifecycleEvent("init")
+    }
+
+    public func onLaunch() {
+        AndroidAppSessionStore.saveLifecycleEvent("launch")
+    }
+
+    public func onResume() {
+        AndroidAppSessionStore.saveLifecycleEvent("resume")
+    }
+
+    public func onPause() {
+        AndroidAppSessionStore.saveLifecycleEvent("pause")
+    }
+
+    public func onStop() {
+        AndroidAppSessionStore.saveLifecycleEvent("stop")
+    }
+
+    public func onDestroy() {
+        AndroidAppSessionStore.saveLifecycleEvent("destroy")
+    }
+
+    public func onLowMemory() {
+        AndroidAppSessionStore.saveLifecycleEvent("lowMemory")
+    }
 }

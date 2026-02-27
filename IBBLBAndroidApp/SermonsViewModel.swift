@@ -1,11 +1,16 @@
 import Foundation
 
 struct SermonsViewModel {
-    var sermons: [SermonSummary] = []
-    var searchText: String = ""
+    var sermons: [SermonSummary]
+    var searchText: String
     var isLoading: Bool = false
     var errorMessage: String?
     var hasLoadedInitial: Bool = false
+
+    init() {
+        sermons = AndroidAppSessionStore.loadCachedSermons()
+        searchText = AndroidAppSessionStore.loadSearchText()
+    }
 
     var filteredSermons: [SermonSummary] {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -18,12 +23,22 @@ struct SermonsViewModel {
         }
     }
 
+    mutating func updateSearchText(_ text: String) {
+        searchText = text
+        AndroidAppSessionStore.saveSearchText(text)
+    }
+
+    mutating func replaceSermons(_ items: [SermonSummary]) {
+        sermons = items
+        AndroidAppSessionStore.saveCachedSermons(items)
+    }
+
     mutating func clearSearch() {
-        searchText = ""
+        updateSearchText("")
     }
 
     mutating func loadSampleData() {
-        sermons = SermonFixtures.sample
+        replaceSermons(SermonFixtures.sample)
         errorMessage = nil
         hasLoadedInitial = true
     }

@@ -44,4 +44,7 @@ skip android test
 echo "==> gradle -p Android :app:assembleDebug"
 gradle -p Android :app:assembleDebug
 
+echo "==> android launch smoke"
+./ci_scripts/android_smoke_launch.sh --skip-install
+
 echo "Android verification complete."

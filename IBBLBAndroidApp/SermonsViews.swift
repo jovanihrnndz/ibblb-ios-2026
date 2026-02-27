@@ -2,10 +2,12 @@ import SwiftUI
 
 struct SermonsRootView: View {
     @State private var viewModel = SermonsViewModel()
+    @State private var navigationPath: [SermonSummary] = []
+    @State private var pendingRestoreSermonID: String? = AndroidAppSessionStore.loadLastOpenedSermonID()
     private let repository: SermonsRepository = LiveSermonsRepository()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             VStack(spacing: 12) {
                 searchBar
                 content
@@ -18,12 +20,22 @@ struct SermonsRootView: View {
             .task {
                 await loadInitialIfNeeded()
             }
+            .onChange(of: navigationPath) { path in
+                AndroidAppSessionStore.saveLastOpenedSermonID(path.last?.id)
+            }
         }
+    }
+
+    private var searchTextBinding: Binding<String> {
+        Binding(
+            get: { viewModel.searchText },
+            set: { viewModel.updateSearchText($0) }
+        )
     }
 
     private var searchBar: some View {
         HStack(spacing: 8) {
-            TextField("Search sermons", text: $viewModel.searchText)
+            TextField("Search sermons", text: searchTextBinding)
                 .textFieldStyle(.roundedBorder)
 
             if !viewModel.searchText.isEmpty {
@@ -47,7 +59,10 @@ struct SermonsRootView: View {
             SermonsErrorStateView(
                 message: errorMessage,
                 onRetry: { Task { await refreshSermons() } },
-                onLoadSample: { viewModel.loadSampleData() }
+                onLoadSample: {
+                    viewModel.loadSampleData()
+                    restoreLastOpenedSermonIfPossible()
+                }
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         } else if viewModel.filteredSermons.isEmpty {
@@ -66,6 +81,7 @@ struct SermonsRootView: View {
     private func loadInitialIfNeeded() async {
         guard !viewModel.hasLoadedInitial else { return }
         viewModel.hasLoadedInitial = true
+        restoreLastOpenedSermonIfPossible()
         await refreshSermons()
     }
 
@@ -74,7 +90,7 @@ struct SermonsRootView: View {
         viewModel.errorMessage = nil
 
         do {
-            viewModel.sermons = try await repository.fetchSermons()
+            viewModel.replaceSermons(try await repository.fetchSermons())
             if viewModel.sermons.isEmpty {
                 viewModel.errorMessage = "No sermons are available right now."
             }
@@ -82,7 +98,19 @@ struct SermonsRootView: View {
             viewModel.errorMessage = "Could not load sermons. Check your connection and try again."
         }
 
+        restoreLastOpenedSermonIfPossible()
         viewModel.isLoading = false
+    }
+
+    private func restoreLastOpenedSermonIfPossible() {
+        guard navigationPath.isEmpty,
+              let restoreID = pendingRestoreSermonID,
+              let sermon = viewModel.sermons.first(where: { $0.id == restoreID }) else {
+            return
+        }
+
+        navigationPath = [sermon]
+        pendingRestoreSermonID = nil
     }
 }
 

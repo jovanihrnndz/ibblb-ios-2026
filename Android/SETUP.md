@@ -24,3 +24,10 @@ export ANDROID_SDK_ROOT=$ANDROID_HOME
 gradle -p Android :app:installDebug
 adb shell am start -n com.jovanihrnndz.ibblb/com.jovanihrnndz.ibblb.MainActivity
 ```
+
+## Runtime smoke test (launch/focus)
+
+```bash
+cd /Users/jovanihernandez/ibblb_ios/IBBLB
+./ci_scripts/android_smoke_launch.sh
+```

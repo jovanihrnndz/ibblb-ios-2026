@@ -38,9 +38,21 @@ struct LiveSermonsRepository: SermonsRepository {
         }
 
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            if let value = try? container.decode(String.self),
+               let date = DateDisplayFormatters.parseISO8601(value) {
+                return date
+            }
+            if let timestamp = try? container.decode(Double.self) {
+                return Date(timeIntervalSince1970: timestamp)
+            }
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Unsupported date value in sermons response."
+            )
+        }
         let envelope = try decoder.decode(SermonsEnvelope.self, from: data)
         return envelope.sermons
     }
 }
-

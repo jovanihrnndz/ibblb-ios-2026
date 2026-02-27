@@ -4,7 +4,7 @@ struct SermonsEnvelope: Decodable {
     let sermons: [SermonSummary]
 }
 
-struct SermonSummary: Decodable, Identifiable, Hashable {
+struct SermonSummary: Codable, Identifiable, Hashable {
     let id: String
     let title: String
     let speaker: String?

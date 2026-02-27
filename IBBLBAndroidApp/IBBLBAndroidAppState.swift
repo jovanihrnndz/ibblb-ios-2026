@@ -15,10 +15,21 @@ enum AndroidAppTab: String, Hashable {
 }
 
 struct IBBLBAndroidAppState {
-    var selectedTab: AndroidAppTab = .sermons
-    private(set) var launchCount: Int = 0
+    var selectedTab: AndroidAppTab
+    private(set) var launchCount: Int
+
+    init() {
+        selectedTab = AndroidAppSessionStore.loadSelectedTab()
+        launchCount = AndroidAppSessionStore.loadLaunchCount()
+    }
+
+    mutating func selectTab(_ tab: AndroidAppTab) {
+        selectedTab = tab
+        AndroidAppSessionStore.saveSelectedTab(tab)
+    }
 
     mutating func markLaunch() {
         launchCount += 1
+        AndroidAppSessionStore.saveLaunchCount(launchCount)
     }
 }
