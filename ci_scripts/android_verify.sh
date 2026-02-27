@@ -41,7 +41,7 @@ skip android build
 echo "==> skip android test"
 skip android test
 
-echo "==> gradle :IBBLBAndroid:assembleDebug"
-gradle -p .build/plugins/outputs/ibblb/IBBLBAndroid/destination/skipstone :IBBLBAndroid:assembleDebug
+echo "==> gradle -p Android :app:assembleDebug"
+gradle -p Android :app:assembleDebug
 
 echo "Android verification complete."

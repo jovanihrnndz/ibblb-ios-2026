@@ -1,17 +1,42 @@
 import SwiftUI
 
 public struct IBBLBAppRootView: View {
+    @State private var appState = IBBLBAndroidAppState()
+
     public init() {}
 
     public var body: some View {
-        VStack(spacing: 12) {
-            Text("IBBLB")
-                .font(.title)
-                .fontWeight(.bold)
-            Text("Android app shell is running")
-                .foregroundStyle(.secondary)
+        TabView(selection: $appState.selectedTab) {
+            SermonsRootView()
+                .tabItem { Text(AndroidAppTab.sermons.title) }
+                .tag(AndroidAppTab.sermons)
+
+            FeaturePlaceholderView(
+                title: AndroidAppTab.live.title,
+                message: "Live tab is staged for the next Android milestone."
+            )
+            .tabItem { Text(AndroidAppTab.live.title) }
+            .tag(AndroidAppTab.live)
+
+            FeaturePlaceholderView(
+                title: AndroidAppTab.events.title,
+                message: "Events tab is staged for the next Android milestone."
+            )
+            .tabItem { Text(AndroidAppTab.events.title) }
+            .tag(AndroidAppTab.events)
+
+            FeaturePlaceholderView(
+                title: AndroidAppTab.giving.title,
+                message: "Giving tab is staged for the next Android milestone."
+            )
+            .tabItem { Text(AndroidAppTab.giving.title) }
+            .tag(AndroidAppTab.giving)
         }
-        .padding(24)
+        .onAppear {
+            if appState.launchCount == 0 {
+                appState.markLaunch()
+            }
+        }
     }
 }
 

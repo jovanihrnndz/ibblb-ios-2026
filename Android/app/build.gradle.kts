@@ -5,6 +5,13 @@ plugins {
     id("skip-build-plugin")
 }
 
+val androidAppTranspiledKotlinDir = rootDir.parentFile.resolve(
+    ".build/index-build/plugins/outputs/ibblb/IBBLBAndroidApp/destination/skipstone/IBBLBAndroidApp/src/main/kotlin"
+)
+
+// Keep wrapper builds pure-transpiled for now; Skip bridge native Swift tasks are not required for phase-1 UI flow.
+gradle.extra["bridgeModules"] = null
+
 configurations.configureEach {
     resolutionStrategy.dependencySubstitution {
         substitute(module("com.jovanihrnndz.ibblb:IBBLBAndroidApp")).using(project(":IBBLBAndroidApp"))
@@ -44,6 +51,10 @@ android {
 
     buildFeatures {
         buildConfig = true
+    }
+
+    sourceSets {
+        getByName("main").java.srcDir(androidAppTranspiledKotlinDir)
     }
 
     lint {
