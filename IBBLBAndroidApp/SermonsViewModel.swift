@@ -1,6 +1,6 @@
 import Foundation
 
-struct SermonsViewModel {
+public struct SermonsViewModel {
     var sermons: [SermonSummary]
     var searchText: String
     var isLoading: Bool = false

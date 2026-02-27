@@ -1,11 +1,11 @@
 import Foundation
 
-struct SermonsEnvelope: Decodable {
+public struct SermonsEnvelope: Decodable {
     let sermons: [SermonSummary]
 }
 
-struct SermonSummary: Codable, Identifiable, Hashable {
-    let id: String
+public struct SermonSummary: Codable, Identifiable, Hashable {
+    public let id: String
     let title: String
     let speaker: String?
     let date: Date?
@@ -66,8 +66,8 @@ struct SermonSummary: Codable, Identifiable, Hashable {
     }
 }
 
-struct SermonDetailModel: Identifiable, Hashable {
-    let id: String
+public struct SermonDetailModel: Identifiable, Hashable {
+    public let id: String
     let title: String
     let speaker: String?
     let date: Date?
@@ -95,7 +95,7 @@ struct SermonDetailModel: Identifiable, Hashable {
     }
 }
 
-enum SermonFixtures {
+public enum SermonFixtures {
     static let sample: [SermonSummary] = [
         SermonSummary(
             id: "sample-1",
@@ -127,7 +127,7 @@ enum SermonFixtures {
     ]
 }
 
-enum DateDisplayFormatters {
+public enum DateDisplayFormatters {
     static let sermonDate: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")

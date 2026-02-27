@@ -1,12 +1,12 @@
 import SwiftUI
 
-struct SermonsRootView: View {
+public struct SermonsRootView: View {
     @State private var viewModel = SermonsViewModel()
     @State private var navigationPath: [SermonSummary] = []
     @State private var pendingRestoreSermonID: String? = AndroidAppSessionStore.loadLastOpenedSermonID()
     private let repository: SermonsRepository = LiveSermonsRepository()
 
-    var body: some View {
+    public var body: some View {
         NavigationStack(path: $navigationPath) {
             VStack(spacing: 12) {
                 searchBar
@@ -117,7 +117,7 @@ struct SermonsRootView: View {
 private struct SermonRowView: View {
     let sermon: SermonSummary
 
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(sermon.title)
                 .font(.headline)
@@ -148,7 +148,7 @@ private struct SermonsErrorStateView: View {
     let onRetry: () -> Void
     let onLoadSample: () -> Void
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 14) {
             Text("Unable to Load Sermons")
                 .font(.headline)
@@ -169,7 +169,7 @@ private struct SermonsErrorStateView: View {
 private struct SermonsEmptyStateView: View {
     let isSearching: Bool
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 10) {
             Text(isSearching ? "No results" : "No sermons available")
                 .font(.headline)
@@ -180,10 +180,10 @@ private struct SermonsEmptyStateView: View {
     }
 }
 
-struct SermonDetailView: View {
+public struct SermonDetailView: View {
     let model: SermonDetailModel
 
-    var body: some View {
+    public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
                 Text(model.title)
@@ -248,11 +248,11 @@ private struct DetailLine: View {
     }
 }
 
-struct FeaturePlaceholderView: View {
+public struct FeaturePlaceholderView: View {
     let title: String
     let message: String
 
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             VStack(spacing: 12) {
                 Text(title)

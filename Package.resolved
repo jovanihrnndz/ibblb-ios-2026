@@ -10,48 +10,12 @@
       }
     },
     {
-      "identity" : "skip-android-bridge",
-      "kind" : "remoteSourceControl",
-      "location" : "https://source.skip.tools/skip-android-bridge.git",
-      "state" : {
-        "revision" : "f1f761fa208296b7fa56ee29e725529cc55735ac",
-        "version" : "0.6.1"
-      }
-    },
-    {
-      "identity" : "skip-bridge",
-      "kind" : "remoteSourceControl",
-      "location" : "https://source.skip.tools/skip-bridge.git",
-      "state" : {
-        "revision" : "92ba906e8c8871140073f73315084fcd89711dc5",
-        "version" : "0.16.7"
-      }
-    },
-    {
       "identity" : "skip-foundation",
       "kind" : "remoteSourceControl",
       "location" : "https://source.skip.tools/skip-foundation.git",
       "state" : {
         "branch" : "main",
         "revision" : "d950fadb16df7c1ceb35432b4f5510b7f9a24b0e"
-      }
-    },
-    {
-      "identity" : "skip-fuse",
-      "kind" : "remoteSourceControl",
-      "location" : "https://source.skip.tools/skip-fuse.git",
-      "state" : {
-        "revision" : "8f3295094ad29075730284c5197c7f1d94c0f2d9",
-        "version" : "1.0.2"
-      }
-    },
-    {
-      "identity" : "skip-fuse-ui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://source.skip.tools/skip-fuse-ui.git",
-      "state" : {
-        "revision" : "1955f31c07a1e3a20babff4346d50adfdfab46eb",
-        "version" : "1.13.0"
       }
     },
     {
@@ -97,24 +61,6 @@
       "state" : {
         "branch" : "main",
         "revision" : "eb238e548556275b5152e095b3d8f4a9322e5199"
-      }
-    },
-    {
-      "identity" : "swift-android-native",
-      "kind" : "remoteSourceControl",
-      "location" : "https://source.skip.tools/swift-android-native.git",
-      "state" : {
-        "revision" : "8bfa631886b4dd1f9e3fc3f43d653a71b6d19295",
-        "version" : "1.4.3"
-      }
-    },
-    {
-      "identity" : "swift-jni",
-      "kind" : "remoteSourceControl",
-      "location" : "https://source.skip.tools/swift-jni.git",
-      "state" : {
-        "revision" : "e2cc18b34695d0f3e7948a6c1d4b95cd5d89571f",
-        "version" : "0.3.1"
       }
     }
   ],

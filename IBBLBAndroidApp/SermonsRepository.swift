@@ -3,16 +3,16 @@ import Foundation
 import FoundationNetworking
 #endif
 
-protocol SermonsRepository {
+public protocol SermonsRepository {
     func fetchSermons() async throws -> [SermonSummary]
 }
 
-enum SermonsRepositoryError: Error {
+public enum SermonsRepositoryError: Error {
     case invalidResponse
     case badStatusCode(Int)
 }
 
-struct LiveSermonsRepository: SermonsRepository {
+public struct LiveSermonsRepository: SermonsRepository {
     private let endpoint: URL
     private let session: URLSession
 
@@ -24,7 +24,7 @@ struct LiveSermonsRepository: SermonsRepository {
         self.session = session
     }
 
-    func fetchSermons() async throws -> [SermonSummary] {
+    public func fetchSermons() async throws -> [SermonSummary] {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")

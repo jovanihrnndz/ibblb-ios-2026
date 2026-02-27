@@ -1,13 +1,13 @@
 import SwiftUI
 
-struct LiveRootView: View {
+public struct LiveRootView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var latestSermon: SermonSummary?
     private let repository: SermonsRepository = LiveSermonsRepository()
     private let liveURL = URL(string: "https://www.youtube.com/IBBLBvideo")!
 
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {

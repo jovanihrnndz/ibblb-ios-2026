@@ -1,4 +1,4 @@
-enum AndroidAppTab: String, Hashable {
+public enum AndroidAppTab: String, Hashable {
     case sermons
     case live
     case events
@@ -14,7 +14,7 @@ enum AndroidAppTab: String, Hashable {
     }
 }
 
-struct IBBLBAndroidAppState {
+public struct IBBLBAndroidAppState {
     var selectedTab: AndroidAppTab
     private(set) var launchCount: Int
 

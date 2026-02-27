@@ -1,6 +1,6 @@
 import Foundation
 
-enum AndroidAppSessionStore {
+public enum AndroidAppSessionStore {
     private static let defaults = UserDefaults.standard
 
     private enum Key {
@@ -9,6 +9,9 @@ enum AndroidAppSessionStore {
         static let searchText = "android.sermons.searchText"
         static let cachedSermons = "android.sermons.cached"
         static let lastOpenedSermonID = "android.sermons.lastOpenedID"
+        static let eventsSearchText = "android.events.searchText"
+        static let cachedEvents = "android.events.cached"
+        static let lastOpenedEventID = "android.events.lastOpenedID"
         static let lastLifecycleEvent = "android.lifecycle.lastEvent"
         static let lastLifecycleTimestamp = "android.lifecycle.lastTimestamp"
     }
@@ -66,6 +69,41 @@ enum AndroidAppSessionStore {
 
     static func saveLastOpenedSermonID(_ id: String?) {
         defaults.set(id, forKey: Key.lastOpenedSermonID)
+    }
+
+    static func loadEventsSearchText() -> String {
+        defaults.string(forKey: Key.eventsSearchText) ?? ""
+    }
+
+    static func saveEventsSearchText(_ text: String) {
+        defaults.set(text, forKey: Key.eventsSearchText)
+    }
+
+    static func loadCachedEvents() -> [EventSummary] {
+        guard let data = defaults.data(forKey: Key.cachedEvents) else {
+            return []
+        }
+        let decoder = JSONDecoder()
+        if let events = try? decoder.decode([EventSummary].self, from: data) {
+            return events
+        }
+        return []
+    }
+
+    static func saveCachedEvents(_ events: [EventSummary]) {
+        let encoder = JSONEncoder()
+        guard let data = try? encoder.encode(events) else {
+            return
+        }
+        defaults.set(data, forKey: Key.cachedEvents)
+    }
+
+    static func loadLastOpenedEventID() -> String? {
+        defaults.string(forKey: Key.lastOpenedEventID)
+    }
+
+    static func saveLastOpenedEventID(_ id: String?) {
+        defaults.set(id, forKey: Key.lastOpenedEventID)
     }
 
     static func saveLifecycleEvent(_ event: String) {

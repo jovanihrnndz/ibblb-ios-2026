@@ -22,12 +22,9 @@ public struct IBBLBAppRootView: View {
                 .tabItem { Text(AndroidAppTab.live.title) }
                 .tag(AndroidAppTab.live)
 
-            FeaturePlaceholderView(
-                title: AndroidAppTab.events.title,
-                message: "Events tab is staged for the next Android milestone."
-            )
-            .tabItem { Text(AndroidAppTab.events.title) }
-            .tag(AndroidAppTab.events)
+            EventsRootView()
+                .tabItem { Text(AndroidAppTab.events.title) }
+                .tag(AndroidAppTab.events)
 
             FeaturePlaceholderView(
                 title: AndroidAppTab.giving.title,

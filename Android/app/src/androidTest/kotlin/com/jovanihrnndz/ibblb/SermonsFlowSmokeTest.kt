@@ -20,6 +20,7 @@ class SermonsFlowSmokeTest {
 
     @Test
     fun sermonsList_toDetail_toBack() {
+        composeRule.onNodeWithText("Sermons", useUnmergedTree = true).performClick()
         composeRule.onNodeWithText("Search sermons").assertIsDisplayed()
 
         // If API loading failed in CI/emulator, switch to deterministic local fixtures.
@@ -55,5 +56,30 @@ class SermonsFlowSmokeTest {
 
         composeRule.activity.onBackPressedDispatcher.onBackPressed()
         composeRule.onNodeWithText("Search sermons").assertIsDisplayed()
+    }
+
+    @Test
+    fun eventsTab_toDetail_toBack() {
+        composeRule.onNodeWithText("Events", useUnmergedTree = true).performClick()
+        composeRule.onNodeWithText("Search events").assertIsDisplayed()
+
+        val sampleButton = composeRule.onAllNodesWithText("Load Sample Events", useUnmergedTree = true)
+        if (sampleButton.fetchSemanticsNodes().isNotEmpty()) {
+            sampleButton[0].performClick()
+            composeRule.waitForIdle()
+        }
+
+        val fixtureRowMatcher = hasClickAction().and(
+            hasAnyDescendant(hasText("Community Prayer Night", substring = true))
+        )
+        composeRule.waitForIdle()
+
+        val fixtureRows = composeRule.onAllNodes(fixtureRowMatcher, useUnmergedTree = true)
+        if (fixtureRows.fetchSemanticsNodes().isNotEmpty()) {
+            fixtureRows[0].performClick()
+            composeRule.onNodeWithText("Details", useUnmergedTree = true).assertIsDisplayed()
+            composeRule.activity.onBackPressedDispatcher.onBackPressed()
+            composeRule.onNodeWithText("Search events").assertIsDisplayed()
+        }
     }
 }

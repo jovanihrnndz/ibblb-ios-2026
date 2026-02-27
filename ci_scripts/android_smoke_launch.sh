@@ -48,6 +48,9 @@ resolved_component="$(adb shell cmd package resolve-activity --brief "${PKG}" 2>
 if [[ "$resolved_component" == */* ]]; then
   COMPONENT="$resolved_component"
 fi
+if [[ "$COMPONENT" == "${PKG}/${PKG}."* ]]; then
+  COMPONENT="${PKG}/.${COMPONENT#${PKG}/${PKG}.}"
+fi
 
 echo "==> adb shell am start -n ${COMPONENT}"
 adb shell am start -n "${COMPONENT}" >/dev/null
