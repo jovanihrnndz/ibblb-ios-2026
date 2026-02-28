@@ -26,7 +26,7 @@ struct BannerView: View {
                 .overlay(
                     LinearGradient(
                         colors: [
-                            Color.black.opacity(0.5),
+                            Color.black.opacity(0.75),
                             Color.clear,
                             Color(.systemBackground)
                         ],
