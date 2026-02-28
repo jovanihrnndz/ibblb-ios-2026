@@ -319,6 +319,7 @@ struct YouTubePlayerView: View {
     var loop: Bool = false
     var controls: Bool = true
     var playsInline: Bool = true
+    var onPlayingStateChanged: ((Bool) -> Void)? = nil
 
     var body: some View {
         Text("YouTube player placeholder (Android): \(videoID)")
