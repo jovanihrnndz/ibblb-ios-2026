@@ -25,9 +25,9 @@ struct BannerView: View {
                 .clipped()
                 .overlay(
                     LinearGradient(
-                        colors: [Color.black.opacity(0.5), Color.accentColor.opacity(0.4)],
+                        colors: [Color.black.opacity(0.55), Color.clear],
                         startPoint: .top,
-                        endPoint: .bottom
+                        endPoint: .init(x: 0.5, y: 0.35)
                     )
                 )
         }
