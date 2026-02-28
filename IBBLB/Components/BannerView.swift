@@ -13,7 +13,7 @@ struct BannerView: View {
 
     /// Banner height scales with size class
     private var bannerHeight: CGFloat {
-        horizontalSizeClass == .regular ? 140 : 100
+        horizontalSizeClass == .regular ? 160 : 120
     }
 
     var body: some View {
