@@ -134,39 +134,22 @@ struct NowPlayingView: View {
         return nil
     }
 
+    /// Applies shared artwork container styling: fixed square frame, clipped rounded corners, dual shadow.
+    private func styledArtwork<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        content()
+            .frame(width: artworkSize, height: artworkSize)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .shadow(color: Color.black.opacity(0.25), radius: 24, x: 0, y: 12)
+            .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+    }
+
     @ViewBuilder
     private var artworkView: some View {
         if let artworkURL = audioManager.currentTrack?.artworkURL {
-            // Use fallback URLs for YouTube thumbnails, single URL for others
             if let fallbackURLs = thumbnailFallbackURLs(from: artworkURL) {
-                FallbackAsyncImage(urls: fallbackURLs) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .background {
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .blur(radius: 30)
-                                .scaleEffect(1.2)
-                        }
-                        .frame(width: artworkSize, height: artworkSize)
-                } placeholder: {
-                    placeholderArtwork
-                        .overlay(
-                            ProgressView()
-                                .tint(.primary)
-                        )
-                }
-                .frame(width: artworkSize, height: artworkSize)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .shadow(color: Color.black.opacity(0.25), radius: 24, x: 0, y: 12)
-                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
-            } else {
-                AsyncImage(url: artworkURL) { phase in
-                    switch phase {
-                    case .success(let image):
+                styledArtwork {
+                    FallbackAsyncImage(urls: fallbackURLs) { image in
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
@@ -177,26 +160,40 @@ struct NowPlayingView: View {
                                     .blur(radius: 30)
                                     .scaleEffect(1.2)
                             }
-                        
-                    case .failure:
+                            .frame(width: artworkSize, height: artworkSize)
+                    } placeholder: {
                         placeholderArtwork
-                    case .empty:
-                        placeholderArtwork
-                            .overlay(
-                                ProgressView()
-                                    .tint(.primary)
-                            )
-                    @unknown default:
-                        placeholderArtwork
+                            .overlay(ProgressView().tint(.primary))
                     }
                 }
-                .frame(width: artworkSize, height: artworkSize)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .shadow(color: Color.black.opacity(0.25), radius: 24, x: 0, y: 12)
-                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+            } else {
+                styledArtwork {
+                    AsyncImage(url: artworkURL) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .background {
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .blur(radius: 30)
+                                        .scaleEffect(1.2)
+                                }
+                        case .failure:
+                            placeholderArtwork
+                        case .empty:
+                            placeholderArtwork
+                                .overlay(ProgressView().tint(.primary))
+                        @unknown default:
+                            placeholderArtwork
+                        }
+                    }
+                }
             }
         } else {
+            // No artwork URL — lighter shadow for the placeholder
             placeholderArtwork
                 .frame(width: artworkSize, height: artworkSize)
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
