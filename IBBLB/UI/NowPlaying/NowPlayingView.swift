@@ -91,13 +91,13 @@ struct NowPlayingView: View {
             VStack(spacing: 6) {
                 Text(titlePart)
                     .font(.title2.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
-                
+
                 Text(subtitlePart)
                     .font(.body.weight(.medium))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
             }
@@ -105,7 +105,7 @@ struct NowPlayingView: View {
             // Just title
             Text(track.title)
                 .font(.title2.weight(.semibold))
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
                 .multilineTextAlignment(.center)
                 .lineLimit(3)
         }
@@ -234,7 +234,7 @@ struct NowPlayingView: View {
                     #if canImport(UIKit)
                     .monospacedDigit()
                     #endif
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .fontWeight(.medium)
 
                 Spacer()
@@ -244,7 +244,7 @@ struct NowPlayingView: View {
                     #if canImport(UIKit)
                     .monospacedDigit()
                     #endif
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .fontWeight(.medium)
             }
         }
@@ -264,12 +264,12 @@ struct NowPlayingView: View {
                         
                         Image(systemName: "gobackward.15")
                             .font(.system(size: 24, weight: .semibold))
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                     }
-                    
+
                     Text("15")
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .fontWeight(.medium)
                 }
             }
@@ -286,7 +286,7 @@ struct NowPlayingView: View {
 
                     Image(systemName: audioManager.isPlaying ? "pause.fill" : "play.fill")
                         .font(.system(size: 34, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .offset(x: audioManager.isPlaying ? 0 : 3)
                         #if canImport(UIKit)
                         .contentTransition(.symbolEffect(.replace.downUp))
@@ -310,12 +310,12 @@ struct NowPlayingView: View {
                         
                         Image(systemName: "goforward.30")
                             .font(.system(size: 24, weight: .semibold))
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                     }
-                    
+
                     Text("30")
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .fontWeight(.medium)
                 }
             }
@@ -334,7 +334,7 @@ struct NowPlayingView: View {
                 Text("Stop")
                     .font(.system(size: 16, weight: .semibold))
             }
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
             .padding(.horizontal, 24)
             .padding(.vertical, 12)
             .background(
