@@ -1,0 +1,43 @@
+# Android verify gate: runs on every PR (and push to branches).
+# Executes ci_scripts/android_verify.sh (Skip transpile, unit tests, assemble, install, launch smoke).
+# Requires: Skip (macOS), Gradle, Android SDK, and a running emulator (started by this workflow).
+# Note: macOS GitHub runners are ARM; if the emulator fails (nested virt), consider a build-only job or macos-15-intel.
+
+name: Android
+
+on:
+  pull_request:
+    branches: ["**"]
+  push:
+    branches: ["**"]
+
+jobs:
+  android-verify:
+    name: Android verify
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Skip and Gradle
+        run: |
+          brew install skiptools/skip/skip
+          brew install skiptools/skip/swift-android-toolchain@6.0 || true
+          brew install gradle
+          skip checkup || true
+
+      - name: Free disk space (emulator needs space)
+        run: |
+          brew cleanup --prune=all -s || true
+          rm -rf "$HOME/Library/Caches/Homebrew" || true
+          df -h .
+
+      - name: Start emulator and run Android verify
+        uses: ReactiveCircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: default
+          arch: arm64-v8a
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          emulator-boot-timeout: 600
+          script: ./ci_scripts/android_verify.sh

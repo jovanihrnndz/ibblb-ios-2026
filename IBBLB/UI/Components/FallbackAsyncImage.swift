@@ -50,6 +50,11 @@ struct FallbackAsyncImage<Content: View, Placeholder: View>: View {
             successfulImage = nil
             currentPhase = nil
         }
+        .onChange(of: urls) { _, _ in
+            currentIndex = 0
+            successfulImage = nil
+            currentPhase = nil
+        }
     }
     
     @ViewBuilder

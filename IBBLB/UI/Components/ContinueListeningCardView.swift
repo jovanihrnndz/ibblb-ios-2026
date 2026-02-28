@@ -13,7 +13,6 @@ struct ContinueListeningCardView: View {
     let duration: TimeInterval?
     let onCardTap: (() -> Void)?
     let onResume: () -> Void
-
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     private var useGridLayout: Bool {

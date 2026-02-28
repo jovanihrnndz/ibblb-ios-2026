@@ -18,9 +18,14 @@ struct YouTubePlayerView: UIViewRepresentable {
     var loop: Bool = false
     var controls: Bool = true
     var playsInline: Bool = true
+    var onPlayingStateChanged: ((Bool) -> Void)? = nil
 
     func makeCoordinator() -> Coordinator {
         Coordinator()
+    }
+
+    static func dismantleUIView(_ uiView: WKWebView, coordinator: Coordinator) {
+        uiView.configuration.userContentController.removeScriptMessageHandler(forName: "youtubePlayerState")
     }
 
     func makeUIView(context: Context) -> WKWebView {
@@ -40,6 +45,56 @@ struct YouTubePlayerView: UIViewRepresentable {
 
         // SECURITY: Disable JavaScript from opening windows automatically
         config.preferences.javaScriptCanOpenWindowsAutomatically = false
+
+        // YouTube playback state detection.
+        // Injected into ALL frames (forMainFrameOnly: false) so the script runs
+        // inside the YouTube iframe where the <video> element lives.
+        // Direct video event listeners are far more reliable than cross-frame postMessage.
+        context.coordinator.onPlayingStateChanged = onPlayingStateChanged
+        config.userContentController.add(context.coordinator, name: "youtubePlayerState")
+        let stateScript = WKUserScript(
+            source: """
+            (function() {
+                function attachVideoListeners() {
+                    var videos = document.querySelectorAll('video');
+                    for (var i = 0; i < videos.length; i++) {
+                        var v = videos[i];
+                        if (v._ibblbAttached) continue;
+                        v._ibblbAttached = true;
+                        v.addEventListener('play', function() {
+                            try { window.webkit.messageHandlers.youtubePlayerState.postMessage(1); } catch(e) {}
+                        });
+                        v.addEventListener('pause', function() {
+                            try { window.webkit.messageHandlers.youtubePlayerState.postMessage(2); } catch(e) {}
+                        });
+                        v.addEventListener('ended', function() {
+                            try { window.webkit.messageHandlers.youtubePlayerState.postMessage(0); } catch(e) {}
+                        });
+                        v.addEventListener('waiting', function() {
+                            try { window.webkit.messageHandlers.youtubePlayerState.postMessage(3); } catch(e) {}
+                        });
+                    }
+                }
+                // Attach now and poll for video elements YouTube creates after page load
+                attachVideoListeners();
+                var poll = setInterval(attachVideoListeners, 500);
+                setTimeout(function() { clearInterval(poll); }, 30000);
+
+                // Fallback: also intercept YouTube IFrame API postMessage from parent frame
+                window.addEventListener('message', function(event) {
+                    try {
+                        var data = JSON.parse(event.data);
+                        if (data.event === 'onStateChange') {
+                            window.webkit.messageHandlers.youtubePlayerState.postMessage(data.info);
+                        }
+                    } catch(e) {}
+                });
+            })();
+            """,
+            injectionTime: .atDocumentEnd,
+            forMainFrameOnly: false
+        )
+        config.userContentController.addUserScript(stateScript)
 
         // Set data store to allow cookies and cache (important for YouTube to not think we're a bot)
         // Note: WKProcessPool is deprecated in iOS 15+ as it's now handled automatically
@@ -66,6 +121,7 @@ struct YouTubePlayerView: UIViewRepresentable {
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
+        context.coordinator.onPlayingStateChanged = onPlayingStateChanged
         if context.coordinator.currentVideoID != videoID {
             context.coordinator.currentVideoID = videoID
             load(videoID: videoID, into: webView)
@@ -137,8 +193,17 @@ struct YouTubePlayerView: UIViewRepresentable {
         """
     }
 
-    final class Coordinator: NSObject, WKNavigationDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         var currentVideoID: String?
+        var onPlayingStateChanged: ((Bool) -> Void)?
+
+        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+            guard message.name == "youtubePlayerState",
+                  let state = message.body as? Int else { return }
+            // YouTube IFrame API states: -1=unstarted, 0=ended, 1=playing, 2=paused, 3=buffering, 5=cued
+            let isPlaying = (state == 1 || state == 3)
+            onPlayingStateChanged?(isPlaying)
+        }
 
         // Whitelist of allowed hosts for YouTube player
         private let allowedHosts = [
@@ -254,6 +319,7 @@ struct YouTubePlayerView: View {
     var loop: Bool = false
     var controls: Bool = true
     var playsInline: Bool = true
+    var onPlayingStateChanged: ((Bool) -> Void)? = nil
 
     var body: some View {
         Text("YouTube player placeholder (Android): \(videoID)")

@@ -59,6 +59,11 @@ final class AudioPlayerManager: ObservableObject {
     @Published private(set) var duration: TimeInterval = 0
     @Published private(set) var currentTrack: AudioTrackInfo?
     @Published var isScrubbing = false
+    @Published private(set) var isVideoPlaying: Bool = false
+
+    func setVideoPlaying(_ playing: Bool) {
+        isVideoPlaying = playing
+    }
 
     /// Whether the mini player should be visible
     var showMiniPlayer: Bool {
@@ -678,6 +683,9 @@ final class AudioPlayerManager: ObservableObject {
     @Published private(set) var duration: TimeInterval = 0
     @Published private(set) var currentTrack: AudioTrackInfo?
     @Published var isScrubbing = false
+    @Published private(set) var isVideoPlaying: Bool = false
+
+    func setVideoPlaying(_ playing: Bool) { isVideoPlaying = playing }
 
     var showMiniPlayer: Bool { currentTrack != nil }
     var progress: Double {

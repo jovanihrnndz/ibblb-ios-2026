@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SermonDetailView: View {
     let sermon: Sermon
+    var splitViewWidth: CGFloat? = nil
+    var showBanner: Bool = true
     @State private var outline: SermonOutline?
     @State private var isOutlineLoading = false
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -16,14 +18,17 @@ struct SermonDetailView: View {
     private let outlineService = SanityOutlineService()
     @ObservedObject private var audioManager = AudioPlayerManager.shared
 
-    /// Video height scales with size class
+    /// Video height scales with size class or fills split pane width
     private var videoHeight: CGFloat {
-        horizontalSizeClass == .regular ? 480 : 220
+        if let w = splitViewWidth {
+            return (w - horizontalPadding * 2) * (9.0 / 16.0)
+        }
+        return horizontalSizeClass == .regular ? 480 : 220
     }
 
     /// Max content width for readability on wide screens
     private var maxContentWidth: CGFloat {
-        horizontalSizeClass == .regular ? 900 : .infinity
+        splitViewWidth != nil ? .infinity : (horizontalSizeClass == .regular ? 900 : .infinity)
     }
 
     /// Section spacing scales with size class
@@ -38,8 +43,10 @@ struct SermonDetailView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            BannerView()
-                .frame(maxWidth: .infinity)
+            if showBanner {
+                BannerView()
+                    .frame(maxWidth: .infinity)
+            }
 
             ZStack(alignment: .top) {
                 // Scrollable content
@@ -137,6 +144,9 @@ struct SermonDetailView: View {
         .task {
             await loadOutline()
         }
+        .onDisappear {
+            AudioPlayerManager.shared.setVideoPlaying(false)
+        }
     }
 
     // MARK: - Video Player Section
@@ -145,7 +155,9 @@ struct SermonDetailView: View {
     private var videoPlayerSection: some View {
         if let rawVideoId = sermon.youtubeVideoId,
            let videoId = YouTubeVideoIDExtractor.extractVideoID(from: rawVideoId) {
-            YouTubePlayerView(videoID: videoId)
+            YouTubePlayerView(videoID: videoId, onPlayingStateChanged: { isPlaying in
+                AudioPlayerManager.shared.setVideoPlaying(isPlaying)
+            })
                 .aspectRatio(16/9, contentMode: .fit)
                 .cornerRadius(12)
                 .frame(maxWidth: .infinity)
