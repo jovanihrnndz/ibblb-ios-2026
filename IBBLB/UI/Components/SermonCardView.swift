@@ -2,7 +2,9 @@ import SwiftUI
 
 struct SermonCardView: View {
     let sermon: Sermon
-    
+
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     // Platform detection
     private var isTV: Bool {
         #if os(tvOS)
@@ -10,6 +12,11 @@ struct SermonCardView: View {
         #else
         return false
         #endif
+    }
+
+    /// On iPhone (compact) cards fill edge-to-edge — no radius or shadow needed
+    private var isEdgeToEdge: Bool {
+        horizontalSizeClass == .compact && !isTV
     }
 
     var body: some View {
@@ -46,8 +53,8 @@ struct SermonCardView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: isTV ? 20 : 12, style: .continuous))
-        .shadow(color: Color.black.opacity(0.1), radius: isTV ? 8 : 4, x: 0, y: 2)
+        .clipShape(RoundedRectangle(cornerRadius: isTV ? 20 : (isEdgeToEdge ? 0 : 12), style: .continuous))
+        .shadow(color: Color.black.opacity(isEdgeToEdge ? 0 : 0.1), radius: isTV ? 8 : 4, x: 0, y: 2)
     }
 
     private var thumbnailView: some View {

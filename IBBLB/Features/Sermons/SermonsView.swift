@@ -163,7 +163,7 @@ struct SermonsView: View {
                     sermonsListContent
                 }
             }
-            .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 16))
+            .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 0))
             .padding(.top, isTV ? 24 : (useGridLayout ? 60 : 50)) // More top padding on iPad
             .padding(.bottom, isTV ? 32 : (useGridLayout ? 24 : 16))
         }
@@ -221,7 +221,7 @@ struct SermonsView: View {
                 }
             } else {
                 // iPhone / tvOS: single column list
-                LazyVStack(spacing: isTV ? 32 : 16) {
+                LazyVStack(spacing: isTV ? 32 : (useGridLayout ? 16 : 1)) {
                     ForEach(listSermons) { sermon in
                         Button {
                             selectedSermon = sermon
