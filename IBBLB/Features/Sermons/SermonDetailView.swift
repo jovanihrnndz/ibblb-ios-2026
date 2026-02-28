@@ -41,6 +41,12 @@ struct SermonDetailView: View {
         horizontalSizeClass == .regular ? 24 : 16
     }
 
+    /// Top padding for video — in split mode matches sidebar's search bar height
+    /// so the video top aligns with the first sermon card
+    private var videoTopPadding: CGFloat {
+        splitViewWidth != nil ? 60 : 8
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             if showBanner {
@@ -54,7 +60,7 @@ struct SermonDetailView: View {
                     VStack(alignment: .leading, spacing: sectionSpacing) {
                         // Spacer for video
                         Color.clear
-                            .frame(height: videoHeight + 16)
+                            .frame(height: videoHeight + videoTopPadding + 8)
 
                         // Metadata
                         if let speaker = sermon.speaker, !speaker.isEmpty {
@@ -122,7 +128,7 @@ struct SermonDetailView: View {
                 VStack(spacing: 0) {
                     videoPlayerSection
                         .padding(.horizontal, horizontalPadding)
-                        .padding(.top, 8)
+                        .padding(.top, videoTopPadding)
                         .padding(.bottom, 8)
                         .frame(maxWidth: maxContentWidth)
                         .frame(maxWidth: .infinity, alignment: .center)
