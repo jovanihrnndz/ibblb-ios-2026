@@ -18,7 +18,7 @@ struct GivingView: View {
                     .frame(maxWidth: .infinity)
                 
                 ZStack {
-                    Color.white
+                    Color(.systemBackground)
                         .ignoresSafeArea()
                     
                     ScrollView {
@@ -26,7 +26,7 @@ struct GivingView: View {
                             // Subtitle
                             Text("Trust God with your finances by giving your first 10% back to Him.")
                                 .font(.system(size: 16))
-                                .foregroundColor(.gray)
+                                .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 32)
                             
@@ -34,7 +34,7 @@ struct GivingView: View {
                             VStack(spacing: 8) {
                                 Text("$\(Int(viewModel.totalGiven))")
                                     .font(.system(size: 48, weight: .bold))
-                                    .foregroundColor(.gray)
+                                    .foregroundStyle(.secondary)
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 32)
@@ -55,7 +55,7 @@ struct GivingView: View {
                                     Text("Give with Sharefaith Giving")
                                         .font(.system(size: 17, weight: .bold))
                                 }
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)
                                 .background(
@@ -71,14 +71,11 @@ struct GivingView: View {
                             }) {
                                 Text("Manage Your Account & Scheduled Gifts.")
                                     .font(.system(size: 14))
-                                    .foregroundColor(.gray)
+                                    .foregroundStyle(.secondary)
                             }
                             
                             Spacer().frame(height: 20)
                             notificationsSection
-                                .task {
-                                    await notificationManager.refreshAuthorizationStatus()
-                                }
                             Spacer().frame(height: 20)
                         }
                         .padding(.top, 8)
@@ -86,6 +83,9 @@ struct GivingView: View {
                     .toolbar(.hidden, for: .navigationBar)
                     .task {
                         await viewModel.loadGivingPage()
+                    }
+                    .task {
+                        await notificationManager.refreshAuthorizationStatus()
                     }
                 }
             }
@@ -97,17 +97,17 @@ struct GivingView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Notifications")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
 
             VStack(spacing: 0) {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("New Sermons")
                             .font(.system(size: 16))
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                         Text("Get notified when a new sermon is posted.")
                             .font(.system(size: 13))
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                     Spacer()
                     #if canImport(UIKit)
@@ -118,7 +118,7 @@ struct GivingView: View {
                                 }
                             }
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                         } else {
                             Toggle("", isOn: Binding(
                                 get: { notificationManager.isOptedIn },

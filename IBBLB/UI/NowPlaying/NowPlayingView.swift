@@ -8,6 +8,7 @@ struct NowPlayingView: View {
 
     @State private var sliderValue: Double = 0
     @State private var isDragging = false
+    @State private var parsedTitleComponents: (title: String, subtitle: String)? = nil
 
     private let artworkSize: CGFloat = 320
 
@@ -65,6 +66,18 @@ struct NowPlayingView: View {
                     sliderValue = newValue
                 }
             }
+            .onChange(of: audioManager.currentTrack?.title, initial: true) { _, newTitle in
+                guard let title = newTitle else {
+                    parsedTitleComponents = nil
+                    return
+                }
+                let separators = ["–", "—", "-"]
+                if let (titlePart, subtitlePart, _) = parseTitleComponents(title, separators: separators) {
+                    parsedTitleComponents = (titlePart, subtitlePart)
+                } else {
+                    parsedTitleComponents = nil
+                }
+            }
         }
     }
 
@@ -79,33 +92,24 @@ struct NowPlayingView: View {
     
     @ViewBuilder
     private func titleView(for track: AudioTrackInfo) -> some View {
-        // Split title if it contains "–" (en-dash) or "-" (hyphen) separator
-        let titleString = track.title
-        let separators: [String] = ["–", "—", "-"]
-        
-        // Parse the title components outside of ViewBuilder
-        let parsedTitle = parseTitleComponents(titleString, separators: separators)
-        
-        if let (titlePart, subtitlePart, _) = parsedTitle {
-            // Title and artist/subtitle format
+        if let parsed = parsedTitleComponents {
             VStack(spacing: 6) {
-                Text(titlePart)
+                Text(parsed.title)
                     .font(.title2.weight(.semibold))
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
-                
-                Text(subtitlePart)
+
+                Text(parsed.subtitle)
                     .font(.body.weight(.medium))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
             }
         } else {
-            // Just title
             Text(track.title)
                 .font(.title2.weight(.semibold))
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
                 .multilineTextAlignment(.center)
                 .lineLimit(3)
         }
@@ -130,39 +134,22 @@ struct NowPlayingView: View {
         return nil
     }
 
+    /// Applies shared artwork container styling: fixed square frame, clipped rounded corners, dual shadow.
+    private func styledArtwork<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        content()
+            .frame(width: artworkSize, height: artworkSize)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .shadow(color: Color.black.opacity(0.25), radius: 24, x: 0, y: 12)
+            .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+    }
+
     @ViewBuilder
     private var artworkView: some View {
         if let artworkURL = audioManager.currentTrack?.artworkURL {
-            // Use fallback URLs for YouTube thumbnails, single URL for others
             if let fallbackURLs = thumbnailFallbackURLs(from: artworkURL) {
-                FallbackAsyncImage(urls: fallbackURLs) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .background {
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .blur(radius: 30)
-                                .scaleEffect(1.2)
-                        }
-                        .frame(width: artworkSize, height: artworkSize)
-                } placeholder: {
-                    placeholderArtwork
-                        .overlay(
-                            ProgressView()
-                                .tint(.primary)
-                        )
-                }
-                .frame(width: artworkSize, height: artworkSize)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .shadow(color: Color.black.opacity(0.25), radius: 24, x: 0, y: 12)
-                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
-            } else {
-                AsyncImage(url: artworkURL) { phase in
-                    switch phase {
-                    case .success(let image):
+                styledArtwork {
+                    FallbackAsyncImage(urls: fallbackURLs) { image in
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
@@ -173,26 +160,40 @@ struct NowPlayingView: View {
                                     .blur(radius: 30)
                                     .scaleEffect(1.2)
                             }
-                        
-                    case .failure:
+                            .frame(width: artworkSize, height: artworkSize)
+                    } placeholder: {
                         placeholderArtwork
-                    case .empty:
-                        placeholderArtwork
-                            .overlay(
-                                ProgressView()
-                                    .tint(.primary)
-                            )
-                    @unknown default:
-                        placeholderArtwork
+                            .overlay(ProgressView().tint(.primary))
                     }
                 }
-                .frame(width: artworkSize, height: artworkSize)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .shadow(color: Color.black.opacity(0.25), radius: 24, x: 0, y: 12)
-                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+            } else {
+                styledArtwork {
+                    AsyncImage(url: artworkURL) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .background {
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .blur(radius: 30)
+                                        .scaleEffect(1.2)
+                                }
+                        case .failure:
+                            placeholderArtwork
+                        case .empty:
+                            placeholderArtwork
+                                .overlay(ProgressView().tint(.primary))
+                        @unknown default:
+                            placeholderArtwork
+                        }
+                    }
+                }
             }
         } else {
+            // No artwork URL — lighter shadow for the placeholder
             placeholderArtwork
                 .frame(width: artworkSize, height: artworkSize)
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
@@ -234,7 +235,7 @@ struct NowPlayingView: View {
                     #if canImport(UIKit)
                     .monospacedDigit()
                     #endif
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .fontWeight(.medium)
 
                 Spacer()
@@ -244,7 +245,7 @@ struct NowPlayingView: View {
                     #if canImport(UIKit)
                     .monospacedDigit()
                     #endif
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .fontWeight(.medium)
             }
         }
@@ -264,12 +265,12 @@ struct NowPlayingView: View {
                         
                         Image(systemName: "gobackward.15")
                             .font(.system(size: 24, weight: .semibold))
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                     }
-                    
+
                     Text("15")
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .fontWeight(.medium)
                 }
             }
@@ -286,7 +287,7 @@ struct NowPlayingView: View {
 
                     Image(systemName: audioManager.isPlaying ? "pause.fill" : "play.fill")
                         .font(.system(size: 34, weight: .semibold))
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .offset(x: audioManager.isPlaying ? 0 : 3)
                         #if canImport(UIKit)
                         .contentTransition(.symbolEffect(.replace.downUp))
@@ -310,12 +311,12 @@ struct NowPlayingView: View {
                         
                         Image(systemName: "goforward.30")
                             .font(.system(size: 24, weight: .semibold))
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                     }
-                    
+
                     Text("30")
                         .font(.caption2)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                         .fontWeight(.medium)
                 }
             }
@@ -334,7 +335,7 @@ struct NowPlayingView: View {
                 Text("Stop")
                     .font(.system(size: 16, weight: .semibold))
             }
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
             .padding(.horizontal, 24)
             .padding(.vertical, 12)
             .background(

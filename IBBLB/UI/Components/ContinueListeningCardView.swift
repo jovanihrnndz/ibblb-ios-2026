@@ -67,14 +67,14 @@ struct ContinueListeningCardView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Continue Listening")
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .textCase(.uppercase)
                 .tracking(0.5)
 
             Text(result.displayTitle)
                 .font(.headline)
                 .lineLimit(2)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
 
             // Progress bar (optional, only if duration known)
             if let duration = duration, duration > 0 {
@@ -86,7 +86,7 @@ struct ContinueListeningCardView: View {
             // Time info
             Text(AudioPlayerManager.formatTime(result.savedTime))
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
