@@ -8,6 +8,7 @@ struct NowPlayingView: View {
 
     @State private var sliderValue: Double = 0
     @State private var isDragging = false
+    @State private var parsedTitleComponents: (title: String, subtitle: String)? = nil
 
     private let artworkSize: CGFloat = 320
 
@@ -65,6 +66,18 @@ struct NowPlayingView: View {
                     sliderValue = newValue
                 }
             }
+            .onChange(of: audioManager.currentTrack?.title, initial: true) { _, newTitle in
+                guard let title = newTitle else {
+                    parsedTitleComponents = nil
+                    return
+                }
+                let separators = ["–", "—", "-"]
+                if let (titlePart, subtitlePart, _) = parseTitleComponents(title, separators: separators) {
+                    parsedTitleComponents = (titlePart, subtitlePart)
+                } else {
+                    parsedTitleComponents = nil
+                }
+            }
         }
     }
 
@@ -79,30 +92,21 @@ struct NowPlayingView: View {
     
     @ViewBuilder
     private func titleView(for track: AudioTrackInfo) -> some View {
-        // Split title if it contains "–" (en-dash) or "-" (hyphen) separator
-        let titleString = track.title
-        let separators: [String] = ["–", "—", "-"]
-        
-        // Parse the title components outside of ViewBuilder
-        let parsedTitle = parseTitleComponents(titleString, separators: separators)
-        
-        if let (titlePart, subtitlePart, _) = parsedTitle {
-            // Title and artist/subtitle format
+        if let parsed = parsedTitleComponents {
             VStack(spacing: 6) {
-                Text(titlePart)
+                Text(parsed.title)
                     .font(.title2.weight(.semibold))
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
 
-                Text(subtitlePart)
+                Text(parsed.subtitle)
                     .font(.body.weight(.medium))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
             }
         } else {
-            // Just title
             Text(track.title)
                 .font(.title2.weight(.semibold))
                 .foregroundStyle(.primary)
