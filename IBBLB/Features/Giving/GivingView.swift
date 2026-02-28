@@ -89,6 +89,7 @@ struct GivingView: View {
                     }
                 }
             }
+            .ignoresSafeArea(edges: .top)
         }
     }
 
