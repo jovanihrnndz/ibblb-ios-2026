@@ -63,12 +63,49 @@ struct SermonsView: View {
     }
     
     var body: some View {
+        #if canImport(UIKit)
+        if useGridLayout {
+            GeometryReader { geo in
+                if geo.size.width > geo.size.height {
+                    // iPad landscape → sidebar + detail split view
+                    iPadLandscapeSermonsView(
+                        viewModel: viewModel,
+                        selectedSermon: $selectedSermon,
+                        notificationSermonId: $notificationSermonId
+                    )
+                    .onAppear {
+                        if selectedSermon == nil, let first = viewModel.sermons.first {
+                            selectedSermon = first
+                        }
+                    }
+                    .onChange(of: viewModel.sermons) { _, sermons in
+                        if selectedSermon == nil, let first = sermons.first {
+                            selectedSermon = first
+                        }
+                    }
+                } else {
+                    // iPad portrait → stacked layout unchanged
+                    // Clear selection so NavigationStack doesn't auto-push on rotation back
+                    portraitLayout
+                        .onAppear { selectedSermon = nil }
+                }
+            }
+        } else {
+            // iPhone / tvOS → unchanged
+            portraitLayout
+        }
+        #else
+        portraitLayout
+        #endif
+    }
+
+    private var portraitLayout: some View {
         NavigationStack {
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
                     BannerView()
                         .frame(maxWidth: .infinity)
-                    
+
                     ZStack {
                         Color(.systemGroupedBackground)
                             .ignoresSafeArea()
@@ -78,11 +115,11 @@ struct SermonsView: View {
                                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                                 #endif
                             }
-                        
+
                         contentView
                     }
                 }
-                
+
                 // Search bar overlaying content - content bleeds underneath
                 VStack(spacing: 0) {
                     UIKitSearchBar(text: $viewModel.searchText, placeholder: "Search sermons")

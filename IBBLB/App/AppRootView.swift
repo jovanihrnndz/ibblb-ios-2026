@@ -89,7 +89,7 @@ private struct MiniPlayerContainer: View {
 
     var body: some View {
         Group {
-            if audioManager.showMiniPlayer {
+            if audioManager.showMiniPlayer && !audioManager.isVideoPlaying {
                 AudioMiniPlayerBar(audioManager: audioManager) {
                     showNowPlaying = true
                 }
@@ -106,7 +106,7 @@ private struct MiniPlayerContainer: View {
                 .allowsHitTesting(true)
             }
         }
-        .animation(Animation.spring(response: 0.35, dampingFraction: 0.8), value: audioManager.showMiniPlayer)
+        .animation(Animation.spring(response: 0.35, dampingFraction: 0.8), value: audioManager.showMiniPlayer && !audioManager.isVideoPlaying)
     }
 }
 
