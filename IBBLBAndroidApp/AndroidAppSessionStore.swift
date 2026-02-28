@@ -12,6 +12,7 @@ public enum AndroidAppSessionStore {
         static let eventsSearchText = "android.events.searchText"
         static let cachedEvents = "android.events.cached"
         static let lastOpenedEventID = "android.events.lastOpenedID"
+        static let cachedGivingPage = "android.giving.cachedPage"
         static let lastLifecycleEvent = "android.lifecycle.lastEvent"
         static let lastLifecycleTimestamp = "android.lifecycle.lastTimestamp"
     }
@@ -104,6 +105,26 @@ public enum AndroidAppSessionStore {
 
     static func saveLastOpenedEventID(_ id: String?) {
         defaults.set(id, forKey: Key.lastOpenedEventID)
+    }
+
+    static func loadCachedGivingPage() -> GivingPageModel? {
+        guard let data = defaults.data(forKey: Key.cachedGivingPage) else {
+            return nil
+        }
+        let decoder = JSONDecoder()
+        return try? decoder.decode(GivingPageModel.self, from: data)
+    }
+
+    static func saveCachedGivingPage(_ page: GivingPageModel?) {
+        guard let page else {
+            defaults.removeObject(forKey: Key.cachedGivingPage)
+            return
+        }
+        let encoder = JSONEncoder()
+        guard let data = try? encoder.encode(page) else {
+            return
+        }
+        defaults.set(data, forKey: Key.cachedGivingPage)
     }
 
     static func saveLifecycleEvent(_ event: String) {

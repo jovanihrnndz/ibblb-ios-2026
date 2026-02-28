@@ -26,12 +26,9 @@ public struct IBBLBAppRootView: View {
                 .tabItem { Text(AndroidAppTab.events.title) }
                 .tag(AndroidAppTab.events)
 
-            FeaturePlaceholderView(
-                title: AndroidAppTab.giving.title,
-                message: "Giving tab is staged for the next Android milestone."
-            )
-            .tabItem { Text(AndroidAppTab.giving.title) }
-            .tag(AndroidAppTab.giving)
+            GivingRootView()
+                .tabItem { Text(AndroidAppTab.giving.title) }
+                .tag(AndroidAppTab.giving)
         }
         .onAppear {
             if appState.launchCount == 0 {

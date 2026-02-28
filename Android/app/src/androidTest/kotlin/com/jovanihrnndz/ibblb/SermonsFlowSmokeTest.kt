@@ -82,4 +82,32 @@ class SermonsFlowSmokeTest {
             composeRule.onNodeWithText("Search events").assertIsDisplayed()
         }
     }
+
+    @Test
+    fun givingTab_loadsContent() {
+        composeRule.onNodeWithText("Giving", useUnmergedTree = true).performClick()
+        composeRule.onNodeWithText("Trust God with your finances", substring = true, useUnmergedTree = true)
+            .assertIsDisplayed()
+
+        // Wait for loading spinner to clear before checking for error/sample state
+        composeRule.waitUntil(20_000) {
+            composeRule.onAllNodesWithText("Loading giving page...", useUnmergedTree = true)
+                .fetchSemanticsNodes().isEmpty()
+        }
+
+        // If network failed, fall back to sample data
+        val sampleButton = composeRule.onAllNodesWithText("Load Sample Giving Info", useUnmergedTree = true)
+        if (sampleButton.fetchSemanticsNodes().isNotEmpty()) {
+            sampleButton[0].performClick()
+            composeRule.waitForIdle()
+        }
+
+        // Verify final state — either live giving content or unavailable message
+        composeRule.waitUntil(10_000) {
+            composeRule.onAllNodesWithText("Give with Sharefaith Giving", substring = true, useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty() ||
+            composeRule.onAllNodesWithText("Giving link is unavailable right now.", useUnmergedTree = true)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
+    }
 }
