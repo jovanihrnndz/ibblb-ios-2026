@@ -13,7 +13,7 @@ struct BannerView: View {
 
     /// Banner height scales with size class
     private var bannerHeight: CGFloat {
-        horizontalSizeClass == .regular ? 140 : 100
+        horizontalSizeClass == .regular ? 160 : 120
     }
 
     var body: some View {
@@ -23,6 +23,18 @@ struct BannerView: View {
                 .scaledToFill()
                 .frame(width: geometry.size.width, height: bannerHeight)
                 .clipped()
+                .overlay(
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black.opacity(0.75), location: 0.0),
+                            .init(color: .black.opacity(0.75), location: 0.3),
+                            .init(color: .clear,               location: 0.6),
+                            .init(color: Color(.systemBackground), location: 1.0)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
         }
         .frame(height: bannerHeight)
     }

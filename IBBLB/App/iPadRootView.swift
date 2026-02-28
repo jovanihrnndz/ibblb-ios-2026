@@ -39,18 +39,15 @@ struct iPadRootView: View {
     // MARK: - Main Content with Top Tab Bar
 
     private var mainContent: some View {
-        VStack(spacing: 0) {
-            // Top tab bar
-            topTabBar
-
-            // Content area
-            contentArea
-        }
-        #if canImport(UIKit)
-        .safeAreaInset(edge: .bottom) {
-            iPadMiniPlayerContainer(showNowPlaying: $showNowPlaying)
-        }
-        #endif
+        contentArea
+            #if canImport(UIKit)
+            .safeAreaInset(edge: .top) {
+                topTabBar
+            }
+            .safeAreaInset(edge: .bottom) {
+                iPadMiniPlayerContainer(showNowPlaying: $showNowPlaying)
+            }
+            #endif
     }
 
     // MARK: - Top Tab Bar
@@ -75,7 +72,6 @@ struct iPadRootView: View {
             Spacer()
         }
         .padding(.vertical, 12)
-        .background(Color(.systemBackground))
     }
 
     private func tabButton(tab: AppTab, title: String, icon: String) -> some View {
@@ -132,7 +128,7 @@ private struct iPadMiniPlayerContainer: View {
 
     var body: some View {
         Group {
-            if audioManager.showMiniPlayer {
+            if audioManager.showMiniPlayer && !audioManager.isVideoPlaying {
                 AudioMiniPlayerBar(audioManager: audioManager) {
                     showNowPlaying = true
                 }
@@ -147,7 +143,7 @@ private struct iPadMiniPlayerContainer: View {
                 )
             }
         }
-        .animation(Animation.spring(response: 0.35, dampingFraction: 0.8), value: audioManager.showMiniPlayer)
+        .animation(Animation.spring(response: 0.35, dampingFraction: 0.8), value: audioManager.showMiniPlayer && !audioManager.isVideoPlaying)
     }
 }
 

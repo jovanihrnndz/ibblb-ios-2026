@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SermonCardView: View {
     let sermon: Sermon
-    
+
     // Platform detection
     private var isTV: Bool {
         #if os(tvOS)

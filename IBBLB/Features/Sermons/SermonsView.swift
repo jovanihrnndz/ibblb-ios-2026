@@ -63,12 +63,49 @@ struct SermonsView: View {
     }
     
     var body: some View {
+        #if canImport(UIKit)
+        if useGridLayout {
+            GeometryReader { geo in
+                if geo.size.width > geo.size.height {
+                    // iPad landscape → sidebar + detail split view
+                    iPadLandscapeSermonsView(
+                        viewModel: viewModel,
+                        selectedSermon: $selectedSermon,
+                        notificationSermonId: $notificationSermonId
+                    )
+                    .onAppear {
+                        if selectedSermon == nil, let first = viewModel.sermons.first {
+                            selectedSermon = first
+                        }
+                    }
+                    .onChange(of: viewModel.sermons) { _, sermons in
+                        if selectedSermon == nil, let first = sermons.first {
+                            selectedSermon = first
+                        }
+                    }
+                } else {
+                    // iPad portrait → stacked layout unchanged
+                    // Clear selection so NavigationStack doesn't auto-push on rotation back
+                    portraitLayout
+                        .onAppear { selectedSermon = nil }
+                }
+            }
+        } else {
+            // iPhone / tvOS → unchanged
+            portraitLayout
+        }
+        #else
+        portraitLayout
+        #endif
+    }
+
+    private var portraitLayout: some View {
         NavigationStack {
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
                     BannerView()
                         .frame(maxWidth: .infinity)
-                    
+
                     ZStack {
                         Color(.systemGroupedBackground)
                             .ignoresSafeArea()
@@ -78,11 +115,11 @@ struct SermonsView: View {
                                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                                 #endif
                             }
-                        
+
                         contentView
                     }
                 }
-                
+
                 // Search bar overlaying content - content bleeds underneath
                 VStack(spacing: 0) {
                     UIKitSearchBar(text: $viewModel.searchText, placeholder: "Search sermons")
@@ -92,6 +129,7 @@ struct SermonsView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.top, useGridLayout ? 140 : 100) // Position below banner (140 on iPad, 100 on iPhone)
             }
+            .ignoresSafeArea(edges: .top)
             .toolbar(.hidden, for: .navigationBar)
             .task {
                 // Load initial data only once
@@ -125,7 +163,7 @@ struct SermonsView: View {
                     sermonsListContent
                 }
             }
-            .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 16))
+            .padding(.horizontal, isTV ? 60 : (useGridLayout ? iPadHorizontalPadding : 12))
             .padding(.top, isTV ? 24 : (useGridLayout ? 60 : 50)) // More top padding on iPad
             .padding(.bottom, isTV ? 32 : (useGridLayout ? 24 : 16))
         }
@@ -183,7 +221,7 @@ struct SermonsView: View {
                 }
             } else {
                 // iPhone / tvOS: single column list
-                LazyVStack(spacing: isTV ? 32 : 16) {
+                LazyVStack(spacing: isTV ? 32 : 12) {
                     ForEach(listSermons) { sermon in
                         Button {
                             selectedSermon = sermon

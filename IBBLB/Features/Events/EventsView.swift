@@ -64,6 +64,7 @@ struct EventsView: View {
                     await viewModel.refresh()
                 }
             }
+            .ignoresSafeArea(edges: .top)
         }
     }
 

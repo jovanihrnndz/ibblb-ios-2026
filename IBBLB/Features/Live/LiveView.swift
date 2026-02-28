@@ -78,6 +78,7 @@ struct LiveView: View {
                     }
                 }
             }
+            .ignoresSafeArea(edges: .top)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(.hidden, for: .navigationBar)
             .task {

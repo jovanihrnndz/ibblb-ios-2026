@@ -2,31 +2,32 @@
 
 ## Prerequisites
 
-- Install Skip CLI:
-  - `brew install skiptools/skip/skip`
-- Install Java 17 or newer:
-  - `brew install openjdk@17`
-- Install Android Studio and complete SDK setup (SDK + emulator/device tools).
+- Skip CLI: `brew install skiptools/skip/skip`
+- Java + Android command-line tools (or Android Studio)
+- Running emulator/device (`adb devices`)
 
-## Initialize
+## Validate Swift/Skip module
 
-From this folder (`Android/`):
+From the package root:
 
 ```bash
-cd /Users/jovanihernandez/ibblb_ios/IBBLB/Android
-skip checkup
-skip init
+cd /Users/jovanihernandez/ibblb_ios/IBBLB
+./ci_scripts/android_verify.sh
 ```
 
-## Build
+## Build/Install Android app wrapper
 
 ```bash
-cd /Users/jovanihernandez/ibblb_ios/IBBLB/Android
-skip android build
+cd /Users/jovanihernandez/ibblb_ios/IBBLB
+export ANDROID_HOME=/opt/homebrew/share/android-commandlinetools
+export ANDROID_SDK_ROOT=$ANDROID_HOME
+gradle -p Android :app:installDebug
+adb shell am start -n com.jovanihrnndz.ibblb/com.jovanihrnndz.ibblb.MainActivity
 ```
 
-Optional run command:
+## Runtime smoke test (launch/focus)
 
 ```bash
-skip android run
+cd /Users/jovanihernandez/ibblb_ios/IBBLB
+./ci_scripts/android_smoke_launch.sh
 ```
