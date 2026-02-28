@@ -26,9 +26,9 @@ struct BannerView: View {
                 .overlay(
                     // Subtle scrim so white status bar text is legible over any banner image
                     LinearGradient(
-                        colors: [Color.black.opacity(0.7), Color.clear],
+                        colors: [Color.black.opacity(0.85), Color.clear],
                         startPoint: .top,
-                        endPoint: .init(x: 0.5, y: 0.4)
+                        endPoint: .init(x: 0.5, y: 0.5)
                     )
                 )
         }
