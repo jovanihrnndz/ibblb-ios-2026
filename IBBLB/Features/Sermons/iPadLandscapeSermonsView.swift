@@ -7,24 +7,30 @@ struct iPadLandscapeSermonsView: View {
     @Binding var notificationSermonId: String?
 
     var body: some View {
-        HStack(spacing: 0) {
-            // Left sidebar: reuse iPadSermonsListView at fixed width
-            iPadSermonsListView(viewModel: viewModel, selectedSermon: $selectedSermon)
-                .frame(width: 320)
+        VStack(spacing: 0) {
+            // Banner spans full landscape width above both panes
+            BannerView()
+                .frame(maxWidth: .infinity)
 
-            Divider()
+            HStack(spacing: 0) {
+                // Left sidebar: banner suppressed — already shown full-width above
+                iPadSermonsListView(viewModel: viewModel, selectedSermon: $selectedSermon, showBanner: false)
+                    .frame(width: 320)
 
-            // Right pane: detail fills remaining width
-            GeometryReader { geo in
-                if let sermon = selectedSermon {
-                    SermonDetailView(
-                        sermon: sermon,
-                        splitViewWidth: geo.size.width,
-                        showBanner: false
-                    )
-                    .id(sermon.id)
-                } else {
-                    emptyState
+                Divider()
+
+                // Right pane: detail fills remaining width
+                GeometryReader { geo in
+                    if let sermon = selectedSermon {
+                        SermonDetailView(
+                            sermon: sermon,
+                            splitViewWidth: geo.size.width,
+                            showBanner: false
+                        )
+                        .id(sermon.id)
+                    } else {
+                        emptyState
+                    }
                 }
             }
         }

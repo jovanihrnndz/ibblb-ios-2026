@@ -7,11 +7,13 @@ import SwiftUI
 struct iPadSermonsListView: View {
     @ObservedObject var viewModel: SermonsViewModel
     @Binding var selectedSermon: Sermon?
+    var showBanner: Bool = true
     @ObservedObject private var audioManager = AudioPlayerManager.shared
 
-    init(viewModel: SermonsViewModel, selectedSermon: Binding<Sermon?>) {
+    init(viewModel: SermonsViewModel, selectedSermon: Binding<Sermon?>, showBanner: Bool = true) {
         self.viewModel = viewModel
         _selectedSermon = selectedSermon
+        self.showBanner = showBanner
     }
 
     private var listSermons: [Sermon] {
@@ -42,8 +44,10 @@ struct iPadSermonsListView: View {
 
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
-                    BannerView()
-                        .frame(maxWidth: .infinity)
+                    if showBanner {
+                        BannerView()
+                            .frame(maxWidth: .infinity)
+                    }
 
                     ZStack {
                         Color(.systemGroupedBackground)
