@@ -5,9 +5,14 @@ import SwiftUI
 /// iPad-only sermon list for the content column of NavigationSplitView.
 /// Uses selection binding instead of NavigationStack push.
 struct iPadSermonsListView: View {
-    @StateObject private var viewModel = SermonsViewModel()
+    @ObservedObject var viewModel: SermonsViewModel
     @Binding var selectedSermon: Sermon?
     @ObservedObject private var audioManager = AudioPlayerManager.shared
+
+    init(viewModel: SermonsViewModel, selectedSermon: Binding<Sermon?>) {
+        self.viewModel = viewModel
+        _selectedSermon = selectedSermon
+    }
 
     private var listSermons: [Sermon] {
         viewModel.sermons
@@ -163,6 +168,10 @@ struct iPadSermonsListView: View {
                     emptyView
                 } else {
                     sermonsGridContent(metrics: metrics)
+                    if viewModel.isLoadingMore {
+                        ProgressView()
+                            .padding(.vertical, 16)
+                    }
                 }
             }
             .padding(.horizontal, metrics.horizontalPadding)
@@ -180,21 +189,11 @@ struct iPadSermonsListView: View {
 
     private func sermonsGridContent(metrics: LayoutMetrics) -> some View {
         VStack(spacing: metrics.gridSpacing) {
-            // Continue Listening Card (if available and no active playback)
+            // Slim resume bar (if available and no active playback)
             if audioManager.currentTrack == nil,
                let info = continueListeningInfo {
-                ContinueListeningCardView(
-                    result: info,
-                    duration: nil, // Duration not available in list view
-                    onCardTap: info.hasMatchingSermon ? {
-                        selectedSermon = info.sermon
-                    } : nil,
-                    onResume: {
-                        audioManager.resumeListening(from: info)
-                    }
-                )
-                .padding(.top, 40)
-                .padding(.bottom, 0)
+                sidebarResumeBar(info: info)
+                    .padding(.top, 40)
             }
             
             // Sermons grid
@@ -213,9 +212,87 @@ struct iPadSermonsListView: View {
                             )
                     }
                     .buttonStyle(.plain)
+                    .onAppear { viewModel.loadMoreIfNeeded(currentItem: sermon) }
                 }
             }
         }
+    }
+
+    // MARK: - Slim Resume Bar
+
+    private func sidebarResumeBar(info: AudioPlayerManager.ContinueListeningResult) -> some View {
+        HStack(spacing: 10) {
+            // Thumbnail
+            Group {
+                if let urls = resumeThumbnailURLs(from: info) {
+                    FallbackAsyncImage(urls: urls) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } placeholder: {
+                        Color(.systemGray5)
+                    }
+                } else {
+                    Color(.systemGray5)
+                }
+            }
+            .frame(width: 40, height: 40)
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+
+            // Text — taps navigate to sermon
+            VStack(alignment: .leading, spacing: 2) {
+                Text(info.displayTitle)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .lineLimit(1)
+                    .foregroundStyle(Color.primary)
+                Text("Resume · \(AudioPlayerManager.formatTime(info.savedTime))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if info.hasMatchingSermon { selectedSermon = info.sermon }
+            }
+
+            // Resume button
+            Button { audioManager.resumeListening(from: info) } label: {
+                Image(systemName: "play.fill")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 30, height: 30)
+                    .background(Color.accentColor)
+                    .clipShape(Circle())
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(Color(.secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .shadow(color: Color.black.opacity(0.06), radius: 3, x: 0, y: 1)
+    }
+
+    private func resumeThumbnailURLs(from info: AudioPlayerManager.ContinueListeningResult) -> [URL]? {
+        if let sermon = info.sermon {
+            if let thumbnailString = sermon.thumbnailUrl, !thumbnailString.isEmpty {
+                if let videoId = YouTubeThumbnail.videoId(from: thumbnailString) {
+                    return YouTubeThumbnail.fallbackURLs(videoId: videoId)
+                }
+                if let url = URL(string: thumbnailString) { return [url] }
+            }
+            if let youtubeId = sermon.youtubeVideoId,
+               !youtubeId.trimmingCharacters(in: .whitespaces).isEmpty,
+               let id = YouTubeVideoIDExtractor.extractVideoID(from: youtubeId) {
+                return YouTubeThumbnail.fallbackURLs(videoId: id)
+            }
+        }
+        if let urlString = info.displayThumbnailURL, let url = URL(string: urlString) {
+            return [url]
+        }
+        return nil
     }
 
     // MARK: - State Views
@@ -308,14 +385,20 @@ struct iPadSermonsListView: View {
 
 #if canImport(UIKit)
 #Preview {
-    iPadSermonsListView(selectedSermon: .constant(nil))
+    iPadSermonsListView(viewModel: SermonsViewModel(), selectedSermon: .constant(nil))
 }
 #endif
 
 #else
 
 struct iPadSermonsListView: View {
+    var viewModel: SermonsViewModel
     @Binding var selectedSermon: Sermon?
+
+    init(viewModel: SermonsViewModel, selectedSermon: Binding<Sermon?>) {
+        self.viewModel = viewModel
+        _selectedSermon = selectedSermon
+    }
 
     var body: some View {
         EmptyView()
