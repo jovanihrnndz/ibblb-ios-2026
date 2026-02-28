@@ -41,4 +41,4 @@ jobs:
           arch: x86_64
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           emulator-boot-timeout: 600
-          script: ./ci_scripts/android_verify.sh
+          script: RUN_SKIP_ANDROID_BUILD=0 ./ci_scripts/android_verify.sh

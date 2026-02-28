@@ -37,12 +37,17 @@ fi
 
 SKIP_ANDROID_ARCH="${SKIP_ANDROID_ARCH:-aarch64}"
 SKIP_ANDROID_API_LEVEL="${SKIP_ANDROID_API_LEVEL:-24}"
+RUN_SKIP_ANDROID_BUILD="${RUN_SKIP_ANDROID_BUILD:-1}"
 
-echo "==> skip android build"
-skip android build --arch "${SKIP_ANDROID_ARCH}" --android-api-level "${SKIP_ANDROID_API_LEVEL}"
+if [[ "${RUN_SKIP_ANDROID_BUILD}" == "1" ]]; then
+  echo "==> skip android build"
+  skip android build --arch "${SKIP_ANDROID_ARCH}" --android-api-level "${SKIP_ANDROID_API_LEVEL}"
 
-echo "==> skip android test"
-skip android test --arch "${SKIP_ANDROID_ARCH}" --android-api-level "${SKIP_ANDROID_API_LEVEL}"
+  echo "==> skip android test"
+  skip android test --arch "${SKIP_ANDROID_ARCH}" --android-api-level "${SKIP_ANDROID_API_LEVEL}"
+else
+  echo "==> skipping skip transpile/test (RUN_SKIP_ANDROID_BUILD=${RUN_SKIP_ANDROID_BUILD})"
+fi
 
 echo "==> gradle -p Android :app:assembleDebug"
 gradle -p Android :app:assembleDebug
