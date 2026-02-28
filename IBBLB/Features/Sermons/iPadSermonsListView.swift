@@ -179,7 +179,7 @@ struct iPadSermonsListView: View {
                 }
             }
             .padding(.horizontal, metrics.horizontalPadding)
-            .padding(.top, metrics.contentTopPadding)
+            .padding(.top, showBanner ? metrics.contentTopPadding : 8)
             .padding(.bottom, 16)
         }
         .scrollIndicators(.hidden)
