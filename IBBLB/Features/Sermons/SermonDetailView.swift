@@ -62,10 +62,10 @@ struct SermonDetailView: View {
                             HStack(spacing: 6) {
                                 Image(systemName: "person.fill")
                                     .font(.system(size: 13, weight: .medium))
-                                    .foregroundColor(.secondary)
+                                    .foregroundStyle(.secondary)
                                 Text(speaker)
                                     .font(.subheadline)
-                                    .foregroundColor(.secondary)
+                                    .foregroundStyle(.secondary)
                             }
                         }
 
@@ -75,10 +75,10 @@ struct SermonDetailView: View {
                                 HStack(spacing: 6) {
                                     Image(systemName: "calendar")
                                         .font(.system(size: 13, weight: .medium))
-                                        .foregroundColor(.secondary)
+                                        .foregroundStyle(.secondary)
                                     Text(date.formattedSermonDate)
                                         .font(.subheadline)
-                                        .foregroundColor(.secondary)
+                                        .foregroundStyle(.secondary)
                                 }
                             }
 
@@ -92,7 +92,7 @@ struct SermonDetailView: View {
                                         Text(isCurrentlyPlaying(url: audioURL) ? "Playing" : "Play Audio")
                                             .font(.system(size: 14, weight: .semibold))
                                     }
-                                    .foregroundColor(.accentColor)
+                                    .foregroundStyle(Color.accentColor)
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 8)
                                     .background(
@@ -160,7 +160,7 @@ struct SermonDetailView: View {
                 AudioPlayerManager.shared.setVideoPlaying(isPlaying)
             })
                 .aspectRatio(16/9, contentMode: .fit)
-                .cornerRadius(12)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .frame(maxWidth: .infinity)
                 .frame(height: videoHeight)
                 .id(videoId)
