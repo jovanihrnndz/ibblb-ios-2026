@@ -129,6 +129,7 @@ struct SermonsView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.top, useGridLayout ? 140 : 100) // Position below banner (140 on iPad, 100 on iPhone)
             }
+            .ignoresSafeArea(edges: .top)
             .toolbar(.hidden, for: .navigationBar)
             .task {
                 // Load initial data only once
