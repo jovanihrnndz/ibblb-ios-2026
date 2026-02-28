@@ -156,7 +156,7 @@ struct iPadSermonsListView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, metrics.searchBarTopOffset)
+        .padding(.top, showBanner ? metrics.searchBarTopOffset : 0)
     }
 
     // MARK: - Content
