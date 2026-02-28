@@ -35,11 +35,13 @@ if ! adb devices | awk 'NR>1 {print $2}' | grep -q '^device$'; then
   exit 1
 fi
 
+SKIP_ANDROID_ARCH="${SKIP_ANDROID_ARCH:-aarch64}"
+
 echo "==> skip android build"
-skip android build
+skip android build --arch "${SKIP_ANDROID_ARCH}"
 
 echo "==> skip android test"
-skip android test
+skip android test --arch "${SKIP_ANDROID_ARCH}"
 
 echo "==> gradle -p Android :app:assembleDebug"
 gradle -p Android :app:assembleDebug
