@@ -49,11 +49,13 @@ struct LiveView: View {
                                         HStack {
                                             Spacer()
                                             Button {
-                                                activeVideoId = nil
+                                                withAnimation(.easeInOut(duration: 0.2)) {
+                                                    activeVideoId = nil
+                                                }
                                             } label: {
                                                 Image(systemName: "xmark.circle.fill")
                                                     .font(.largeTitle)
-                                                    .foregroundColor(.white)
+                                                    .foregroundStyle(.white)
                                             }
                                             .padding()
                                         }
@@ -61,7 +63,7 @@ struct LiveView: View {
                                         // YouTube player matching SermonDetailView styling
                                         YouTubePlayerView(videoID: videoId)
                                             .aspectRatio(16/9, contentMode: .fit)
-                                            .cornerRadius(12)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                                             .frame(maxWidth: .infinity)
                                             .padding(.horizontal, 16)
 
@@ -103,7 +105,7 @@ struct LiveView: View {
                 Text("Únete a nosotros para servicios de adoración en vivo")
                     .font(.system(size: 22, weight: .bold))
                     .multilineTextAlignment(.center)
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
 
@@ -114,14 +116,14 @@ struct LiveView: View {
                         Text(status.state == .live ? "En Vivo" : "Próximo Servicio")
                             .font(.headline)
                             .fontWeight(.bold)
-                            .foregroundColor(.black)
+                            .foregroundStyle(.black)
 
                         if status.state == .live,
                            let rawVideoId = status.event?.youtubeVideoId,
                            let videoId = YouTubeVideoIDExtractor.extractVideoID(from: rawVideoId) {
                             YouTubePlayerView(videoID: videoId)
                                 .aspectRatio(16/9, contentMode: .fit)
-                                .cornerRadius(12)
+                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         } else if status.state == .upcoming, status.event != nil {
                             WebStyleCountdownCard(status: status, viewModel: viewModel, darkColor: webDarkColor)
                         } else {
@@ -136,7 +138,7 @@ struct LiveView: View {
                             Text("Servicio Anterior")
                                 .font(.headline)
                                 .fontWeight(.bold)
-                                .foregroundColor(.black)
+                                .foregroundStyle(.black)
 
                             PreviousServiceVideoCard(event: lastEvent)
                         }
@@ -165,7 +167,7 @@ struct LiveView: View {
                     Text("Únete a nosotros para\nservicios en vivo")
                         .font(.system(size: 24, weight: .bold))
                         .multilineTextAlignment(.center)
-                        .foregroundColor(.black)
+                        .foregroundStyle(.black)
                         .padding(.horizontal, 20)
 
                     if status.state == .live,
@@ -173,7 +175,7 @@ struct LiveView: View {
                        let videoId = YouTubeVideoIDExtractor.extractVideoID(from: rawVideoId) {
                         YouTubePlayerView(videoID: videoId)
                             .aspectRatio(16/9, contentMode: .fit)
-                            .cornerRadius(12)
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                             .frame(maxWidth: .infinity)
                             .padding(.horizontal)
                     } else if status.state == .upcoming, status.event != nil {
@@ -191,7 +193,7 @@ struct LiveView: View {
                         Text("Servicio Anterior")
                             .font(.title3)
                             .fontWeight(.bold)
-                            .foregroundColor(.black)
+                            .foregroundStyle(.black)
 
                         PreviousServiceVideoCard(event: lastEvent)
                     }
@@ -230,7 +232,7 @@ struct WebStyleCountdownCard: View {
                 Text("COMIENZA EN")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.gray)
                     .tracking(1.5)
 
                 // Countdown Digits
@@ -259,14 +261,13 @@ struct WebStyleCountdownCard: View {
                     }
                     .font(.subheadline)
                     .fontWeight(.bold)
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
                 }
             }
             .padding(.vertical, 32)
             .padding(.horizontal, 16)
         }
-        .background(Color.white)
-        .cornerRadius(16)
+        .background(Color.white, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
         .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 5)
     }
 
@@ -296,12 +297,12 @@ struct WebStyleCountdownCard: View {
 
                 Text(value)
                     .font(.system(size: 36, weight: .bold))
-                    .foregroundColor(Color(red: 140/255, green: 130/255, blue: 255/255))
+                    .foregroundStyle(Color(red: 140/255, green: 130/255, blue: 255/255))
             }
 
             Text(label)
                 .font(.system(size: 10, weight: .bold))
-                .foregroundColor(.gray)
+                .foregroundStyle(.gray)
         }
     }
 }
@@ -316,7 +317,7 @@ struct PreviousServiceVideoCard: View {
                 // YouTube player shown directly - one tap to play
                 YouTubePlayerView(videoID: videoId)
                     .aspectRatio(16/9, contentMode: .fit)
-                    .cornerRadius(12)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .frame(maxWidth: .infinity)
             } else {
                 // Fallback placeholder when no video ID
@@ -326,7 +327,7 @@ struct PreviousServiceVideoCard: View {
                     .overlay {
                         Image(systemName: "play.rectangle.fill")
                             .font(.system(size: 40))
-                            .foregroundColor(Color(.systemGray3))
+                            .foregroundStyle(Color(.systemGray3))
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
@@ -344,23 +345,22 @@ struct NoUpcomingServiceCard: View {
             VStack(spacing: 16) {
                 Image(systemName: "calendar.badge.clock")
                     .font(.system(size: 40))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
 
                 Text("No hay servicio programado")
                     .font(.headline)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
 
                 Text("Consulta los horarios de servicio abajo")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
             .padding(.vertical, 32)
             .padding(.horizontal, 16)
         }
         .frame(maxWidth: .infinity)
-        .background(Color.white)
-        .cornerRadius(16)
+        .background(Color.white, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
         .shadow(color: Color.black.opacity(0.08), radius: 15, x: 0, y: 5)
     }
 }
@@ -371,16 +371,15 @@ struct ServiceTimesCard: View {
             HStack {
                 Image(systemName: "calendar")
                     .font(.title2)
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.gray)
                     .padding(10)
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(8)
+                    .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                 Spacer()
             }
 
             Text("Horarios de Servicio")
                 .font(.headline)
-                .foregroundColor(.black)
+                .foregroundStyle(.black)
 
             VStack(alignment: .leading, spacing: 12) {
                 serviceLine(day: "Jueves", time: "7:30 PM", label: "Estudio Bíblico")
@@ -390,8 +389,7 @@ struct ServiceTimesCard: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
-        .cornerRadius(16)
+        .background(Color.white, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
         .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
     }
 
@@ -401,10 +399,10 @@ struct ServiceTimesCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("\(day) \(time)")
                     .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(.black)
+                    .foregroundStyle(.black)
                 Text(label)
                     .font(.system(size: 13))
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.gray)
             }
         }
     }
@@ -420,14 +418,14 @@ struct ElevationErrorView: View {
         VStack(spacing: 20) {
             Image(systemName: "wifi.slash")
                 .font(.largeTitle)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
 
             Text("Connection Error")
                 .font(.headline)
 
             Text(error)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
 

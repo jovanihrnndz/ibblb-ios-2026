@@ -20,7 +20,7 @@ struct SermonCardView: View {
                 Text(sermon.title)
                     .font(isTV ? .system(size: 28, weight: .semibold) : .headline)
                     .lineLimit(isTV ? 3 : 2)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
                     #if canImport(UIKit)
                     .fixedSize(horizontal: false, vertical: true)
                     #endif
@@ -39,7 +39,7 @@ struct SermonCardView: View {
                     }
                 }
                 .font(isTV ? .system(size: 22) : .subheadline)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
             }
             .padding(isTV ? 24 : 16)
             .frame(maxWidth: .infinity, minHeight: isTV ? 140 : 100, alignment: .top)

@@ -33,7 +33,7 @@ struct EventsView: View {
                         VStack(spacing: 16) {
                             Image(systemName: "exclamationmark.bubble")
                                 .font(.system(size: 50))
-                                .foregroundColor(.orange)
+                                .foregroundStyle(.orange)
                             Text(error)
                                 .multilineTextAlignment(.center)
                             Button("Reintentar") {
@@ -78,7 +78,7 @@ struct EventsView: View {
             ) {
                 ForEach(viewModel.events) { event in
                     NavigationLink(value: event) {
-                        eventCard(event: event)
+                        EventCardView(event: event)
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
@@ -88,7 +88,7 @@ struct EventsView: View {
             LazyVStack(spacing: 20) {
                 ForEach(viewModel.events) { event in
                     NavigationLink(value: event) {
-                        eventCard(event: event)
+                        EventCardView(event: event)
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
@@ -100,13 +100,13 @@ struct EventsView: View {
         VStack(spacing: 20) {
             Image(systemName: "calendar.badge.exclamationmark")
                 .font(.system(size: 60))
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
             
             Text("No hay eventos próximos")
                 .font(.headline)
             
             Text("Vuelve pronto para ver nuestras próximas actividades.")
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
             
             Button("Actualizar") {
@@ -119,95 +119,6 @@ struct EventsView: View {
         .padding()
     }
     
-    @ViewBuilder
-    private func eventCard(event: Event) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if let imageUrl = event.imageUrl {
-                AsyncImage(url: URL(string: imageUrl)) { image in
-                    image.resizable()
-                        .aspectRatio(16/9, contentMode: .fill)
-                } placeholder: {
-                    Color.gray.opacity(0.2)
-                        .aspectRatio(16/9, contentMode: .fill)
-                }
-                .frame(maxHeight: 180)
-                .clipped()
-            }
-            
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(event.title)
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .lineLimit(2)
-                        
-                        HStack(spacing: 4) {
-                            Image(systemName: "calendar")
-                            Text(event.startDate.formatted(date: .long, time: .shortened))
-                        }
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        
-                        if let location = event.location {
-                            HStack(spacing: 4) {
-                                Image(systemName: "mappin.and.ellipse")
-                                Text(location)
-                            }
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    // Date Badge
-                    VStack(spacing: 0) {
-                        Text(EventsView.dayString(from: event.startDate))
-                            .font(.title2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.accentColor)
-                        Text(EventsView.monthString(from: event.startDate))
-                            .font(.caption2)
-                            .fontWeight(.bold)
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(width: 50, height: 50)
-                    .background(Color.accentColor.opacity(0.1))
-                    .cornerRadius(8)
-                }
-                
-                if let description = event.description {
-                    Text(description)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .lineLimit(3)
-                        .padding(.top, 4)
-                }
-                
-                if event.registrationEnabled == true {
-                    Button(action: {
-                        // Registration action
-                    }) {
-                        Text("Registrarse")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
-                            .background(Color.accentColor)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                    .padding(.top, 12)
-                }
-            }
-            .padding()
-        }
-        .background(Color(.secondarySystemGroupedBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
-    }
-
     // MARK: - Date Formatting Helpers
 
     private static let dayFormatter: DateFormatter = {
@@ -228,6 +139,97 @@ struct EventsView: View {
 
     static func monthString(from date: Date) -> String {
         return monthFormatter.string(from: date).uppercased()
+    }
+}
+
+private struct EventCardView: View {
+    let event: Event
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if let imageUrl = event.imageUrl {
+                AsyncImage(url: URL(string: imageUrl)) { image in
+                    image.resizable()
+                        .aspectRatio(16/9, contentMode: .fill)
+                } placeholder: {
+                    Color.gray.opacity(0.2)
+                        .aspectRatio(16/9, contentMode: .fill)
+                }
+                .frame(maxHeight: 180)
+                .clipped()
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(event.title)
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .lineLimit(2)
+
+                        HStack(spacing: 4) {
+                            Image(systemName: "calendar")
+                            Text(event.startDate.formatted(date: .long, time: .shortened))
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                        if let location = event.location {
+                            HStack(spacing: 4) {
+                                Image(systemName: "mappin.and.ellipse")
+                                Text(location)
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    Spacer()
+
+                    // Date Badge
+                    VStack(spacing: 0) {
+                        Text(EventsView.dayString(from: event.startDate))
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color.accentColor)
+                        Text(EventsView.monthString(from: event.startDate))
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(width: 50, height: 50)
+                    .background(Color.accentColor.opacity(0.1), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(Text(event.startDate, format: .dateTime.day().month(.wide)))
+                }
+
+                if let description = event.description {
+                    Text(description)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(3)
+                        .padding(.top, 4)
+                }
+
+                if event.registrationEnabled == true {
+                    Button(action: {
+                        // Registration action
+                    }) {
+                        Text("Registrarse")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.top, 12)
+                }
+            }
+            .padding()
+        }
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
     }
 }
 

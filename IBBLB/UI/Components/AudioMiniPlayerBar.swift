@@ -30,7 +30,7 @@ struct AudioMiniPlayerBar: View {
                     if let track = audioManager.currentTrack {
                         Text(track.title)
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                             .lineLimit(1)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -41,7 +41,7 @@ struct AudioMiniPlayerBar: View {
                     } label: {
                         Image(systemName: audioManager.isPlaying ? "pause.fill" : "play.fill")
                             .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.primary)
+                            .foregroundStyle(.primary)
                             .frame(width: 40, height: 40)
                             #if canImport(UIKit)
                             .contentShape(Circle())

@@ -11,7 +11,7 @@ import Combine
 #endif
 
 struct SermonsView: View {
-    @StateObject private var viewModel: SermonsViewModel
+    @ObservedObject var viewModel: SermonsViewModel
     @State private var selectedSermon: Sermon?
     @Binding var hideTabBar: Bool
     @Binding var notificationSermonId: String?
@@ -25,7 +25,7 @@ struct SermonsView: View {
         hideTabBar: Binding<Bool>,
         notificationSermonId: Binding<String?>
     ) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
         _hideTabBar = hideTabBar
         _notificationSermonId = notificationSermonId
     }
@@ -48,19 +48,6 @@ struct SermonsView: View {
     private var iPadGridMinWidth: CGFloat { 400 }
     private var iPadGridSpacing: CGFloat { 24 }
     private var iPadHorizontalPadding: CGFloat { 24 }
-    
-    // All sermons for the list
-    private var listSermons: [Sermon] {
-        return viewModel.sermons
-    }
-
-    // Audio manager for continue listening feature
-    @ObservedObject private var audioManager = AudioPlayerManager.shared
-
-    // Continue listening info from shared helper (supports offline fallback)
-    private var continueListeningInfo: AudioPlayerManager.ContinueListeningResult? {
-        audioManager.getContinueListeningInfo(from: viewModel.sermons)
-    }
     
     var body: some View {
         #if canImport(UIKit)
@@ -185,19 +172,11 @@ struct SermonsView: View {
     @ViewBuilder
     private var sermonsListContent: some View {
         VStack(spacing: useGridLayout ? iPadGridSpacing : (isTV ? 32 : 16)) {
-            // Continue Listening Card (if available, not on tvOS, and no active playback)
-            if !isTV, audioManager.currentTrack == nil,
-               let info = continueListeningInfo {
-                ContinueListeningCardView(
-                    result: info,
-                    duration: nil, // Duration not available in list view
-                    onCardTap: info.hasMatchingSermon ? {
-                        selectedSermon = info.sermon
-                    } : nil,
-                    onResume: {
-                        audioManager.resumeListening(from: info)
-                    }
-                )
+            // Continue Listening Card (if available, not on tvOS)
+            if !isTV {
+                ContinueListeningSection(sermons: viewModel.sermons) { sermon in
+                    selectedSermon = sermon
+                }
                 .padding(.top, useGridLayout ? 28 : 24)
                 .padding(.bottom, useGridLayout ? -8 : 0)
             }
@@ -209,7 +188,7 @@ struct SermonsView: View {
                     columns: [GridItem(.adaptive(minimum: iPadGridMinWidth), spacing: iPadGridSpacing)],
                     spacing: iPadGridSpacing
                 ) {
-                    ForEach(listSermons) { sermon in
+                    ForEach(viewModel.sermons) { sermon in
                         Button {
                             selectedSermon = sermon
                         } label: {
@@ -222,7 +201,7 @@ struct SermonsView: View {
             } else {
                 // iPhone / tvOS: single column list
                 LazyVStack(spacing: isTV ? 32 : 12) {
-                    ForEach(listSermons) { sermon in
+                    ForEach(viewModel.sermons) { sermon in
                         Button {
                             selectedSermon = sermon
                         } label: {
@@ -245,14 +224,14 @@ struct SermonsView: View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 50))
-                .foregroundColor(.amber)
+                .foregroundStyle(Color.amber)
             
             Text("Something went wrong")
                 .font(.headline)
             
             Text(message)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
             
@@ -266,8 +245,7 @@ struct SermonsView: View {
                     .foregroundColor(.white)
                     .padding()
                     .frame(maxWidth: 200)
-                    .background(Color.accentColor)
-                    .cornerRadius(10)
+                    .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
         }
     }
@@ -279,7 +257,7 @@ struct SermonsView: View {
             
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 50))
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
             
             Text("No sermons found")
                 .font(.headline)
@@ -296,11 +274,10 @@ struct SermonsView: View {
                 }) {
                     Text("Clear Search")
                         .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 12)
-                        .background(Color.accentColor)
-                        .cornerRadius(10)
+                        .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .padding(.top, 8)
             }
@@ -314,6 +291,28 @@ struct SermonsView: View {
 // Minimal amber color for error icon
 extension Color {
     static let amber = Color(red: 1.0, green: 0.75, blue: 0.0)
+}
+
+/// Isolated observer for AudioPlayerManager so SermonsView doesn't re-render on every audio tick.
+private struct ContinueListeningSection: View {
+    @ObservedObject private var audioManager = AudioPlayerManager.shared
+    let sermons: [Sermon]
+    let onCardTap: (Sermon) -> Void
+
+    private var continueListeningInfo: AudioPlayerManager.ContinueListeningResult? {
+        audioManager.getContinueListeningInfo(from: sermons)
+    }
+
+    var body: some View {
+        if audioManager.currentTrack == nil, let info = continueListeningInfo {
+            ContinueListeningCardView(
+                result: info,
+                duration: nil,
+                onCardTap: info.sermon.map { sermon in { onCardTap(sermon) } },
+                onResume: { audioManager.resumeListening(from: info) }
+            )
+        }
+    }
 }
 
 // MARK: - Navigation Transitions
