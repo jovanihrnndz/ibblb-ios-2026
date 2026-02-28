@@ -1,13 +1,22 @@
 import SwiftUI
 
-/// Root container that switches between iPhone (tabs) and iPad (sidebar) layouts
-/// based on horizontal size class. Supports split-screen and Stage Manager.
+/// Root container that switches between iPhone (tabs) and iPad (sidebar) layouts.
+/// Device idiom is checked first so iPhone Pro Max models (which can report .regular
+/// horizontal size class) always get the native bottom-tab layout.
 struct AdaptiveRootView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    /// Defaults to compact when size class is nil (e.g., during early layout)
+    private var isPhone: Bool {
+        #if canImport(UIKit)
+        return UIDevice.current.userInterfaceIdiom == .phone
+        #else
+        return false
+        #endif
+    }
+
+    /// True when iPhone, or when size class is compact/nil on other devices
     private var isCompact: Bool {
-        horizontalSizeClass == .compact || horizontalSizeClass == nil
+        isPhone || horizontalSizeClass == .compact || horizontalSizeClass == nil
     }
 
     var body: some View {
