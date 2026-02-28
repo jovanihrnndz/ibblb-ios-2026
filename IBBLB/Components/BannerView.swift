@@ -23,6 +23,14 @@ struct BannerView: View {
                 .scaledToFill()
                 .frame(width: geometry.size.width, height: bannerHeight)
                 .clipped()
+                .overlay(
+                    // Subtle scrim so white status bar text is legible over any banner image
+                    LinearGradient(
+                        colors: [Color.black.opacity(0.45), Color.clear],
+                        startPoint: .top,
+                        endPoint: .init(x: 0.5, y: 0.4)
+                    )
+                )
         }
         .frame(height: bannerHeight)
     }
